@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Acompanhamento - Power Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f1419;
+            --bg-secondary: #1a2332;
+            --bg-card: #212d3b;
+            --bg-hover: #2a3a4d;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #334155;
+            --shadow: 0 4px 24px rgba(0,0,0,0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-left h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-left p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .deadline-badge {
+            background: linear-gradient(135deg, var(--accent-red), #dc2626);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .deadline-badge .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        .deadline-badge .date {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.25rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-blue);
+        }
+
+        .stat-card .label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-card.horas .value { color: var(--accent-blue); }
+        .stat-card.concluido .value { color: var(--accent-green); }
+        .stat-card.andamento .value { color: var(--accent-yellow); }
+        .stat-card.pendente .value { color: var(--text-secondary); }
+
+        /* Progress Bar */
+        .progress-section {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .progress-header h3 {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .progress-header span {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-green);
+            font-weight: 700;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: var(--bg-primary);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan));
+            border-radius: 6px;
+            transition: width 0.5s ease;
+        }
+
+        /* Timeline */
+        .timeline-section {
+            margin-bottom: 2rem;
+        }
+
+        .timeline-section h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .day-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .day-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem 0;
+        }
+
+        .day-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+        }
+
+        .day-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .day-header .hours {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Task Cards */
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-left: 1.5rem;
+            padding-left: 1.5rem;
+            border-left: 2px solid var(--border);
+        }
+
+        .task-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.25rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .task-card:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent-blue);
+        }
+
+        .task-card.expanded {
+            border-color: var(--accent-purple);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .task-info {
+            flex: 1;
+        }
+
+        .task-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .task-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .task-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .status-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .status-concluido { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+        .status-andamento { background: rgba(245, 158, 11, 0.2); color: var(--accent-yellow); }
+        .status-pendente { background: rgba(148, 163, 184, 0.2); color: var(--text-secondary); }
+        .status-aguardando { background: rgba(59, 130, 246, 0.2); color: var(--accent-blue); }
+        .status-erro { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+        .status-reservado { background: rgba(139, 92, 246, 0.2); color: var(--accent-purple); }
+
+        /* Task Details */
+        .task-details {
+            display: none;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .task-card.expanded .task-details {
+            display: block;
+        }
+
+        .checklist {
+            margin-bottom: 1rem;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent-green);
+            cursor: pointer;
+        }
+
+        .checklist-item.checked {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        /* Observations */
+        .observations-section {
+            margin-top: 1rem;
+        }
+
+        .observations-section label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .observation-input {
+            width: 100%;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: var(--text-primary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            resize: vertical;
+            min-height: 80px;
+            transition: border-color 0.3s ease;
+        }
+
+        .observation-input:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+        }
+
+        .observation-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .saved-observations {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-purple);
+        }
+
+        .saved-observations .obs-header {
+            font-size: 0.75rem;
+            color: var(--accent-purple);
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .saved-observations .obs-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Actions */
+        .task-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text-secondary);
+        }
+
+        .btn-status {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+        }
+
+        .btn-status:hover {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-info {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .export-btn {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            font-family: 'DM Sans', sans-serif;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .task-header {
+                flex-direction: column;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .task-card {
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .day-group:nth-child(1) .task-card { animation-delay: 0.1s; }
+        .day-group:nth-child(2) .task-card { animation-delay: 0.2s; }
+        .day-group:nth-child(3) .task-card { animation-delay: 0.3s; }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--accent-green);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 500;
+            box-shadow: var(--shadow);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1>📊 Painel de Acompanhamento</h1>
+                <p>Entregas Power Platform • Atualizado em tempo real</p>
+            </div>
+            <div class="deadline-badge">
+                <div class="label">Prazo Final</div>
+                <div class="date">Quinta, 13/03</div>
+            </div>
+        </header>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card horas">
+                <div class="label">Horas Disponíveis</div>
+                <div class="value" id="horasTotal">30h</div>
+            </div>
+            <div class="stat-card concluido">
+                <div class="label">Concluídas</div>
+                <div class="value" id="concluidas">0</div>
+            </div>
+            <div class="stat-card andamento">
+                <div class="label">Em Andamento</div>
+                <div class="value" id="andamento">3</div>
+            </div>
+            <div class="stat-card pendente">
+                <div class="label">Pendentes</div>
+                <div class="value" id="pendentes">5</div>
+            </div>
+        </div>
+
+        <!-- Progress -->
+        <div class="progress-section">
+            <div class="progress-header">
+                <h3>Progresso Geral</h3>
+                <span id="progressPercent">23%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar" style="width: 23%"></div>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="timeline-section">
+            <h2>📅 Cronograma de Entregas</h2>
+
+            <!-- Terça -->
+            <div class="day-group" data-day="terca">
+                <div class="day-header">
+                    <div class="day-dot"></div>
+                    <h3>Terça-feira, 11/03</h3>
+                    <span class="hours">~8.5h</span>
+                </div>
+                <div class="task-list" id="tasks-terca"></div>
+            </div>
+
+            <!-- Quarta -->
+            <div class="day-group" data-day="quarta">
+                <div class="day-header">
+                    <div class="day-dot"></div>
+                    <h3>Quarta-feira, 12/03</h3>
+                    <span class="hours">~9.5h</span>
+                </div>
+                <div class="task-list" id="tasks-quarta"></div>
+            </div>
+
+            <!-- Quinta -->
+            <div class="day-group" data-day="quinta">
+                <div class="day-header">
+                    <div class="day-dot"></div>
+                    <h3>Quinta-feira, 13/03</h3>
+                    <span class="hours">~8h + buffer</span>
+                </div>
+                <div class="task-list" id="tasks-quinta"></div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-info">
+                Última atualização: <span id="lastUpdate"></span>
+            </div>
+            <button class="export-btn" onclick="exportReport()">
+                📥 Exportar Relatório
+            </button>
+        </footer>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">Salvo com sucesso!</div>
+
+    <script>
+        // Task Data
+        const tasks = [
+            // Terça
+            {
+                id: 1,
+                title: "Painel Departamentos",
+                day: "terca",
+                period: "Manhã",
+                hours: "3h",
+                status: "erro",
+                statusLabel: "Com Erros",
+                progress: 70,
+                checklist: [
+                    { text: "Estrutura criada", done: true },
+                    { text: "Dados conectados", done: true },
+                    { text: "Corrigir erros identificados", done: false },
+                    { text: "Validar dados", done: false }
+                ],
+                observation: ""
+            },
+            {
+                id: 2,
+                title: "Painel TED (melhorias)",
+                day: "terca",
+                period: "Tarde",
+                hours: "3h",
+                status: "aguardando",
+                statusLabel: "Aguardando",
+                progress: 50,
+                checklist: [
+                    { text: "Versão base funcional", done: true },
+                    { text: "Aguardando detalhamento", done: false },
+                    { text: "Implementar melhorias", done: false },
+                    { text: "Testes finais", done: false }
+                ],
+                observation: ""
+            },
+            {
+                id: 3,
+                title: "Repositório CGPROJ",
+                day: "terca",
+                period: "Tarde",
+                hours: "1h",
+                status: "andamento",
+                statusLabel: "Em Andamento",
+                progress: 60,
+                checklist: [
+                    { text: "Repositório criado", done: true },
+                    { text: "Concluir alterações", done: false },
+                    { text: "Migrar código", done: false }
+                ],
+                observation: ""
+            },
+            {
+                id: 4,
+                title: "Manual Painel TED",
+                day: "terca",
+                period: "Final",
+                hours: "1.5h",
+                status: "pendente",
+                statusLabel: "Pendente",
+                progress: 0,
+                checklist: [
+                    { text: "Screenshots", done: false },
+                    { text: "Passo-a-passo", done: false },
+                    { text: "FAQ básico", done: false }
+                ],
+                observation: ""
+            },
+            // Quarta
+            {
+                id: 5,
+                title: "Manual Painel Departamentos",
+                day: "quarta",
+                period: "Manhã",
+                hours: "1.5h",
+                status: "pendente",
+                statusLabel: "Pendente",
+                progress: 0,
+                checklist: [
+                    { text: "Screenshots", done: false },
+                    { text: "Passo-a-passo", done: false },
+                    { text: "FAQ básico", done: false }
+                ],
+                observation: ""
+            },
+            {
+                id: 6,
+                title: "Módulo Sistema Áreas",
+                day: "quarta",
+                period: "Manhã",
+                hours: "3h",
+                status: "pendente",
+                statusLabel: "Pendente",
+                progress: 0,
+                checklist: [
+                    { text: "Configuração inicial", done: false },
+                    { text: "Permissões", done: false },
+                    { text: "Integração", done: false },
+                    { text: "Testes", done: false }
+                ],
+                observation: ""
+            },
+            {
+                id: 7,
+                title: "Painel Pronon",
+                day: "quarta",
+                period: "Tarde",
+                hours: "3h",
+                status: "pendente",
+                statusLabel: "Pendente",
+                progress: 0,
+                checklist: [
+                    { text: "Estrutura", done: false },
+                    { text: "Conexão dados", done: false },
+                    { text: "Visualizações", done: false },
+                    { text: "Validação", done: false }
+                ],
+                observation: ""
+            },
+            {
+                id: 8,
+                title: "Melhoria Coleta Informações",
+                day: "quarta",
+                period: "Tarde",
+                hours: "2h",
+                status: "pendente",
+                statusLabel: "Pendente",
+                progress: 0,
+                checklist: [
+                    { text: "Revisar forms", done: false },
+                    { text: "Otimizar fluxos", done: false },
+                    { text: "Automações", done: false }
+                ],
+                observation: ""
+            },
+            // Quinta
+            {
+                id: 9,
+                title: "Migração CGPROJ (finalizar)",
+                day: "quinta",
+                period: "Manhã",
+                hours: "1h",
+                status: "pendente",
+                statusLabel: "Pendente",
+                progress: 0,
+                checklist: [
+                    { text: "Push final", done: false },
+                    { text: "Validar ambiente", done: false }
+                ],
+                observation: ""
+            },
+            {
+                id: 10,
+                title: "Revisões e Correções",
+                day: "quinta",
+                period: "Manhã",
+                hours: "3h",
+                status: "pendente",
+                statusLabel: "Pendente",
+                progress: 0,
+                checklist: [
+                    { text: "Bugs críticos", done: false },
+                    { text: "Ajustes visuais", done: false },
+                    { text: "Performance", done: false }
+                ],
+                observation: ""
+            },
+            {
+                id: 11,
+                title: "Validação Final + Deploy",
+                day: "quinta",
+                period: "Tarde",
+                hours: "2h",
+                status: "pendente",
+                statusLabel: "Pendente",
+                progress: 0,
+                checklist: [
+                    { text: "Testes E2E", done: false },
+                    { text: "Deploy PRD", done: false },
+                    { text: "Documentação", done: false }
+                ],
+                observation: ""
+            },
+            {
+                id: 12,
+                title: "BUFFER EMERGÊNCIA",
+                day: "quinta",
+                period: "Tarde",
+                hours: "2h",
+                status: "reservado",
+                statusLabel: "Reservado",
+                progress: 0,
+                checklist: [
+                    { text: "Reservado para imprevistos", done: false }
+                ],
+                observation: "⚠️ NÃO COMPROMETER - Reservado para emergências"
+            }
+        ];
+
+        // Load from localStorage
+        function loadData() {
+            const saved = localStorage.getItem('cronogramaData');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                parsed.forEach(savedTask => {
+                    const task = tasks.find(t => t.id === savedTask.id);
+                    if (task) {
+                        task.status = savedTask.status;
+                        task.statusLabel = savedTask.statusLabel;
+                        task.progress = savedTask.progress;
+                        task.checklist = savedTask.checklist;
+                        task.observation = savedTask.observation;
+                    }
+                });
+            }
+        }
+
+        // Save to localStorage
+        function saveData() {
+            localStorage.setItem('cronogramaData', JSON.stringify(tasks));
+            showToast('Alterações salvas!');
+        }
+
+        // Render tasks
+        function renderTasks() {
+            const days = ['terca', 'quarta', 'quinta'];
+            
+            days.forEach(day => {
+                const container = document.getElementById(`tasks-${day}`);
+                const dayTasks = tasks.filter(t => t.day === day);
+                
+                container.innerHTML = dayTasks.map(task => `
+                    <div class="task-card" id="task-${task.id}" onclick="toggleTask(${task.id})">
+                        <div class="task-header">
+                            <div class="task-info">
+                                <div class="task-title">
+                                    ${task.title}
+                                    ${task.progress > 0 ? `<span style="font-size: 0.8rem; color: var(--text-muted)">(${task.progress}%)</span>` : ''}
+                                </div>
+                                <div class="task-meta">
+                                    <span>🕐 ${task.period}</span>
+                                    <span>⏱️ ${task.hours}</span>
+                                </div>
+                            </div>
+                            <span class="status-badge status-${task.status}">${task.statusLabel}</span>
+                        </div>
+                        <div class="task-details">
+                            <div class="checklist">
+                                ${task.checklist.map((item, idx) => `
+                                    <label class="checklist-item ${item.done ? 'checked' : ''}" onclick="event.stopPropagation()">
+                                        <input type="checkbox" ${item.done ? 'checked' : ''} 
+                                            onchange="toggleChecklist(${task.id}, ${idx})">
+                                        ${item.text}
+                                    </label>
+                                `).join('')}
+                            </div>
+                            <div class="observations-section" onclick="event.stopPropagation()">
+                                <label>📝 Observações do Gestor</label>
+                                <textarea class="observation-input" 
+                                    placeholder="Adicione observações, feedbacks ou instruções..."
+                                    onchange="saveObservation(${task.id}, this.value)"
+                                >${task.observation}</textarea>
+                                ${task.observation ? `
+                                    <div class="saved-observations">
+                                        <div class="obs-header">
+                                            <span>Última observação</span>
+                                            <span>${new Date().toLocaleString('pt-BR')}</span>
+                                        </div>
+                                        <div class="obs-text">${task.observation}</div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            <div class="task-actions">
+                                <button class="btn btn-status" onclick="event.stopPropagation(); changeStatus(${task.id}, 'andamento')">🔄 Em Andamento</button>
+                                <button class="btn btn-status" onclick="event.stopPropagation(); changeStatus(${task.id}, 'concluido')">✅ Concluir</button>
+                                <button class="btn btn-status" onclick="event.stopPropagation(); changeStatus(${task.id}, 'erro')">⚠️ Com Erro</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            });
+            
+            updateStats();
+        }
+
+        // Toggle task expansion
+        function toggleTask(id) {
+            const card = document.getElementById(`task-${id}`);
+            card.classList.toggle('expanded');
+        }
+
+        // Toggle checklist item
+        function toggleChecklist(taskId, itemIdx) {
+            const task = tasks.find(t => t.id === taskId);
+            task.checklist[itemIdx].done = !task.checklist[itemIdx].done;
+            
+            // Update progress based on checklist
+            const done = task.checklist.filter(c => c.done).length;
+            task.progress = Math.round((done / task.checklist.length) * 100);
+            
+            saveData();
+            renderTasks();
+        }
+
+        // Save observation
+        function saveObservation(taskId, text) {
+            const task = tasks.find(t => t.id === taskId);
+            task.observation = text;
+            saveData();
+        }
+
+        // Change status
+        function changeStatus(taskId, newStatus) {
+            const task = tasks.find(t => t.id === taskId);
+            const statusMap = {
+                'concluido': { status: 'concluido', label: 'Concluído', progress: 100 },
+                'andamento': { status: 'andamento', label: 'Em Andamento' },
+                'pendente': { status: 'pendente', label: 'Pendente' },
+                'erro': { status: 'erro', label: 'Com Erros' },
+                'aguardando': { status: 'aguardando', label: 'Aguardando' }
+            };
+            
+            const newData = statusMap[newStatus];
+            task.status = newData.status;
+            task.statusLabel = newData.label;
+            if (newData.progress) task.progress = newData.progress;
+            
+            // If completed, mark all checklist as done
+            if (newStatus === 'concluido') {
+                task.checklist.forEach(c => c.done = true);
+            }
+            
+            saveData();
+            renderTasks();
+        }
+
+        // Update statistics
+        function updateStats() {
+            const concluidas = tasks.filter(t => t.status === 'concluido').length;
+            const andamento = tasks.filter(t => ['andamento', 'aguardando', 'erro'].includes(t.status)).length;
+            const pendentes = tasks.filter(t => t.status === 'pendente').length;
+            
+            document.getElementById('concluidas').textContent = concluidas;
+            document.getElementById('andamento').textContent = andamento;
+            document.getElementById('pendentes').textContent = pendentes;
+            
+            // Calculate overall progress
+            const totalProgress = tasks.reduce((sum, t) => sum + t.progress, 0);
+            const avgProgress = Math.round(totalProgress / tasks.length);
+            
+            document.getElementById('progressPercent').textContent = avgProgress + '%';
+            document.getElementById('progressBar').style.width = avgProgress + '%';
+        }
+
+        // Show toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        // Export report
+        function exportReport() {
+            let report = "RELATÓRIO DE ACOMPANHAMENTO - POWER PLATFORM\n";
+            report += "Data: " + new Date().toLocaleString('pt-BR') + "\n";
+            report += "=" .repeat(50) + "\n\n";
+            
+            const days = ['terca', 'quarta', 'quinta'];
+            const dayNames = { terca: 'TERÇA 11/03', quarta: 'QUARTA 12/03', quinta: 'QUINTA 13/03' };
+            
+            days.forEach(day => {
+                report += dayNames[day] + "\n";
+                report += "-".repeat(30) + "\n";
+                
+                tasks.filter(t => t.day === day).forEach(task => {
+                    report += `• ${task.title} [${task.statusLabel}] - ${task.progress}%\n`;
+                    if (task.observation) {
+                        report += `  📝 Observação: ${task.observation}\n`;
+                    }
+                });
+                report += "\n";
+            });
+            
+            // Download
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `relatorio_${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+            
+            showToast('Relatório exportado!');
+        }
+
+        // Update last update time
+        function updateLastUpdate() {
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleString('pt-BR');
+        }
+
+        // Initialize
+        loadData();
+        renderTasks();
+        updateLastUpdate();
+        
+        // Auto-save every 30 seconds
+        setInterval(updateLastUpdate, 30000);
+    </script>
+</body>
+</html>
