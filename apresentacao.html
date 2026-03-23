@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SISPROJ SAES — Atualização SISPROJ v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B1120;--bg2:#111B2E;--bg3:#162234;--bg4:#1C2D42;
+  --green:#2A9D8F;--green-d:#2A9D8F20;--blue:#1474B7;--opas:#0969C3;
+  --orange:#D35400;--yellow:#F39C12;--purple:#8E44AD;--red:#CC2222;--teal:#17A2B8;
+  --text:#E8ECF2;--text2:#9BB0C4;--muted:#5A7089;--border:#263D58;
+  --font:'Sora',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
+button{font-family:var(--font);cursor:pointer;border:none}
+a{text-decoration:none;color:inherit}
+
+/* ═══ TOP NAV ═══ */
+.topnav{position:fixed;top:0;left:0;right:0;height:56px;background:rgba(11,17,32,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);z-index:200;display:flex;align-items:center;padding:0 28px;gap:16px}
+.topnav .logo{font-size:14px;font-weight:800;letter-spacing:-.02em;cursor:pointer;display:flex;align-items:center;gap:8px}
+.topnav .logo span{color:var(--green)}
+.topnav .nav-pills{display:flex;gap:4px;margin-left:24px;overflow-x:auto;flex:1}
+.nav-pill{padding:6px 14px;border-radius:8px;font-size:11px;font-weight:600;color:var(--muted);background:transparent;transition:all .2s;white-space:nowrap;border:1px solid transparent}
+.nav-pill:hover{color:var(--text);background:var(--bg3)}
+.nav-pill.active{color:#fff;border-color:var(--green);background:var(--green)}
+
+/* ═══ SECTIONS ═══ */
+.section{min-height:100vh;padding:80px 28px 40px;position:relative}
+
+/* ═══ HOME ═══ */
+.home-hero{text-align:center;padding-top:60px;margin-bottom:48px}
+.home-hero .label{font-size:12px;color:var(--green);font-weight:600;letter-spacing:3px;text-transform:uppercase;margin-bottom:12px}
+.home-hero h1{font-size:44px;font-weight:800;letter-spacing:-.03em;margin-bottom:10px}
+.home-hero h1 span{background:linear-gradient(135deg,var(--green),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.home-hero p{font-size:15px;color:var(--muted);max-width:600px;margin:0 auto;line-height:1.7}
+.home-hero .ver{display:inline-flex;padding:4px 16px;border-radius:20px;font-size:11px;font-weight:600;background:var(--green-d);color:var(--green);font-family:var(--mono);margin-top:16px}
+
+.home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px;max-width:1200px;margin:0 auto}
+.home-card{background:var(--bg3);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:all .35s;cursor:pointer;position:relative}
+.home-card:hover{transform:translateY(-6px);box-shadow:0 20px 48px rgba(0,0,0,.35);border-color:rgba(42,157,143,.4)}
+.home-card .hc-bar{height:4px}
+.home-card .hc-body{padding:24px}
+.home-card .hc-icon{font-size:36px;margin-bottom:12px}
+.home-card h3{font-size:18px;font-weight:700;margin-bottom:6px}
+.home-card .hc-desc{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:16px}
+.home-card .hc-tags{display:flex;gap:6px;flex-wrap:wrap}
+.home-card .tag{font-size:10px;padding:3px 10px;border-radius:8px;font-weight:600}
+.home-card .hc-footer{padding:14px 24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted)}
+.home-card .hc-footer .go{color:var(--green);font-weight:600;display:flex;align-items:center;gap:4px}
+
+/* ═══ MOCKUP PAGE ═══ */
+.mockup-page{display:none}
+.mockup-page.active{display:block}
+
+.mp-header{max-width:1300px;margin:0 auto 28px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.mp-header .mp-num{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff}
+.mp-header .mp-icon{font-size:36px}
+.mp-header .mp-info{flex:1}
+.mp-header h2{font-size:28px;font-weight:800;letter-spacing:-.02em}
+.mp-header .mp-sub{font-size:13px;color:var(--muted)}
+.mp-header .btn-back{padding:8px 18px;border-radius:8px;font-size:12px;font-weight:600;color:var(--text2);border:1px solid var(--border);background:transparent;transition:all .2s}
+.mp-header .btn-back:hover{background:var(--bg3);color:var(--text)}
+
+/* IFRAME CONTAINER */
+.iframe-wrap{max-width:1300px;margin:0 auto 32px;border-radius:16px;overflow:hidden;border:2px solid var(--border);position:relative;background:var(--bg2)}
+.iframe-wrap iframe{width:100%;height:720px;border:none;display:block}
+.iframe-toolbar{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--bg3);border-bottom:1px solid var(--border)}
+.iframe-toolbar .dots{display:flex;gap:6px}
+.iframe-toolbar .dot{width:10px;height:10px;border-radius:50%}
+.iframe-toolbar .url-bar{flex:1;padding:5px 14px;border-radius:6px;background:var(--bg);border:1px solid var(--border);font-size:11px;font-family:var(--mono);color:var(--muted)}
+.iframe-toolbar .btn-fs{padding:4px 12px;border-radius:6px;background:var(--bg);border:1px solid var(--border);font-size:11px;color:var(--text2);cursor:pointer;transition:all .15s}
+.iframe-toolbar .btn-fs:hover{background:var(--green);color:#fff;border-color:var(--green)}
+
+/* ═══ FLOW SECTION ═══ */
+.flow-section{max-width:1300px;margin:0 auto 40px}
+.flow-title{font-size:18px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.flow-title .ft-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+
+.flow-pipeline{display:flex;gap:0;align-items:stretch;overflow-x:auto;padding-bottom:12px}
+.flow-step{flex:1;min-width:160px;position:relative;display:flex;flex-direction:column}
+.flow-step-head{display:flex;align-items:center;gap:0;margin-bottom:12px}
+.flow-step-circle{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;flex-shrink:0;z-index:1;position:relative}
+.flow-step-line{flex:1;height:3px;margin:0 -2px}
+.flow-step:last-child .flow-step-line{display:none}
+.flow-step-body{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;flex:1}
+.flow-step-body h5{font-size:12px;font-weight:700;margin-bottom:6px}
+.flow-step-body p{font-size:10px;color:var(--muted);line-height:1.6}
+.flow-step-body .fields{margin-top:8px;display:flex;flex-direction:column;gap:3px}
+.flow-step-body .field-tag{font-size:9px;padding:2px 8px;border-radius:4px;background:var(--bg);color:var(--text2);font-family:var(--mono);display:inline-block}
+
+/* RULES BOX */
+.rules-box{max-width:1300px;margin:0 auto 40px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:20px}
+.rules-box h4{font-size:13px;font-weight:700;margin-bottom:12px;color:var(--yellow);display:flex;align-items:center;gap:8px}
+.rules-box .rule{font-size:11px;color:var(--text2);padding:5px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.rules-box .rule:last-child{border:none}
+.rules-box .rule .r-icon{font-size:14px;flex-shrink:0}
+
+/* ═══ UTILS ═══ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.anim{animation:fadeUp .5s ease both}
+.d1{animation-delay:.05s}.d2{animation-delay:.1s}.d3{animation-delay:.15s}.d4{animation-delay:.2s}
+
+@media(max-width:800px){
+  .home-grid{grid-template-columns:1fr}
+  .topnav .nav-pills{display:none}
+  .iframe-wrap iframe{height:500px}
+  .flow-pipeline{flex-direction:column}
+  .flow-step-head{flex-direction:row}
+  .flow-step-line{width:3px;height:20px;flex:none}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<div class="topnav">
+  <div class="logo" onclick="showHome()">📋 SISPROJ <span>SAES</span></div>
+  <div class="nav-pills" id="nav-pills">
+    <button class="nav-pill active" onclick="showHome()">Início</button>
+    <button class="nav-pill" onclick="showMockup(0)">🔬 TED</button>
+    <button class="nav-pill" onclick="showMockup(1)">🌎 OPAS</button>
+    <button class="nav-pill" onclick="showMockup(2)">✈️ Passagens</button>
+    <button class="nav-pill" onclick="showMockup(3)">🏖️ Férias</button>
+    <button class="nav-pill" onclick="showMockup(4)">🔧 Elaboração</button>
+    <button class="nav-pill" onclick="showMockup(5)">📊 Reg. Mensal</button>
+    <button class="nav-pill" onclick="showMockup(6)">📋 Kanban</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- HOME                                   -->
+<!-- ═══════════════════════════════════════ -->
+<div class="section" id="home-section">
+  <div class="home-hero">
+    <div class="label">CGPROJ / SAES — Ministério da Saúde</div>
+    <h1>Atualização <span>SISPROJ</span> v2</h1>
+    <p>7 formulários redesenhados do SISPROJ SAES. Clique em qualquer card para ver o formulário funcional e o fluxo de preenchimento.</p>
+    <div class="ver">v2.0 · 7 formulários · Março 2026</div>
+  </div>
+
+  <div class="home-grid" id="home-grid"></div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- FORMULÁRIO PAGES (generated by JS)     -->
+<!-- ═══════════════════════════════════════ -->
+<div id="mockup-pages"></div>
+
+<script>
+// ═══ DATA ═══
+const MOCKUPS = [
+  {
+    id:'ted', icon:'🔬', title:'Formulário TED', file:'MOCKUP_TED_v2.html',
+    color:'#2A9D8F', num:'01',
+    desc:'Formulário completo com 9 abas, 7 métricas financeiras, timeline de aditivos e accordion de resultados.',
+    tags:[
+      {label:'9 abas',color:'#2A9D8F'},{label:'7 métricas',color:'#1474B7'},{label:'Saldo Financeiro',color:'#8E44AD'}
+    ],
+    bar:'linear-gradient(90deg,#2A9D8F,#1474B7)',
+    flow:[
+      {title:'Abrir / Criar TED', desc:'Portal → TED → Projetos → Novo ou editar existente', fields:['Nome do TED','Nº TED','Processo SEI'], color:'#2A9D8F'},
+      {title:'Identificação', desc:'Tipo, fonte de recurso, temática, vinculação institucional', fields:['Departamento','Coordenação','Instituição'], color:'#1474B7'},
+      {title:'Valores e Datas', desc:'Valor aprovado, datas de publicação, início e término', fields:['Valor Aprovado','Data Início','Data Término'], color:'#D35400'},
+      {title:'Objeto', desc:'Texto descritivo do objeto do TED e observações', fields:['Objeto do TED','Observações'], color:'#F39C12'},
+      {title:'Metas / PEP', desc:'Cadastrar metas com número PEP, valor previsto e executado', fields:['Nº Meta','Nº PEP','Valor Previsto'], color:'#8E44AD'},
+      {title:'Plano Aplicação', desc:'Rubricas orçamentárias com código de natureza de despesa', fields:['Rubrica','Código ND','Valor'], color:'#1474B7'},
+      {title:'Aditivos (TA)', desc:'Registrar termos aditivos de prazo e/ou valor', fields:['Nº TA','Novo Término','Valor Aditivo'], color:'#2A9D8F'},
+      {title:'Cronograma', desc:'Parcelas de desembolso com data de pagamento', fields:['Parcela','Mês/Ano','Valor Previsto'], color:'#D35400'},
+      {title:'Resultados', desc:'Resultados com produtos vinculados (meta × realizado)', fields:['Resultado','Produtos','% Conclusão'], color:'#8E44AD'},
+      {title:'Empenhos', desc:'Notas de empenho vinculadas ao TED', fields:['Nº Empenho','Data','Valor'], color:'#CC2222'},
+      {title:'Anexos', desc:'Upload de documentos (publicação, plano, relatórios)', fields:['Arquivo','Tipo','Upload'], color:'#6B8399'},
+    ],
+    rules:[
+      {icon:'💰',text:'Valor Empenhado = Σ automática de todos os empenhos cadastrados'},
+      {icon:'📊',text:'Valor Executado = Σ automática dos registros de execução'},
+      {icon:'💳',text:'Saldo Financeiro = Pago (repasse) − Executado (dinheiro na instituição)'},
+      {icon:'📅',text:'Término Atual = data do último Termo Aditivo automaticamente'},
+      {icon:'🟢',text:'Situação (Vigente/Elaboração/Encerrado) é calculada pelas datas'},
+    ],
+  },
+  {
+    id:'opas', icon:'🌎', title:'Formulário OPAS TC', file:'MOCKUP_OPAS_TC_v2.html',
+    color:'#0969C3', num:'02',
+    desc:'Termo de Cooperação OPAS com identidade visual azul, campos exclusivos e TA com tags.',
+    tags:[
+      {label:'8 abas',color:'#0969C3'},{label:'OPAS/OMS',color:'#1474B7'},{label:'Taxa ADM 7%',color:'#F39C12'}
+    ],
+    bar:'linear-gradient(90deg,#0969C3,#1474B7)',
+    flow:[
+      {title:'Abrir / Criar TC', desc:'Portal → OPAS → Projetos TC → Novo', fields:['Nome do TC','Nº TC OPAS','Nº Acordo OMS'], color:'#0969C3'},
+      {title:'Dados OPAS', desc:'Representação OPAS, Oficial de Projeto, Área Temática', fields:['Representação','Oficial','Área Temática'], color:'#1474B7'},
+      {title:'Vinculação', desc:'Departamento, coordenação e contraparte nacional', fields:['Departamento','Coordenação','Contraparte'], color:'#2A9D8F'},
+      {title:'Valores e Datas', desc:'Valor aprovado, data assinatura, início, término', fields:['Valor Aprovado','Data Assinatura','Término'], color:'#D35400'},
+      {title:'Termos de Ajuste', desc:'Registrar TAs com tipo (Prazo/Valor) e tags visuais', fields:['Nº TA','Tipo (Prazo/Valor)','Valor Ajuste'], color:'#8E44AD'},
+      {title:'Plano Aplicação', desc:'Rubricas OPAS incluindo Taxa Administrativa 7%', fields:['Rubrica','Código','Taxa ADM'], color:'#F39C12'},
+      {title:'Resultados + Empenhos', desc:'Mesma estrutura TED — accordion + notas empenho', fields:['Resultado','Empenho','Valor'], color:'#CC2222'},
+      {title:'Anexos', desc:'TC assinado, TAs, relatórios OPAS', fields:['Arquivo','Tipo','Upload'], color:'#6B8399'},
+    ],
+    rules:[
+      {icon:'🌎',text:'Identidade visual azul OPAS em todos os componentes (#0969C3)'},
+      {icon:'💰',text:'Taxa Administrativa OPAS de 7% como rubrica obrigatória'},
+      {icon:'📝',text:'Termos de Ajuste (TA) com tags visuais de tipo: Prazo, Valor ou ambos'},
+      {icon:'🏢',text:'Natureza de Despesa 3.3.72 / 4.4.72 (Organismo Internacional)'},
+      {icon:'📊',text:'Mesma estrutura de 7 métricas + barra de execução 4 segmentos'},
+    ],
+  },
+  {
+    id:'pd', icon:'✈️', title:'Passagens & Diárias', file:'MOCKUP_PassagensDiarias_v2.html',
+    color:'#D35400', num:'03',
+    desc:'Workflow 6 etapas, rota visual, tipo condicional e auto-cálculos.',
+    tags:[
+      {label:'Workflow 6 steps',color:'#D35400'},{label:'Auto-cálculo',color:'#F39C12'},{label:'Estimativa',color:'#2A9D8F'}
+    ],
+    bar:'linear-gradient(90deg,#D35400,#F39C12)',
+    flow:[
+      {title:'Identificação', desc:'Nº solicitação auto-gerado, origem (manual/gabinete)', fields:['Nº Solicitação','Origem','Situação'], color:'#D35400'},
+      {title:'Vinculação', desc:'Selecionar módulo (TED/OPAS), PEP — projeto e depto auto', fields:['Módulo','PEP','Projeto (auto)'], color:'#1474B7'},
+      {title:'Viajante', desc:'Buscar pessoa — CPF e vínculo preenchidos automaticamente', fields:['Pessoa','CPF (auto)','Vínculo (auto)'], color:'#8E44AD'},
+      {title:'Tipo Solicitação', desc:'Toggle: Passagem+Diária / Apenas Passagem / Apenas Diária', fields:['Tipo','Tipo Viagem','Tipo Passagem'], color:'#D35400'},
+      {title:'Trajeto', desc:'Origem, destino, datas ida e retorno', fields:['Cidade Origem/Destino','UF','Data Ida/Retorno'], color:'#2A9D8F'},
+      {title:'Passagem', desc:'Cia aérea, trecho, valor, Nº Voetur — estimativa automática', fields:['Cia Aérea','Valor','Nº Voetur'], color:'#F39C12'},
+      {title:'Diárias', desc:'Qtd × valor unitário = total auto — Nº PCF Fiotec', fields:['Qtd Diárias','Valor Unit.','Nº PCF Fiotec'], color:'#1474B7'},
+      {title:'Totais + Justificativa', desc:'Custo total auto-calculado + objetivo da viagem', fields:['Custo Total (auto)','Objetivo','Observações'], color:'#CC2222'},
+      {title:'Enviar', desc:'Salvar rascunho ou enviar para aprovação', fields:['Salvar Rascunho','Enviar Aprovação'], color:'#2A9D8F'},
+    ],
+    rules:[
+      {icon:'🎫',text:'Seções Passagem e Diária são condicionais — aparecem conforme o tipo selecionado'},
+      {icon:'💡',text:'Estimativa automática busca média histórica de passagens na mesma rota'},
+      {icon:'💰',text:'Custo Total = Passagem + (Qtd × Valor Diária) + Adicional + Reembolso'},
+      {icon:'📤',text:'Workflow: Rascunho → Enviada → Aprovada → Emitida → Realizada → Prest. Contas'},
+      {icon:'⚠️',text:'Cancelamento: Antes emissão / Após emissão (reembolso) / No-show'},
+    ],
+  },
+  {
+    id:'ferias', icon:'🏖️', title:'Férias', file:'MOCKUP_Ferias_v2.html',
+    color:'#1474B7', num:'04',
+    desc:'Dashboard com KPIs, donut chart, alertas urgentes e checklist de anexos.',
+    tags:[
+      {label:'Donut chart',color:'#1474B7'},{label:'Alertas',color:'#CC2222'},{label:'15d mín 1º',color:'#2A9D8F'}
+    ],
+    bar:'linear-gradient(90deg,#1474B7,#2A9D8F)',
+    flow:[
+      {title:'Dashboard', desc:'Visão geral: KPIs de CLT ativos, férias completas, pendentes, urgentes', fields:['5 KPIs','Tabela contratos','Barra saldo'], color:'#1474B7'},
+      {title:'Selecionar Contrato', desc:'Clicar no contrato CLT para ver detalhe de férias', fields:['Pessoa','Contrato','Depto'], color:'#2A9D8F'},
+      {title:'Donut de Saldo', desc:'Visualizar gozado/programado/restante com donut CSS', fields:['Gozado','Programado','Restante'], color:'#D35400'},
+      {title:'Cadastrar Período', desc:'Novo período: datas, qtd dias — validação de mínimos', fields:['Data Início/Fim','Qtd Dias','Nº Período'], color:'#F39C12'},
+      {title:'Anexar Documentos', desc:'Cronograma, Aviso de Férias assinado, Form. Alteração', fields:['Cronograma','Aviso Assinado','Form. Alteração'], color:'#8E44AD'},
+    ],
+    rules:[
+      {icon:'📅',text:'Direito: 30 dias/ano · 1º período mínimo: 15 dias'},
+      {icon:'✂️',text:'Fracionamento: máximo 3 períodos · Demais mínimo 5 dias cada'},
+      {icon:'⚠️',text:'Alteração: antecedência mínima de 45 dias'},
+      {icon:'📎',text:'Anexos obrigatórios: Cronograma + Aviso Férias Assinado'},
+      {icon:'🔴',text:'Contratos < 90 dias do vencimento concessivo são marcados URGENTE'},
+    ],
+  },
+  {
+    id:'elab', icon:'🔧', title:'Elaboração de Projetos', file:'MOCKUP_Elaboracao_v2.html',
+    color:'#8E44AD', num:'05',
+    desc:'Pipeline de 4 fases com checklist, responsável e progress bars.',
+    tags:[
+      {label:'4 fases',color:'#8E44AD'},{label:'Pipeline',color:'#1474B7'},{label:'Checklist',color:'#2A9D8F'}
+    ],
+    bar:'linear-gradient(90deg,#8E44AD,#2A9D8F)',
+    flow:[
+      {title:'Criar Projeto', desc:'Novo projeto em elaboração: nome, departamento, instituição, valor estimado', fields:['Nome','Depto','Instituição','Valor'], color:'#8E44AD'},
+      {title:'Fase 1 — Concepção', desc:'Definir escopo, identificar parceiro, reunião alinhamento, viabilidade', fields:['Escopo','Parceiro','Reunião','Viabilidade'], color:'#8E44AD'},
+      {title:'Fase 2 — Plano Trabalho', desc:'Plano aplicação, metas, cronograma, equipe, validar parceiro', fields:['Plano','Metas','Cronograma','Equipe'], color:'#1474B7'},
+      {title:'Fase 3 — Análise Jurídica', desc:'Parecer CGPROJ, análise CONJUR, ajustes, aprovação Secretário', fields:['Parecer','CONJUR','Ajustes','Aprovação'], color:'#F39C12'},
+      {title:'Fase 4 — Formalização', desc:'Assinatura, publicação DOU, cadastro SISPROJ, 1º empenho', fields:['Assinatura','DOU','SISPROJ','Empenho'], color:'#2A9D8F'},
+    ],
+    rules:[
+      {icon:'📊',text:'Progresso automático: % calculado por tarefas concluídas / total'},
+      {icon:'👤',text:'Cada tarefa tem responsável e data prevista/realizada'},
+      {icon:'🔒',text:'Fases são sequenciais — fase anterior precisa estar 100% para avançar'},
+      {icon:'✅',text:'Ao concluir Fase 4, projeto é automaticamente cadastrado como TED/OPAS'},
+    ],
+  },
+  {
+    id:'regmensal', icon:'📊', title:'Registro Mensal + Execução', file:'MOCKUP_RegistroMensal_v2.html',
+    color:'#2A9D8F', num:'06',
+    desc:'Grid mensal colorido com dissídio, 2 views e execução consolidada.',
+    tags:[
+      {label:'Grid mensal',color:'#2A9D8F'},{label:'Dissídio',color:'#8E44AD'},{label:'2 views',color:'#F39C12'}
+    ],
+    bar:'linear-gradient(90deg,#2A9D8F,#F39C12)',
+    flow:[
+      {title:'Selecionar View', desc:'Toggle: Registro Mensal (por contrato) ou Execução Consolidada', fields:['View Mensal','View Consolidada'], color:'#2A9D8F'},
+      {title:'Expandir Contrato', desc:'Clicar no card do contrato para ver grid de meses', fields:['Pessoa','Contrato','Projeto'], color:'#1474B7'},
+      {title:'Grid Mensal', desc:'Visualizar meses com status: Pago, Compromissado, Futuro, Cancelado', fields:['Competência','Valor','Status'], color:'#F39C12'},
+      {title:'Verificar Dissídio', desc:'Meses com reajuste destacados com borda roxa e ⬆', fields:['Mês Dissídio','% Reajuste','Novo Valor'], color:'#8E44AD'},
+      {title:'Execução Consolidada', desc:'Tabela unificada de todos os contratos com busca', fields:['Projeto','Tipo','Pessoa','Valor'], color:'#D35400'},
+    ],
+    rules:[
+      {icon:'🔒',text:'Registros com status "Pago" NUNCA são alterados retroativamente'},
+      {icon:'⬆️',text:'Dissídio aplica novo valor apenas em meses Futuros e Compromissados'},
+      {icon:'📅',text:'Registros gerados automaticamente: 1 por mês do início ao fim do contrato'},
+      {icon:'❌',text:'Rescisão: meses futuros viram "Cancelado", pagos ficam intactos'},
+    ],
+  },
+  {
+    id:'kanban', icon:'📋', title:'Kanban + Alterações', file:'MOCKUP_Kanban_Alteracoes_v2.html',
+    color:'#1474B7', num:'07',
+    desc:'3 views Kanban, 8 tipos de alteração contratual e regras de negócio.',
+    tags:[
+      {label:'3 views',color:'#1474B7'},{label:'8 tipos',color:'#D35400'},{label:'Regras',color:'#CC2222'}
+    ],
+    bar:'linear-gradient(90deg,#1474B7,#CC2222)',
+    flow:[
+      {title:'Selecionar View', desc:'Toggle: Kanban Contratos, Kanban Viagens ou Alterações', fields:['Contratos','Viagens','Alterações'], color:'#1474B7'},
+      {title:'Kanban Contratos', desc:'5 colunas: Elaboração → Assinatura → Ativo → Renovação → Encerrado', fields:['Drag cards','Filtros','Alertas'], color:'#2A9D8F'},
+      {title:'Kanban Viagens', desc:'6 colunas: Rascunho → Enviada → Aprovada → Emitida → Realizada → Prest.', fields:['Progress bar','Rota','Valor'], color:'#D35400'},
+      {title:'Selecionar Alteração', desc:'Escolher tipo: Projeto, Vínculo, Aditivo, Promoção, Rescisão, etc.', fields:['8 cards tipo','Vínculo compatível'], color:'#8E44AD'},
+      {title:'Preencher Drawer', desc:'Formulário lateral: contrato, data, justificativa, anexos', fields:['Contrato','Data','Justificativa','Anexo'], color:'#F39C12'},
+      {title:'Aplicar', desc:'Validar regras e salvar alteração', fields:['Validação','Salvar'], color:'#CC2222'},
+    ],
+    rules:[
+      {icon:'🔒',text:'Registros mensais "Pago" NUNCA são alterados por nenhuma alteração'},
+      {icon:'❌',text:'Alteração de vínculo CLT → Bolsa NÃO é permitida'},
+      {icon:'💰',text:'Aditivo de valor aplica novo valor apenas em registros futuros'},
+      {icon:'🔴',text:'Rescisão: registros futuros viram "Cancelado", pagos ficam intactos'},
+      {icon:'⬆️',text:'Promoção/Dissídio: passados mantêm valor, futuros recebem novo valor'},
+    ],
+  },
+];
+
+// ═══ RENDER HOME ═══
+function renderHome() {
+  const grid = document.getElementById('home-grid');
+  grid.innerHTML = MOCKUPS.map((m,i) => `
+    <div class="home-card anim d${i%4+1}" onclick="showMockup(${i})">
+      <div class="hc-bar" style="background:${m.bar}"></div>
+      <div class="hc-body">
+        <div class="hc-icon">${m.icon}</div>
+        <h3>${m.title}</h3>
+        <div class="hc-desc">${m.desc}</div>
+        <div class="hc-tags">${m.tags.map(t=>`<span class="tag" style="background:${t.color}18;color:${t.color}">${t.label}</span>`).join('')}</div>
+      </div>
+      <div class="hc-footer">
+        <span>${m.flow.length} etapas de preenchimento</span>
+        <span class="go">Ver formulário →</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ═══ RENDER MOCKUP PAGES ═══
+function renderPages() {
+  const container = document.getElementById('mockup-pages');
+  container.innerHTML = MOCKUPS.map((m,i) => `
+    <div class="section mockup-page" id="page-${m.id}">
+      <!-- HEADER -->
+      <div class="mp-header anim d1">
+        <button class="btn-back" onclick="showHome()">◀ Voltar</button>
+        <div class="mp-num" style="background:${m.color}">${m.num}</div>
+        <div class="mp-icon">${m.icon}</div>
+        <div class="mp-info">
+          <h2>${m.title}</h2>
+          <div class="mp-sub">${m.desc}</div>
+        </div>
+      </div>
+
+      <!-- IFRAME -->
+      <div class="iframe-wrap anim d2">
+        <div class="iframe-toolbar">
+          <div class="dots"><div class="dot" style="background:#FF5F57"></div><div class="dot" style="background:#FFBD2E"></div><div class="dot" style="background:#27C93F"></div></div>
+          <div class="url-bar">${m.file}</div>
+          <button class="btn-fs" onclick="openFullscreen('${m.file}')">⛶ Tela cheia</button>
+        </div>
+        <iframe data-src="${m.file}" loading="lazy"></iframe>
+      </div>
+
+      <!-- FLOW -->
+      <div class="flow-section anim d3">
+        <div class="flow-title">
+          <div class="ft-icon" style="background:${m.color}20;color:${m.color}">📝</div>
+          Fluxo de Preenchimento — ${m.title}
+        </div>
+        <div class="flow-pipeline">
+          ${m.flow.map((step,si) => `
+            <div class="flow-step">
+              <div class="flow-step-head">
+                <div class="flow-step-circle" style="background:${step.color}">${si+1}</div>
+                <div class="flow-step-line" style="background:linear-gradient(90deg,${step.color},${m.flow[si+1]?m.flow[si+1].color:step.color})"></div>
+              </div>
+              <div class="flow-step-body">
+                <h5>${step.title}</h5>
+                <p>${step.desc}</p>
+                <div class="fields">${step.fields.map(f=>`<span class="field-tag">${f}</span>`).join('')}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- RULES -->
+      <div class="rules-box anim d4">
+        <h4>⚡ Regras e Automações</h4>
+        ${m.rules.map(r=>`<div class="rule"><span class="r-icon">${r.icon}</span>${r.text}</div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ═══ NAVIGATION ═══
+function showHome() {
+  document.getElementById('home-section').style.display = '';
+  document.querySelectorAll('.mockup-page').forEach(p => p.classList.remove('active'));
+  updateNav(-1);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function showMockup(idx) {
+  document.getElementById('home-section').style.display = 'none';
+  document.querySelectorAll('.mockup-page').forEach(p => p.classList.remove('active'));
+  
+  const page = document.getElementById('page-' + MOCKUPS[idx].id);
+  page.classList.add('active');
+  
+  // Lazy load iframe
+  const iframe = page.querySelector('iframe');
+  if (iframe && !iframe.src && iframe.dataset.src) {
+    iframe.src = iframe.dataset.src;
+  }
+  
+  updateNav(idx);
+  window.scrollTo({top:0, behavior:'smooth'});
+  
+  // Retrigger animations
+  page.querySelectorAll('.anim').forEach(el => {
+    el.style.animation = 'none';
+    el.offsetHeight;
+    el.style.animation = '';
+  });
+}
+
+function updateNav(idx) {
+  document.querySelectorAll('.nav-pill').forEach((p,i) => {
+    p.classList.toggle('active', i === idx + 1);
+  });
+}
+
+function openFullscreen(file) {
+  window.open(file, '_blank');
+}
+
+// ═══ INIT ═══
+renderHome();
+renderPages();
+</script>
+</body>
+</html>

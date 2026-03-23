@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MOCKUP — Passagens & Diárias v2 (Redesign)</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="dark"]{
+  --navy:#131E2E;--navy-light:#1A2840;--navy-mid:#213350;
+  --accent-green:#2A9D8F;--accent-green-dim:#2A9D8F18;--accent-blue:#1474B7;--accent-blue-dim:#1474B718;
+  --accent-red:#CC2222;--accent-orange:#d35400;--accent-yellow:#f39c12;--accent-purple:#8e44ad;
+  --accent-travel:#d35400;--accent-travel-dim:#d3540018;
+  --text-primary:#E8ECF2;--text-secondary:#9BB0C4;--text-muted:#6B8399;
+  --surface:#162234;--surface-raised:#1C2D42;--surface-hover:#243A54;
+  --border:#263D58;--border-light:#2E4A68;
+  --radius:8px;--radius-lg:12px;--shadow:0 2px 12px rgba(0,0,0,.25);
+  --font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+[data-theme="light"]{
+  --navy:#f0f2f5;--navy-light:#e4e8ed;--navy-mid:#d8dde5;
+  --accent-green:#0e7a5c;--accent-green-dim:#0e7a5c18;--accent-blue:#0969c3;--accent-blue-dim:#0969c318;
+  --accent-red:#c0392b;--accent-orange:#d35400;--accent-yellow:#f39c12;--accent-purple:#8e44ad;
+  --accent-travel:#d35400;--accent-travel-dim:#d3540015;
+  --text-primary:#1a2332;--text-secondary:#4a5e73;--text-muted:#8395a7;
+  --surface:#ffffff;--surface-raised:#ffffff;--surface-hover:#eef1f5;
+  --border:#dfe4ea;--border-light:#cdd5de;
+  --shadow:0 2px 12px rgba(0,0,0,.07);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;font-family:var(--font);background:var(--navy);color:var(--text-primary)}
+button{font-family:var(--font);cursor:pointer;border:none}
+input,select,textarea{font-family:var(--font)}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:3px}
+
+.mock-shell{display:flex;height:100vh;overflow:hidden}
+.mock-sidebar{width:260px;background:var(--surface);border-right:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;overflow-y:auto}
+.sidebar-header{padding:16px;border-bottom:1px solid var(--border)}
+.sidebar-header h2{font-size:14px;font-weight:700;color:var(--accent-travel)}
+.sidebar-header small{font-size:11px;color:var(--text-muted)}
+.module-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:8px;font-size:11px;font-weight:700;letter-spacing:.5px;margin-top:8px;background:var(--accent-travel-dim);color:var(--accent-travel)}
+.nav-group{padding:10px 0}
+.nav-group-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-muted);padding:0 16px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;font-size:13px;color:var(--text-secondary);cursor:pointer;transition:all .15s;border-left:3px solid transparent}
+.nav-item:hover{background:var(--surface-hover);color:var(--text-primary)}
+.nav-item.active{background:var(--navy-light);color:var(--accent-travel);border-left-color:var(--accent-travel);font-weight:600}
+.nav-item .icon{font-size:15px;width:20px;text-align:center}
+.nav-item .badge{margin-left:auto;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;background:var(--accent-travel-dim);color:var(--accent-travel)}
+
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:50px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0}
+.topbar .breadcrumb{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px}
+.topbar .breadcrumb a{color:var(--accent-travel);text-decoration:none;cursor:pointer}
+.topbar .spacer{flex:1}
+.topbar .user-info{font-size:12px;color:var(--text-secondary)}
+.content{flex:1;overflow-y:auto;padding:0}
+.form-wrapper{display:flex;flex-direction:column;min-height:100%}
+
+/* HERO */
+.form-hero{background:var(--surface);border-bottom:1px solid var(--border);padding:20px 28px}
+.form-hero-top{display:flex;align-items:flex-start;gap:16px;margin-bottom:16px}
+.form-hero-info{flex:1}
+.form-hero-title{font-size:22px;font-weight:700;letter-spacing:-.02em;display:flex;align-items:center;gap:12px;margin-bottom:4px;flex-wrap:wrap}
+.form-hero-subtitle{font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.form-hero-subtitle .sep{color:var(--border-light)}
+.form-hero-actions{display:flex;gap:8px;flex-shrink:0}
+
+/* WORKFLOW BAR */
+.workflow-bar{display:flex;gap:3px;padding:4px;background:var(--navy);border:1px solid var(--border);border-radius:10px;margin-bottom:16px}
+.workflow-step{flex:1;padding:9px 6px;text-align:center;border-radius:8px;font-size:11px;font-weight:600;transition:all .2s;cursor:default;position:relative}
+.workflow-step.done{background:var(--accent-green);color:#fff}
+.workflow-step.current{background:var(--accent-travel);color:#fff;box-shadow:0 2px 8px rgba(211,84,0,.3)}
+.workflow-step.pending{background:var(--surface-hover);color:var(--text-muted)}
+.workflow-step .w-number{display:block;font-size:9px;opacity:.8;margin-bottom:1px}
+
+/* ROUTE VISUAL */
+.route-visual{background:var(--navy);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.route-city{text-align:center}
+.route-city .city-name{font-size:16px;font-weight:700}
+.route-city .city-uf{font-size:11px;color:var(--text-muted);font-family:var(--mono)}
+.route-arrow{display:flex;flex-direction:column;align-items:center;flex:1;min-width:80px}
+.route-arrow .arrow-line{width:100%;height:2px;background:linear-gradient(90deg,var(--accent-travel),var(--accent-yellow));position:relative;border-radius:1px}
+.route-arrow .arrow-line::after{content:'▶';position:absolute;right:-6px;top:-8px;font-size:12px;color:var(--accent-yellow)}
+.route-arrow .arrow-label{font-size:10px;color:var(--text-muted);margin-top:4px}
+.route-dates{display:flex;flex-direction:column;gap:2px;font-size:11px;font-family:var(--mono);color:var(--text-secondary)}
+.route-dates .date-label{font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;font-family:var(--font);font-weight:600}
+
+/* SECTIONS */
+.form-body{flex:1;overflow-y:auto;padding:24px 28px}
+.section-card{background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px}
+.section-card.conditional{border-left:3px solid var(--accent-travel)}
+.section-card.hidden{display:none}
+.section-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.section-icon{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius);font-size:16px}
+.section-icon.orange{background:rgba(211,84,0,.12)}
+.section-icon.blue{background:rgba(20,116,183,.12)}
+.section-icon.green{background:rgba(42,157,143,.12)}
+.section-icon.yellow{background:rgba(243,156,18,.12)}
+.section-icon.purple{background:rgba(142,68,173,.12)}
+.section-icon.red{background:rgba(204,34,34,.12)}
+.section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-primary)}
+.section-title small{font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted);font-size:11px;margin-left:6px}
+.section-title .cond-tag{font-size:9px;padding:2px 8px;border-radius:6px;font-weight:600;background:var(--accent-travel-dim);color:var(--accent-travel);text-transform:none;letter-spacing:0;margin-left:8px}
+
+/* FIELDS */
+.field-grid{display:grid;gap:14px}
+.field-grid.cols-2{grid-template-columns:1fr 1fr}
+.field-grid.cols-3{grid-template-columns:1fr 1fr 1fr}
+.field-grid.cols-4{grid-template-columns:1fr 1fr 1fr 1fr}
+.field-group{display:flex;flex-direction:column;gap:5px}
+.field-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);display:flex;align-items:center;gap:5px}
+.field-label .req{color:var(--accent-red)}
+.field-label .auto-tag{font-size:9px;padding:1px 6px;border-radius:6px;font-weight:600;background:rgba(211,84,0,.1);color:var(--accent-travel);text-transform:none;letter-spacing:0}
+.field-input{width:100%;background:var(--navy);border:1px solid var(--border);color:var(--text-primary);padding:10px 14px;border-radius:var(--radius);font-size:13px;outline:none;transition:border .15s}
+.field-input:focus{border-color:var(--accent-travel);box-shadow:0 0 0 3px rgba(211,84,0,.1)}
+.field-input.readonly{background:var(--navy-light);color:var(--text-muted);cursor:default;border-style:dashed}
+textarea.field-input{resize:vertical;min-height:80px;font-family:var(--font)}
+select.field-input{cursor:pointer}
+
+/* ESTIMATE BOX */
+.estimate-box{background:rgba(42,157,143,.06);border:1px solid rgba(42,157,143,.2);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:12px;margin-top:-4px;margin-bottom:12px}
+.estimate-box .e-icon{font-size:20px}
+.estimate-box .e-text{flex:1;font-size:12px;color:var(--accent-green)}
+.estimate-box .e-text strong{font-family:var(--mono)}
+.estimate-box .e-sub{font-size:10px;color:var(--text-muted);margin-top:2px}
+
+/* TOTALS CARD */
+.totals-card{background:var(--surface-raised);border:2px solid var(--accent-travel);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px}
+.totals-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.total-item{text-align:center}
+.total-item .t-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin-bottom:6px}
+.total-item .t-value{font-size:20px;font-weight:700;font-family:var(--mono)}
+.total-item .t-value.highlight{color:var(--accent-travel);font-size:24px}
+.total-item .t-sub{font-size:10px;color:var(--text-muted);margin-top:2px}
+.totals-divider{width:1px;background:var(--border);margin:0 4px}
+
+/* CANCEL SECTION */
+.cancel-section{background:rgba(204,34,34,.04);border:1px solid rgba(204,34,34,.15);border-radius:var(--radius-lg);padding:20px}
+
+/* FOOTER */
+.form-footer{padding:14px 28px;border-top:1px solid var(--border);background:var(--surface);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+
+/* BUTTONS */
+.btn{padding:8px 18px;border-radius:var(--radius);font-size:12px;font-weight:600;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--accent-travel);color:#fff}
+.btn-primary:hover{filter:brightness(1.15)}
+.btn-secondary{background:var(--accent-green);color:#fff}
+.btn-secondary:hover{filter:brightness(1.15)}
+.btn-ghost{background:transparent;color:var(--text-secondary);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--surface-hover);color:var(--text-primary)}
+.btn-danger{background:transparent;color:var(--accent-red);border:1px solid rgba(204,34,34,.3)}
+.btn-danger:hover{background:rgba(204,34,34,.08)}
+.btn-sm{font-size:11px;padding:6px 12px}
+
+/* TYPE SELECTOR */
+.type-selector{display:flex;gap:4px;padding:3px;background:var(--navy);border:1px solid var(--border);border-radius:10px}
+.type-btn{flex:1;padding:10px;text-align:center;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--text-muted);background:transparent;border:none;font-family:var(--font)}
+.type-btn:hover{background:var(--surface-hover);color:var(--text-primary)}
+.type-btn.active{background:var(--accent-travel);color:#fff;box-shadow:0 2px 8px rgba(211,84,0,.25)}
+
+.theme-toggle{background:var(--surface-hover);border:1px solid var(--border);border-radius:var(--radius);padding:6px 12px;font-size:16px;cursor:pointer}
+.theme-toggle:hover{background:var(--border)}
+
+@media(max-width:1100px){.field-grid.cols-4{grid-template-columns:1fr 1fr}.totals-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.mock-sidebar{display:none}.field-grid.cols-3,.field-grid.cols-4{grid-template-columns:1fr 1fr}.route-visual{flex-direction:column}}
+@media(max-width:600px){.field-grid.cols-2,.field-grid.cols-3,.field-grid.cols-4{grid-template-columns:1fr}.totals-grid{grid-template-columns:1fr 1fr}.workflow-bar{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+
+<div class="mock-shell">
+  <!-- SIDEBAR -->
+  <div class="mock-sidebar">
+    <div class="sidebar-header">
+      <h2>SISPROJ SAES</h2>
+      <small>CGPROJ/SAES — Ministério da Saúde</small>
+      <div class="module-badge">✈️ Passagens & Diárias</div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Solicitações</div>
+      <div class="nav-item active"><span class="icon">✈️</span>Viagens TED<span class="badge">23</span></div>
+      <div class="nav-item"><span class="icon">🌎</span>Viagens OPAS<span class="badge">12</span></div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Planejamento</div>
+      <div class="nav-item"><span class="icon">📅</span>Planejamento Gabinete<span class="badge">8</span></div>
+      <div class="nav-item"><span class="icon">📊</span>Relatórios</div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Referência</div>
+      <div class="nav-item"><span class="icon">💰</span>Tabela de Diárias</div>
+      <div class="nav-item"><span class="icon">📋</span>Prestação de Contas</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="breadcrumb">
+        <a>Módulos</a> <span class="sep">›</span>
+        <a>Passagens & Diárias</a> <span class="sep">›</span>
+        <a>Viagens TED</a> <span class="sep">›</span>
+        <span style="color:var(--text-primary);font-weight:500">SOL-2026-0047</span>
+      </div>
+      <div class="spacer"></div>
+      <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+      <span class="user-info"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e68e8388948f979383a69587938283c8818990c88494">[email&#160;protected]</a></span>
+    </div>
+
+    <div class="content">
+      <div class="form-wrapper">
+
+        <!-- ═══ HERO ═══ -->
+        <div class="form-hero">
+          <div class="form-hero-top">
+            <div class="form-hero-info">
+              <div class="form-hero-title">
+                ✈️ SOL-2026-0047 — Passagem e Diária
+                <span style="padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;background:rgba(20,116,183,.12);color:var(--accent-blue)">📤 Enviada</span>
+              </div>
+              <div class="form-hero-subtitle">
+                <span>👤 João da Silva Neto</span>
+                <span class="sep">•</span>
+                <span>🔬 TED 01/2024 — Fiocruz</span>
+                <span class="sep">•</span>
+                <span>🏢 DAET / CGAE</span>
+                <span class="sep">•</span>
+                <span>🏷️ PEP-003</span>
+              </div>
+            </div>
+            <div class="form-hero-actions">
+              <button class="btn btn-ghost btn-sm">📄 PDF</button>
+              <button class="btn btn-ghost btn-sm">🕘 Log</button>
+            </div>
+          </div>
+
+          <!-- WORKFLOW BAR -->
+          <div class="workflow-bar">
+            <div class="workflow-step done"><span class="w-number">1</span>📝 Rascunho</div>
+            <div class="workflow-step current"><span class="w-number">2</span>📤 Enviada</div>
+            <div class="workflow-step pending"><span class="w-number">3</span>✅ Aprovada</div>
+            <div class="workflow-step pending"><span class="w-number">4</span>🎫 Emitida</div>
+            <div class="workflow-step pending"><span class="w-number">5</span>✈️ Realizada</div>
+            <div class="workflow-step pending"><span class="w-number">6</span>📄 Prest. Contas</div>
+          </div>
+
+          <!-- ROUTE VISUAL -->
+          <div class="route-visual">
+            <div class="route-city">
+              <div class="city-name">Brasília</div>
+              <div class="city-uf">DF</div>
+            </div>
+            <div class="route-arrow">
+              <div class="arrow-line"></div>
+              <div class="arrow-label">Aérea · LATAM · 2h10</div>
+            </div>
+            <div class="route-city">
+              <div class="city-name">São Paulo</div>
+              <div class="city-uf">SP — Fiocruz São Paulo</div>
+            </div>
+            <div style="display:flex;gap:24px;margin-left:auto">
+              <div class="route-dates">
+                <span class="date-label">Ida</span>
+                <span>14/04/2026</span>
+              </div>
+              <div class="route-dates">
+                <span class="date-label">Retorno</span>
+                <span>17/04/2026</span>
+              </div>
+              <div class="route-dates">
+                <span class="date-label">Duração</span>
+                <span style="color:var(--accent-travel);font-weight:600">3 noites</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ FORM BODY ═══ -->
+        <div class="form-body">
+
+          <!-- IDENTIFICAÇÃO -->
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-icon orange">📋</div>
+              <div class="section-title">Identificação</div>
+            </div>
+            <div class="field-grid cols-4">
+              <div class="field-group">
+                <label class="field-label">Nº Solicitação <span class="auto-tag">Auto</span></label>
+                <input class="field-input readonly" value="SOL-2026-0047" readonly style="font-family:var(--mono)">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Origem</label>
+                <select class="field-input"><option selected>Cadastro Manual</option><option>Planejamento Gabinete</option></select>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Situação <span class="auto-tag">Auto</span></label>
+                <input class="field-input readonly" value="Enviada" readonly>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Nº Planejamento</label>
+                <input class="field-input readonly" value="—" readonly placeholder="Somente se origem = Planejamento">
+              </div>
+            </div>
+          </div>
+
+          <!-- VINCULAÇÃO AO PROJETO -->
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-icon blue">🔗</div>
+              <div class="section-title">Vinculação ao Projeto</div>
+            </div>
+            <div class="field-grid cols-4">
+              <div class="field-group">
+                <label class="field-label">Módulo</label>
+                <select class="field-input"><option selected>TED</option><option>OPAS</option></select>
+              </div>
+              <div class="field-group">
+                <label class="field-label">PEP <span class="req">*</span></label>
+                <input class="field-input" value="PEP-003" style="font-family:var(--mono)" placeholder="Buscar PEP...">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Projeto <span class="auto-tag">Auto via PEP</span></label>
+                <input class="field-input readonly" value="TED 01/2024 — Fiocruz" readonly>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Departamento <span class="auto-tag">Auto via Projeto</span></label>
+                <input class="field-input readonly" value="DAET" readonly>
+              </div>
+            </div>
+          </div>
+
+          <!-- VIAJANTE -->
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-icon purple">👤</div>
+              <div class="section-title">Viajante</div>
+            </div>
+            <div class="field-grid cols-3">
+              <div class="field-group">
+                <label class="field-label">Pessoa <span class="req">*</span></label>
+                <input class="field-input" value="João da Silva Neto" placeholder="Buscar pessoa...">
+              </div>
+              <div class="field-group">
+                <label class="field-label">CPF <span class="auto-tag">Auto via Pessoa</span></label>
+                <input class="field-input readonly" value="123.456.789-00" readonly style="font-family:var(--mono)">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Vínculo <span class="auto-tag">Auto via Pessoa</span></label>
+                <input class="field-input readonly" value="CLT — Pesquisador" readonly>
+              </div>
+            </div>
+          </div>
+
+          <!-- TIPO DA SOLICITAÇÃO -->
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-icon orange">🎫</div>
+              <div class="section-title">Tipo da Solicitação</div>
+            </div>
+            <div style="margin-bottom:16px">
+              <div class="type-selector" id="type-selector">
+                <button class="type-btn active" data-type="ambos" onclick="changeType('ambos')">✈️🏨 Passagem e Diária</button>
+                <button class="type-btn" data-type="passagem" onclick="changeType('passagem')">✈️ Apenas Passagem</button>
+                <button class="type-btn" data-type="diaria" onclick="changeType('diaria')">🏨 Apenas Diária</button>
+              </div>
+            </div>
+            <div class="field-grid cols-3">
+              <div class="field-group">
+                <label class="field-label">Tipo Viagem</label>
+                <select class="field-input"><option selected>Nacional</option><option>Internacional</option></select>
+              </div>
+              <div class="field-group" id="tipo-passagem-wrap">
+                <label class="field-label">Tipo Passagem</label>
+                <select class="field-input"><option selected>Aérea</option><option>Rodoviária</option></select>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Objetivo da Viagem <span class="req">*</span></label>
+                <input class="field-input" value="Reunião técnica Fiocruz SP" placeholder="Descreva o objetivo...">
+              </div>
+            </div>
+          </div>
+
+          <!-- TRAJETO -->
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-icon green">📍</div>
+              <div class="section-title">Trajeto</div>
+            </div>
+            <div class="field-grid cols-4">
+              <div class="field-group">
+                <label class="field-label">Cidade Origem</label>
+                <input class="field-input" value="Brasília">
+              </div>
+              <div class="field-group">
+                <label class="field-label">UF Origem</label>
+                <input class="field-input" value="DF" style="font-family:var(--mono)">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Cidade Destino <span class="req">*</span></label>
+                <input class="field-input" value="São Paulo">
+              </div>
+              <div class="field-group">
+                <label class="field-label">UF Destino <span class="req">*</span></label>
+                <input class="field-input" value="SP" style="font-family:var(--mono)">
+              </div>
+            </div>
+            <div class="field-grid cols-3" style="margin-top:14px">
+              <div class="field-group">
+                <label class="field-label">Destino Final</label>
+                <input class="field-input" value="Fiocruz São Paulo" placeholder="Local/evento específico">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Data Ida <span class="req">*</span></label>
+                <input class="field-input" type="date" value="2026-04-14">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Data Retorno <span class="req">*</span></label>
+                <input class="field-input" type="date" value="2026-04-17">
+              </div>
+            </div>
+          </div>
+
+          <!-- PASSAGEM (condicional) -->
+          <div class="section-card conditional" id="section-passagem">
+            <div class="section-header">
+              <div class="section-icon orange">🎫</div>
+              <div class="section-title">Passagem <span class="cond-tag">condicional</span></div>
+            </div>
+            <div class="field-grid cols-4">
+              <div class="field-group">
+                <label class="field-label">Cia Aérea</label>
+                <input class="field-input" value="LATAM" placeholder="Ex: LATAM, GOL, Azul">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Trecho</label>
+                <input class="field-input" value="BSB → GRU → BSB" style="font-family:var(--mono)" placeholder="BSB → GRU → BSB">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Valor Passagem <span class="req">*</span></label>
+                <input class="field-input" type="number" value="1450.00" style="font-family:var(--mono)" oninput="calcTotals()">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Nº Voetur</label>
+                <input class="field-input" value="VOE-2026-1234" style="font-family:var(--mono)" placeholder="Nº no Voetur">
+              </div>
+            </div>
+            <!-- ESTIMATIVA -->
+            <div class="estimate-box">
+              <span class="e-icon">💡</span>
+              <div>
+                <div class="e-text"><strong>Valor estimado: R$ 1.380,00</strong> (média de 7 viagens aéreas Brasília → São Paulo)</div>
+                <div class="e-sub">Última: 15/02/2026 — R$ 1.420,00</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DIÁRIAS (condicional) -->
+          <div class="section-card conditional" id="section-diaria">
+            <div class="section-header">
+              <div class="section-icon yellow">🏨</div>
+              <div class="section-title">Diárias <span class="cond-tag">condicional</span></div>
+            </div>
+            <div class="field-grid cols-4">
+              <div class="field-group">
+                <label class="field-label">Qtd Diárias <span class="req">*</span></label>
+                <input class="field-input" type="number" id="qtd-diarias" value="3.5" style="font-family:var(--mono)" placeholder="Ex: 3.5" oninput="calcDiarias()">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Valor Unitário</label>
+                <input class="field-input" type="number" id="valor-unit-diaria" value="320.11" style="font-family:var(--mono)" placeholder="R$ 320,11" oninput="calcDiarias()">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Total Diárias <span class="auto-tag">Calculado</span></label>
+                <input class="field-input readonly" id="total-diarias" value="1.120,39" readonly style="font-family:var(--mono);font-weight:600">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Nº PCF Fiotec</label>
+                <input class="field-input" value="PCF-2026-0891" style="font-family:var(--mono)" placeholder="Nº no PCF Fiotec">
+              </div>
+            </div>
+            <div class="field-grid cols-4" style="margin-top:14px">
+              <div class="field-group">
+                <label class="field-label">Adicional Deslocamento</label>
+                <input class="field-input" type="number" id="adicional" value="0" style="font-family:var(--mono)" oninput="calcTotals()">
+              </div>
+              <div></div><div></div><div></div>
+            </div>
+          </div>
+
+          <!-- ═══ TOTAIS ═══ -->
+          <div class="totals-card">
+            <div class="section-header" style="margin-bottom:20px">
+              <div class="section-icon orange">💰</div>
+              <div class="section-title">Resumo de Custos</div>
+            </div>
+            <div class="totals-grid">
+              <div class="total-item">
+                <div class="t-label">Passagem</div>
+                <div class="t-value" id="t-passagem" style="color:var(--accent-blue)">R$ 1.450,00</div>
+              </div>
+              <div class="total-item">
+                <div class="t-label">Diárias + Adicional</div>
+                <div class="t-value" id="t-diarias" style="color:var(--accent-yellow)">R$ 1.120,39</div>
+              </div>
+              <div class="total-item">
+                <div class="t-label">Reembolso</div>
+                <div class="t-value" id="t-reembolso" style="color:var(--text-muted)">R$ 0,00</div>
+              </div>
+              <div class="total-item">
+                <div class="t-label">Custo Total</div>
+                <div class="t-value highlight" id="t-total">R$ 2.570,39</div>
+                <div class="t-sub">Rubrica: 339033 + 339014</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- JUSTIFICATIVA -->
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-icon green">📝</div>
+              <div class="section-title">Justificativa e Observações</div>
+            </div>
+            <div class="field-grid cols-2">
+              <div class="field-group">
+                <label class="field-label">Objetivo da Viagem <span class="req">*</span></label>
+                <textarea class="field-input">Participação em reunião técnica de acompanhamento do TED 01/2024 com a equipe de pesquisadores da Fiocruz São Paulo, para alinhamento das atividades do 2º semestre de 2026 e análise dos resultados parciais do Produto P-3.1.</textarea>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Observações</label>
+                <textarea class="field-input" style="min-height:80px">Necessário hospedagem próxima à unidade Fiocruz (Butantan). Preferência por voo matutino na ida e noturno no retorno.</textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- REEMBOLSO -->
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-icon blue">💳</div>
+              <div class="section-title">Reembolso <small>preencher apenas se aplicável</small></div>
+            </div>
+            <div class="field-grid cols-3">
+              <div class="field-group">
+                <label class="field-label">Valor Reembolso</label>
+                <input class="field-input" type="number" id="reembolso-val" value="0" style="font-family:var(--mono)" oninput="calcTotals()">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Motivo do Reembolso</label>
+                <input class="field-input" value="" placeholder="Ex: Táxi aeroporto, bagagem extra...">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Comprovante</label>
+                <input class="field-input" placeholder="Anexar comprovante..." readonly style="cursor:pointer">
+              </div>
+            </div>
+          </div>
+
+          <!-- CANCELAMENTO -->
+          <div class="cancel-section">
+            <div class="section-header">
+              <div class="section-icon red">⚠️</div>
+              <div class="section-title">Cancelamento <small>preencher apenas se cancelado</small></div>
+            </div>
+            <div class="field-grid cols-2">
+              <div class="field-group">
+                <label class="field-label">Cancelado?</label>
+                <select class="field-input">
+                  <option selected>Não</option>
+                  <option>Sim — Antes da emissão</option>
+                  <option>Sim — Após emissão (reembolso)</option>
+                  <option>Sim — No-show</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Motivo</label>
+                <textarea class="field-input" style="min-height:60px" placeholder="Preencher apenas se cancelado..."></textarea>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /form-body -->
+
+        <!-- FOOTER -->
+        <div class="form-footer">
+          <div><button class="btn btn-danger">🗑️ Excluir</button></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost">Cancelar</button>
+            <button class="btn btn-ghost">💾 Salvar Rascunho</button>
+            <button class="btn btn-primary">📤 Enviar para Aprovação</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+function changeType(type) {
+  document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-type="${type}"]`).classList.add('active');
+  
+  const sp = document.getElementById('section-passagem');
+  const sd = document.getElementById('section-diaria');
+  const tp = document.getElementById('tipo-passagem-wrap');
+  
+  sp.style.display = (type === 'passagem' || type === 'ambos') ? '' : 'none';
+  sd.style.display = (type === 'diaria' || type === 'ambos') ? '' : 'none';
+  tp.style.display = (type === 'passagem' || type === 'ambos') ? '' : 'none';
+  calcTotals();
+}
+
+function calcDiarias() {
+  const qtd = parseFloat(document.getElementById('qtd-diarias').value) || 0;
+  const unit = parseFloat(document.getElementById('valor-unit-diaria').value) || 0;
+  const total = qtd * unit;
+  document.getElementById('total-diarias').value = fmtBR(total);
+  calcTotals();
+}
+
+function calcTotals() {
+  const passagemEl = document.querySelector('[value="1450.00"]');
+  const passagem = parseFloat(passagemEl?.value) || 0;
+  const diarias = (parseFloat(document.getElementById('qtd-diarias')?.value) || 0) * (parseFloat(document.getElementById('valor-unit-diaria')?.value) || 0);
+  const adicional = parseFloat(document.getElementById('adicional')?.value) || 0;
+  const reembolso = parseFloat(document.getElementById('reembolso-val')?.value) || 0;
+
+  const sp = document.getElementById('section-passagem').style.display !== 'none';
+  const sd = document.getElementById('section-diaria').style.display !== 'none';
+
+  const pVal = sp ? passagem : 0;
+  const dVal = sd ? (diarias + adicional) : 0;
+  const total = pVal + dVal + reembolso;
+
+  document.getElementById('t-passagem').textContent = sp ? fmtBR(pVal) : '—';
+  document.getElementById('t-diarias').textContent = sd ? fmtBR(dVal) : '—';
+  document.getElementById('t-reembolso').textContent = fmtBR(reembolso);
+  document.getElementById('t-total').textContent = fmtBR(total);
+}
+
+function fmtBR(v) {
+  return 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maxim

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SISPROJ SAES — Atualização SISPROJ v2</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="dark"]{
+  --navy:#131E2E;--navy-light:#1A2840;
+  --accent-green:#2A9D8F;--accent-blue:#1474B7;--accent-red:#CC2222;--accent-orange:#d35400;--accent-yellow:#f39c12;--accent-purple:#8e44ad;
+  --text-primary:#E8ECF2;--text-secondary:#9BB0C4;--text-muted:#6B8399;
+  --surface:#162234;--surface-raised:#1C2D42;--surface-hover:#243A54;
+  --border:#263D58;--border-light:#2E4A68;
+  --radius:8px;--radius-lg:12px;
+  --font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+[data-theme="light"]{
+  --navy:#f0f2f5;--navy-light:#e4e8ed;
+  --accent-green:#0e7a5c;--accent-blue:#0969c3;--accent-red:#c0392b;--accent-orange:#d35400;--accent-yellow:#f39c12;--accent-purple:#8e44ad;
+  --text-primary:#1a2332;--text-secondary:#4a5e73;--text-muted:#8395a7;
+  --surface:#ffffff;--surface-raised:#ffffff;--surface-hover:#eef1f5;
+  --border:#dfe4ea;--border-light:#cdd5de;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;font-family:var(--font);background:var(--navy);color:var(--text-primary)}
+button{font-family:var(--font);cursor:pointer;border:none}
+
+.portal{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 24px 60px;background:linear-gradient(180deg,var(--navy) 0%,var(--surface) 100%)}
+.portal-header{text-align:center;margin-bottom:48px;max-width:700px}
+.portal-header h1{font-size:28px;font-weight:700;letter-spacing:-.02em;margin-bottom:8px}
+.portal-header h1 span{background:linear-gradient(135deg,var(--accent-green),var(--accent-blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.portal-header p{font-size:14px;color:var(--text-muted);line-height:1.7}
+.portal-header .version{display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:600;background:rgba(42,157,143,.1);color:var(--accent-green);margin-top:12px;font-family:var(--mono)}
+
+.topbar-actions{position:fixed;top:16px;right:20px;display:flex;gap:8px;z-index:10}
+.theme-toggle{background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--radius);padding:8px 14px;font-size:16px;cursor:pointer;transition:all .15s}
+.theme-toggle:hover{background:var(--surface-hover)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;width:100%;max-width:1100px}
+
+.card{background:var(--surface-raised);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:all .3s;cursor:pointer;text-decoration:none;color:inherit;display:flex;flex-direction:column;position:relative}
+.card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(0,0,0,.2);border-color:var(--border-light)}
+.card .bar{position:absolute;top:0;left:0;right:0;height:4px}
+.card-body{padding:24px 24px 20px;flex:1}
+.card-icon{font-size:36px;margin-bottom:14px}
+.card h3{font-size:17px;font-weight:700;margin-bottom:6px;letter-spacing:-.01em}
+.card p{font-size:12px;color:var(--text-muted);line-height:1.7;margin-bottom:14px}
+.card .tags{display:flex;gap:6px;flex-wrap:wrap}
+.card .tag{font-size:10px;padding:3px 10px;border-radius:8px;font-weight:600}
+.card-footer{padding:14px 24px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--text-muted)}
+.card-footer .status{display:flex;align-items:center;gap:5px}
+.card-footer .status .dot{width:8px;height:8px;border-radius:50%}
+.card-footer .open-btn{color:var(--accent-green);font-weight:600;display:flex;align-items:center;gap:4px}
+
+.footer{text-align:center;margin-top:48px;font-size:11px;color:var(--text-muted);line-height:1.8}
+
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="topbar-actions">
+  <button class="theme-toggle" onclick="document.documentElement.setAttribute('data-theme',document.documentElement.getAttribute('data-theme')==='light'?'dark':'light')">🌓</button>
+</div>
+
+<div class="portal">
+  <div class="portal-header">
+    <h1>SISPROJ SAES — <span>Atualização SISPROJ v2</span></h1>
+    <p>Redesign completo dos formulários e telas do Sistema Integrado de Projetos.<br>CGPROJ/SAES — Ministério da Saúde</p>
+    <div class="version">v2.0 · 7 formulários · 20/Mar/2026</div>
+  </div>
+
+  <div class="grid">
+
+    <!-- TED -->
+    <a class="card" href="MOCKUP_TED_v2.html" target="_blank">
+      <div class="bar" style="background:linear-gradient(90deg,#2A9D8F,#1474B7)"></div>
+      <div class="card-body">
+        <div class="card-icon">🔬</div>
+        <h3>Formulário TED</h3>
+        <p>Formulário completo com 9 abas: Dados, Metas/PEP, Plano Aplicação, Plano Orçamentário, Aditivos (timeline), Cronograma, Resultados (accordion), Empenhos, Anexos. Hero com 7 métricas + barra de execução 4 segmentos.</p>
+        <div class="tags">
+          <span class="tag" style="background:rgba(42,157,143,.12);color:var(--accent-green)">9 abas</span>
+          <span class="tag" style="background:rgba(20,116,183,.12);color:var(--accent-blue)">7 métricas</span>
+          <span class="tag" style="background:rgba(142,68,173,.12);color:var(--accent-purple)">Saldo Financeiro</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="status"><span class="dot" style="background:var(--accent-green)"></span> Aprovado</div>
+        <span class="open-btn">Abrir →</span>
+      </div>
+    </a>
+
+    <!-- OPAS -->
+    <a class="card" href="MOCKUP_OPAS_TC_v2.html" target="_blank">
+      <div class="bar" style="background:linear-gradient(90deg,#0969C3,#1474B7)"></div>
+      <div class="card-body">
+        <div class="card-icon">🌎</div>
+        <h3>Formulário OPAS TC</h3>
+        <p>Termo de Cooperação OPAS com identidade visual azul. Campos exclusivos: Nº Acordo OMS, Representação OPAS, Oficial de Projeto, Área Temática, Contraparte Nacional. 8 abas incluindo TA com tags Prazo/Valor.</p>
+        <div class="tags">
+          <span class="tag" style="background:rgba(9,105,195,.12);color:#0969C3">OPAS/OMS</span>
+          <span class="tag" style="background:rgba(20,116,183,.12);color:var(--accent-blue)">8 abas</span>
+          <span class="tag" style="background:rgba(243,156,18,.12);color:var(--accent-yellow)">Taxa ADM 7%</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="status"><span class="dot" style="background:var(--accent-green)"></span> Aprovado</div>
+        <span class="open-btn">Abrir →</span>
+      </div>
+    </a>
+
+    <!-- Passagens -->
+    <a class="card" href="MOCKUP_PassagensDiarias_v2.html" target="_blank">
+      <div class="bar" style="background:linear-gradient(90deg,#d35400,#f39c12)"></div>
+      <div class="card-body">
+        <div class="card-icon">✈️</div>
+        <h3>Passagens & Diárias</h3>
+        <p>Workflow 6 etapas, rota visual (origem→destino), tipo condicional com toggle (Passagem/Diária/Ambos), estimativa por histórico, cálculos automáticos, totals card com custo total, campos Voetur + PCF Fiotec.</p>
+        <div class="tags">
+          <span class="tag" style="background:rgba(211,84,0,.12);color:var(--accent-orange)">Workflow 6 steps</span>
+          <span class="tag" style="background:rgba(243,156,18,.12);color:var(--accent-yellow)">Auto-cálculo</span>
+          <span class="tag" style="background:rgba(42,157,143,.12);color:var(--accent-green)">Estimativa</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="status"><span class="dot" style="background:var(--accent-green)"></span> Aprovado</div>
+        <span class="open-btn">Abrir →</span>
+      </div>
+    </a>
+
+    <!-- Férias -->
+    <a class="card" href="MOCKUP_Ferias_v2.html" target="_blank">
+      <div class="bar" style="background:linear-gradient(90deg,#1474B7,#2A9D8F)"></div>
+      <div class="card-body">
+        <div class="card-icon">🏖️</div>
+        <h3>Férias</h3>
+        <p>Dashboard com KPIs (ativos, completas, pendentes, urgentes), tabela com barra de saldo visual, painel detalhe com donut chart CSS, cards de período (gozado/programado/pendente), checklist de anexos obrigatórios.</p>
+        <div class="tags">
+          <span class="tag" style="background:rgba(20,116,183,.12);color:var(--accent-blue)">Donut chart</span>
+          <span class="tag" style="background:rgba(204,34,34,.12);color:var(--accent-red)">Alertas urgentes</span>
+          <span class="tag" style="background:rgba(42,157,143,.12);color:var(--accent-green)">15d mín 1º período</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="status"><span class="dot" style="background:var(--accent-green)"></span> Aprovado</div>
+        <span class="open-btn">Abrir →</span>
+      </div>
+    </a>
+
+    <!-- Elaboração -->
+    <a class="card" href="MOCKUP_Elaboracao_v2.html" target="_blank">
+      <div class="bar" style="background:linear-gradient(90deg,#8e44ad,#2A9D8F)"></div>
+      <div class="card-body">
+        <div class="card-icon">🔧</div>
+        <h3>Elaboração de Projetos</h3>
+        <p>Pipeline visual de 4 fases (Concepção → Plano → Análise Jurídica → Formalização), project cards expansíveis com checklist de tarefas, responsável e data, barra de progresso por fase e global.</p>
+        <div class="tags">
+          <span class="tag" style="background:rgba(142,68,173,.12);color:var(--accent-purple)">4 fases</span>
+          <span class="tag" style="background:rgba(20,116,183,.12);color:var(--accent-blue)">Pipeline</span>
+          <span class="tag" style="background:rgba(42,157,143,.12);color:var(--accent-green)">Checklist</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="status"><span class="dot" style="background:var(--accent-green)"></span> Aprovado</div>
+        <span class="open-btn">Abrir →</span>
+      </div>
+    </a>
+
+    <!-- Registro Mensal -->
+    <a class="card" href="MOCKUP_RegistroMensal_v2.html" target="_blank">
+      <div class="bar" style="background:linear-gradient(90deg,#2A9D8F,#f39c12)"></div>
+      <div class="card-body">
+        <div class="card-icon">📊</div>
+        <h3>Registro Mensal + Execução</h3>
+        <p>Grid mensal colorido por status (Pago/Compromissado/Futuro/Cancelado), destaque de dissídio com borda roxa, totais por contrato. View alternativa: Execução Consolidada unificada com busca.</p>
+        <div class="tags">
+          <span class="tag" style="background:rgba(42,157,143,.12);color:var(--accent-green)">Grid mensal</span>
+          <span class="tag" style="background:rgba(142,68,173,.12);color:var(--accent-purple)">Dissídio</span>
+          <span class="tag" style="background:rgba(243,156,18,.12);color:var(--accent-yellow)">2 views</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="status"><span class="dot" style="background:var(--accent-green)"></span> Aprovado</div>
+        <span class="open-btn">Abrir →</span>
+      </div>
+    </a>
+
+    <!-- Kanban -->
+    <a class="card" href="MOCKUP_Kanban_Alteracoes_v2.html" target="_blank">
+      <div class="bar" style="background:linear-gradient(90deg,#1474B7,#CC2222)"></div>
+      <div class="card-body">
+        <div class="card-icon">📋</div>
+        <h3>Kanban + Alterações Contratuais</h3>
+        <p>3 views: Kanban Contratos (5 colunas ciclo de vida), Kanban Viagens (6 colunas workflow), Alterações Contratuais (8 tipos com drawer lateral). Regras de negócio: Pago nunca altera, CLT→Bolsa proibido.</p>
+        <div class="tags">
+          <span class="tag" style="background:rgba(20,116,183,.12);color:var(--accent-blue)">3 views</span>
+          <span class="tag" style="background:rgba(211,84,0,.12);color:var(--accent-orange)">8 tipos alteração</span>
+          <span class="tag" style="background:rgba(204,34,34,.12);color:var(--accent-red)">Regras negócio</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="status"><span class="dot" style="background:var(--accent-green)"></span> Aprovado</div>
+        <span class="open-btn">Abrir →</span>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="footer">
+    CGPROJ/SAES — Ministério da Saúde · Atualização SISPROJ v2.0<br>
+    7 formulários · 20/Mar/2026 · Todos funcionais com dark/light toggle
+  </div>
+</div>
+
+</body>
+</html>
