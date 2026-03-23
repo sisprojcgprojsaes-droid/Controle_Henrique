@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cargo CLT + Execução + Exportação</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'IBM Plex Sans',sans-serif;background:#f4f6f9;color:#1a2332;min-height:100vh}
+.annotation{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#d63031;color:#fff;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.page{max-width:1200px;margin:0 auto;padding:70px 24px 40px}
+.main-tabs{display:flex;gap:4px;margin-bottom:24px;background:#fff;border:1px solid #dfe4ea;border-radius:12px;padding:6px}
+.main-tab{flex:1;padding:12px;text-align:center;border-radius:8px;font-size:13px;font-weight:600;color:#8395a7;cursor:pointer;transition:all .15s;border:none;background:none;font-family:inherit}
+.main-tab:hover{color:#1a2332;background:#f4f6f9}
+.main-tab.a1{background:#0e7a5c;color:#fff}.main-tab.a2{background:#0969c3;color:#fff}.main-tab.a3{background:#d35400;color:#fff}
+.mp{display:none}.mp.active{display:block}
+.card{background:#fff;border:1px solid #dfe4ea;border-radius:14px;box-shadow:0 2px 16px rgba(0,0,0,.07);overflow:hidden;margin-bottom:24px}
+.card-header{padding:18px 24px;border-bottom:1px solid #dfe4ea;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.card-header h2{font-size:17px;font-weight:700;display:flex;align-items:center;gap:10px}
+.card-body{padding:24px}
+.card-footer{padding:14px 24px;border-top:1px solid #dfe4ea;display:flex;justify-content:space-between;background:#fafbfc}
+.section{margin-bottom:28px}
+.st{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding-bottom:10px;border-bottom:2px solid;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.st-g{color:#0e7a5c;border-color:#0e7a5c30}.st-b{color:#0969c3;border-color:#0969c330}.st-o{color:#d35400;border-color:#d3540030}
+.g{display:grid;gap:16px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}.g4{grid-template-columns:1fr 1fr 1fr 1fr}.g5{grid-template-columns:1fr 1fr 1fr 1fr 1fr}.full{grid-column:1/-1}
+.f{display:flex;flex-direction:column}
+.f label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#8395a7;margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.f label .req{color:#c0392b;font-size:13px}
+.f input,.f select,.f textarea{padding:10px 14px;border:1px solid #dfe4ea;border-radius:8px;font-size:13px;font-family:inherit;background:#f4f6f9;color:#1a2332;outline:none;transition:all .15s}
+.f input:focus,.f select:focus{border-color:#0e7a5c;background:#fff}
+.f textarea{resize:vertical;min-height:70px}
+.f .hint{font-size:10px;color:#b0b8c4;margin-top:4px}
+.f input:disabled{background:#e8ecf2;color:#8395a7;cursor:not-allowed}
+.lk{position:relative}.lk input{padding-right:36px}.lk .ico{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:14px;color:#8395a7;cursor:pointer}
+.cur{position:relative}.cur input{padding-left:36px;text-align:right;font-family:'IBM Plex Mono',monospace}.cur .pfx{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:12px;color:#8395a7;font-weight:600}
+.tag{font-size:9px;padding:2px 6px;border-radius:6px;font-weight:600;margin-left:4px}
+.tag-auto{background:#0e7a5c15;color:#0e7a5c}.tag-link{background:#0969c315;color:#0969c3}.tag-new{background:#d3540015;color:#d35400}
+.btn{padding:9px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;border:none;transition:all .15s}
+.btn-primary{background:#0e7a5c;color:#fff}.btn-blue{background:#0969c3;color:#fff}.btn-danger{background:#c0392b;color:#fff}
+.btn-ghost{background:#fff;color:#4a5e73;border:1px solid #dfe4ea}.btn-ghost:hover{background:#eef1f5}
+.btn-sm{padding:6px 14px;font-size:12px}
+.info{border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:12px;line-height:1.6;display:flex;gap:10px}
+.info .ic{font-size:18px;flex-shrink:0}
+.info-b{background:#0969c308;border:1px solid #0969c325;color:#0969c3}
+.info-g{background:#0e7a5c08;border:1px solid #0e7a5c25;color:#0e7a5c}
+.info-o{background:#d3540008;border:1px solid #d3540025;color:#d35400}
+.sub-table{width:100%;border-collapse:collapse}
+.sub-table thead th{padding:8px 12px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#8395a7;text-align:left;background:#f4f6f9;border-bottom:1px solid #dfe4ea}
+.sub-table tbody td{padding:10px 12px;font-size:12px;color:#4a5e73;border-bottom:1px solid #dfe4ea}
+.sub-table tbody tr:hover{background:#eef1f5;cursor:pointer}
+.sub-table .primary{color:#1a2332;font-weight:500}
+.sub-table .mono{font-family:'IBM Plex Mono',monospace;font-size:11px}
+.badge{font-size:10px;padding:3px 10px;border-radius:10px;font-weight:600;display:inline-block}
+.badge-green{background:#e6f7f2;color:#0e7a5c}.badge-red{background:#fce8e8;color:#c0392b}
+.badge-blue{background:#e3f0fc;color:#0969c3}.badge-orange{background:#fef3e2;color:#d35400}
+.badge-yellow{background:#f39c1215;color:#f39c12}
+.sub-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sub-header h4{font-size:13px;font-weight:600;color:#1a2332;display:flex;align-items:center;gap:8px}
+.sub-count{font-size:11px;color:#8395a7;font-family:'IBM Plex Mono',monospace}
+
+/* CBO Search */
+.cbo-search-box{border:1px solid #dfe4ea;border-radius:10px;padding:14px;background:#fff;margin-top:12px}
+.cbo-search-box input{width:100%;padding:10px 14px;border:1px solid #dfe4ea;border-radius:8px;font-size:13px;font-family:inherit;background:#f4f6f9;outline:none;margin-bottom:10px}
+.cbo-search-box input:focus{border-color:#0e7a5c;background:#fff}
+.cbo-results{max-height:200px;overflow-y:auto}
+.cbo-item{padding:10px 14px;border-bottom:1px solid #f4f6f9;cursor:pointer;font-size:12px;display:flex;justify-content:space-between;transition:background .1s;border-radius:6px}
+.cbo-item:hover{background:#0e7a5c08}
+.cbo-item .cbo-code{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#0969c3;font-weight:600}
+.cbo-item .cbo-desc{color:#4a5e73}
+.cbo-item .cbo-sel{color:#0e7a5c;font-weight:600;font-size:11px}
+
+/* Salary calc panel */
+.salary-panel{background:#f4f6f9;border:1px solid #dfe4ea;border-radius:12px;padding:18px;margin-top:16px}
+.salary-panel h5{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#0e7a5c;margin-bottom:12px}
+.salary-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid #e8ecf2}
+.salary-row:last-child{border:none}
+.salary-row .sl{color:#4a5e73}.salary-row .sv{font-family:'IBM Plex Mono',monospace;font-weight:600}
+.salary-row .neg{color:#c0392b}.salary-row .pos{color:#0e7a5c}
+.salary-row.total{font-weight:700;font-size:14px;padding-top:8px}
+
+/* Dissídio timeline */
+.dissidio-timeline{margin-top:16px}
+.dissidio-item{display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid #dfe4ea;border-radius:8px;margin-bottom:8px;background:#fff;font-size:12px}
+.dissidio-item .di-year{font-weight:700;font-family:'IBM Plex Mono',monospace;color:#0969c3;min-width:50px}
+.dissidio-item .di-pct{font-weight:700;color:#0e7a5c;min-width:60px}
+.dissidio-item .di-val{font-family:'IBM Plex Mono',monospace;color:#1a2332}
+.dissidio-item .di-arrow{color:#b0b8c4}
+.dissidio-item.current{border-color:#0e7a5c;background:#0e7a5c05}
+
+/* Export buttons */
+.export-bar{display:flex;gap:8px;align-items:center}
+.btn-pdf{background:#c0392b;color:#fff;display:flex;align-items:center;gap:6px}
+.btn-excel{background:#0e7a5c;color:#fff;display:flex;align-items:center;gap:6px}
+.btn-csv{background:#0969c3;color:#fff;display:flex;align-items:center;gap:6px}
+
+/* Execução status */
+.exec-status{display:flex;gap:4px;align-items:center}
+.exec-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.exec-dot.pago{background:#0e7a5c}.exec-dot.comp{background:#f39c12}.exec-dot.canc{background:#c0392b}
+
+/* Filter bar */
+.filter-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 16px;background:#f4f6f9;border-radius:10px;margin-bottom:16px}
+.filter-bar label{font-size:11px;font-weight:600;color:#8395a7;text-transform:uppercase}
+.filter-bar select,.filter-bar input{padding:6px 10px;border:1px solid #dfe4ea;border-radius:6px;font-size:12px;font-family:inherit;background:#fff}
+
+@media(max-width:700px){.g2,.g3,.g4,.g5{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="annotation">⚠ 1) Cargo CLT  2) Execução Consolidada  3) Exportação PDF/Excel</div>
+<div class="page">
+
+<div class="main-tabs">
+  <button class="main-tab a1" onclick="showM('cargo',this,'a1')">💼 Cargo CLT</button>
+  <button class="main-tab" onclick="showM('exec',this,'a2')">📊 Execução Consolidada</button>
+  <button class="main-tab" onclick="showM('export',this,'a3')">📥 Exportação PDF/Excel</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- 1. CARGO CLT                                      -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="mp active" id="p-cargo">
+
+<!-- FORM: NOVO CARGO -->
+<div class="card">
+  <div class="card-header">
+    <h2>💼 Cadastro de Cargo CLT</h2>
+    <span style="padding:4px 14px;border-radius:8px;font-size:11px;font-weight:700;background:#0e7a5c15;color:#0e7a5c">Módulo TED</span>
+  </div>
+  <div class="card-body">
+
+    <div class="info info-g"><span class="ic">💼</span><div>
+      <strong>Cargo CLT</strong> vinculado a um projeto TED. Inclui:<br>
+      • <strong>CBO</strong> — Classificação Brasileira de Ocupações (busca online se não existir)<br>
+      • <strong>Cálculo automático</strong> — salário líquido e custo efetivo a partir do bruto<br>
+      • <strong>Dissídio coletivo</strong> — atualização anual sem alterar execução anterior<br>
+      • <strong>Benefícios</strong> — vale transporte, alimentação, plano saúde, etc.
+    </div></div>
+
+    <!-- IDENTIFICAÇÃO -->
+    <div class="section">
+      <div class="st st-g">📋 Identificação do Cargo</div>
+      <div class="g g3">
+        <div class="f"><label>Nome do Cargo <span class="req">*</span></label><input value="Analista de Dados Sênior"></div>
+        <div class="f"><label>Projeto TED <span class="req">*</span></label><div class="lk"><input value="TED 2024/001 — Fortalecimento Rede"><span class="ico">🔍</span></div></div>
+        <div class="f"><label>Rubrica <span class="tag tag-auto">Fixa: CLT</span></label><input value="CLT" disabled style="font-weight:700;color:#0969c3"></div>
+      </div>
+    </div>
+
+    <!-- CBO -->
+    <div class="section">
+      <div class="st st-g">🔍 CBO — Classificação Brasileira de Ocupações</div>
+      <div class="g g2">
+        <div class="f">
+          <label>Código CBO <span class="req">*</span></label>
+          <div class="lk"><input value="2124-05" id="cbo-code"><span class="ico">🔍</span></div>
+          <span class="hint">Formato: XXXX-XX</span>
+        </div>
+        <div class="f">
+          <label>Descrição CBO <span class="tag tag-auto">Auto pelo código</span></label>
+          <input value="Analista de sistemas de informação" disabled style="color:#0e7a5c;font-weight:500" id="cbo-desc">
+        </div>
+      </div>
+
+      <!-- CBO SEARCH -->
+      <div class="cbo-search-box">
+        <div style="font-size:11px;font-weight:600;color:#8395a7;text-transform:uppercase;margin-bottom:8px">🔍 Pesquisa Online de CBO — <a href="https://www.ocupacoes.com.br/" target="_blank" style="color:#0969c3">ocupacoes.com.br</a></div>
+        <input placeholder="Digite o nome do cargo para buscar o CBO..." id="cbo-search-input" oninput="simCBOSearch()">
+        <div class="cbo-results" id="cbo-results">
+          <div class="cbo-item" onclick="selectCBO('2124-05','Analista de sistemas de informação')">
+            <span><span class="cbo-code">2124-05</span> <span class="cbo-desc">Analista de sistemas de informação</span></span>
+            <span class="cbo-sel">Selecionar →</span>
+          </div>
+          <div class="cbo-item" onclick="selectCBO('2124-10','Analista de suporte computacional')">
+            <span><span class="cbo-code">2124-10</span> <span class="cbo-desc">Analista de suporte computacional</span></span>
+            <span class="cbo-sel">Selecionar →</span>
+          </div>
+          <div class="cbo-item" onclick="selectCBO('2521-05','Administrador de banco de dados')">
+            <span><span class="cbo-code">2521-05</span> <span class="cbo-desc">Administrador de banco de dados</span></span>
+            <span class="cbo-sel">Selecionar →</span>
+          </div>
+          <div class="cbo-item" onclick="selectCBO('1425-05','Gerente de projetos')">
+            <span><span class="cbo-code">1425-05</span> <span class="cbo-desc">Gerente de projetos e serviços de manutenção</span></span>
+            <span class="cbo-sel">Selecionar →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SALÁRIO + CÁLCULO AUTOMÁTICO -->
+    <div class="section">
+      <div class="st st-g">💰 Remuneração <span class="tag tag-auto">Cálculo automático: Bruto → Líquido → Custo</span></div>
+      <div class="g g4">
+        <div class="f"><label>Salário Bruto <span class="req">*</span></label><div class="cur"><span class="pfx">R$</span><input value="8.500,00" oninput="simCalcSalary()"></div><span class="hint">Digita o bruto → calcula líquido e custo</span></div>
+        <div class="f"><label>Salário Líquido <span class="tag tag-auto">Calc.</span></label><div class="cur"><span class="pfx">R$</span><input value="6.240,18" disabled style="color:#0e7a5c;font-weight:700"></div><span class="hint">INSS + IRRF descontados</span></div>
+        <div class="f"><label>Custo Efetivo/Mês <span class="tag tag-auto">Calc.</span></label><div class="cur"><span class="pfx">R$</span><input value="12.835,00" disabled style="color:#0969c3;font-weight:700"></div><span class="hint">Bruto + FGTS + 13º prop. + Férias + encargos</span></div>
+        <div class="f"><label>Custo Efetivo/Ano <span class="tag tag-auto">Calc.</span></label><div class="cur"><span class="pfx">R$</span><input value="154.020,00" disabled style="color:#0969c3;font-weight:700"></div><span class="hint">Custo mensal × 12</span></div>
+      </div>
+
+      <!-- DETALHAMENTO -->
+      <div class="salary-panel">
+        <h5>📊 Detalhamento do Cálculo</h5>
+        <div class="salary-row"><span class="sl">Salário Bruto</span><span class="sv">R$ 8.500,00</span></div>
+        <div class="salary-row"><span class="sl">(-) INSS (11,6%)</span><span class="sv neg">- R$ 988,09</span></div>
+        <div class="salary-row"><span class="sl">(-) IRRF (base R$ 7.511,91)</span><span class="sv neg">- R$ 1.271,73</span></div>
+        <div class="salary-row total"><span class="sl">= Salário Líquido</span><span class="sv pos">R$ 6.240,18</span></div>
+        <div style="border-top:2px solid #dfe4ea;margin:12px 0"></div>
+        <div class="salary-row"><span class="sl">FGTS (8%)</span><span class="sv">R$ 680,00</span></div>
+        <div class="salary-row"><span class="sl">13º proporcional/mês</span><span class="sv">R$ 708,33</span></div>
+        <div class="salary-row"><span class="sl">Férias + 1/3 prop./mês</span><span class="sv">R$ 944,44</span></div>
+        <div class="salary-row"><span class="sl">Multa FGTS prov. (3,3%)</span><span class="sv">R$ 280,50</span></div>
+        <div class="salary-row"><span class="sl">Contribuição patronal INSS (20%)</span><span class="sv">R$ 1.700,00</span></div>
+        <div class="salary-row"><span class="sl">RAT + Terceiros (~2,7%)</span><span class="sv">R$ 21,73</span></div>
+        <div class="salary-row total"><span class="sl">= Custo Efetivo Mensal</span><span class="sv" style="color:#0969c3">R$ 12.835,00</span></div>
+      </div>
+    </div>
+
+    <!-- BENEFÍCIOS -->
+    <div class="section">
+      <div class="st st-g">🎁 Benefícios</div>
+      <div class="g g4">
+        <div class="f"><label>Vale Transporte</label><div class="cur"><span class="pfx">R$</span><input value="400,00"></div><span class="hint">6% descontado do funcionário</span></div>
+        <div class="f"><label>Vale Alimentação/Refeição</label><div class="cur"><span class="pfx">R$</span><input value="800,00"></div></div>
+        <div class="f"><label>Plano de Saúde</label><div class="cur"><span class="pfx">R$</span><input value="650,00"></div></div>
+        <div class="f"><label>Outros Benefícios</label><div class="cur"><span class="pfx">R$</span><input value="0,00"></div></div>
+      </div>
+      <div class="g g2" style="margin-top:16px">
+        <div class="f"><label>Total Benefícios/Mês <span class="tag tag-auto">Soma</span></label><div class="cur"><span class="pfx">R$</span><input value="1.850,00" disabled style="color:#d35400;font-weight:700"></div></div>
+        <div class="f"><label>Custo Total com Benefícios/Mês <span class="tag tag-auto">Calc.</span></label><div class="cur"><span class="pfx">R$</span><input value="14.685,00" disabled style="color:#c0392b;font-weight:700;font-size:15px"></div><span class="hint">Custo efetivo + benefícios</span></div>
+      </div>
+    </div>
+
+    <!-- DISSÍDIO COLETIVO -->
+    <div class="section">
+      <div class="st st-o">📈 Dissídio Coletivo — Atualização Salarial Anual</div>
+      <div class="info info-o"><span class="ic">⚠️</span><div>
+        O dissídio aplica novo salário bruto <strong>a partir da data-base</strong>. O custo executado de meses anteriores <strong>NÃO é modificado</strong>. Apenas a projeção futura é recalculada. Cada atualização fica registrada no histórico.
+      </div></div>
+      <div class="g g3">
+        <div class="f"><label>Data-Base do Dissídio</label><select><option>Janeiro</option><option>Fevereiro</option><option selected>Maio</option><option>Setembro</option></select><span class="hint">Mês de referência da convenção coletiva</span></div>
+        <div class="f"><label>% Reajuste 2026 <span class="req">*</span></label><input value="5,8%" style="font-weight:700;color:#d35400;text-align:center"></div>
+        <div class="f"><label>Novo Bruto <span class="tag tag-auto">Calc.</span></label><div class="cur"><span class="pfx">R$</span><input value="8.993,00" disabled style="color:#0e7a5c;font-weight:700"></div><span class="hint">R$ 8.500 × 1,058</span></div>
+      </div>
+
+      <div style="margin-top:16px;display:flex;gap:8px">
+        <button class="btn btn-primary" onclick="alert('Aplica o reajuste:\n\n1. Cria novo registro salarial a partir de Mai/2026\n2. Recalcula líquido e custo efetivo\n3. Meses anteriores NÃO são alterados\n4. Registra no histórico de dissídios')">✅ Aplicar Dissídio 2026</button>
+        <button class="btn btn-ghost">Simular apenas</button>
+      </div>
+
+      <!-- HISTÓRICO DISSÍDIOS -->
+      <div class="dissidio-timeline">
+        <div style="font-size:11px;font-weight:600;color:#8395a7;text-transform:uppercase;margin-bottom:10px">📜 Histórico de Reajustes</div>
+        <div class="dissidio-item current">
+          <span class="di-year">2026</span>
+          <span class="di-pct">+5,8%</span>
+          <span class="di-val">R$ 8.500,00</span>
+          <span class="di-arrow">→</span>
+          <span class="di-val" style="color:#0e7a5c;font-weight:700">R$ 8.993,00</span>
+          <span class="badge badge-orange">Pendente aplicação</span>
+        </div>
+        <div class="dissidio-item">
+          <span class="di-year">2025</span>
+          <span class="di-pct">+4,5%</span>
+          <span class="di-val">R$ 8.133,97</span>
+          <span class="di-arrow">→</span>
+          <span class="di-val">R$ 8.500,00</span>
+          <span class="badge badge-green">Aplicado Mai/2025</span>
+        </div>
+        <div class="dissidio-item">
+          <span class="di-year">2024</span>
+          <span class="di-pct">+3,9%</span>
+          <span class="di-val">R$ 7.828,65</span>
+          <span class="di-arrow">→</span>
+          <span class="di-val">R$ 8.133,97</span>
+          <span class="badge badge-green">Aplicado Mai/2024</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- OBSERVAÇÕES -->
+    <div class="section">
+      <div class="st st-g">📝 Observações</div>
+      <div class="f full"><textarea placeholder="Observações sobre o cargo..."></textarea></div>
+    </div>
+
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-danger">🗑️ Excluir</button>
+    <div style="display:flex;gap:8px"><button class="btn btn-ghost">Cancelar</button><button class="btn btn-primary">💾 Salvar Cargo</button></div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- 2. EXECUÇÃO CONSOLIDADA                           -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="mp" id="p-exec">
+<div class="card">
+  <div class="card-header">
+    <h2>📊 Execução Consolidada</h2>
+    <div class="export-bar">
+      <button class="btn btn-sm btn-pdf" onclick="alert('Exporta PDF com filtros aplicados')">📄 PDF</button>
+      <button class="btn btn-sm btn-excel" onclick="alert('Exporta Excel (.xlsx)')">📊 Excel</button>
+      <button class="btn btn-sm btn-csv" onclick="alert('Exporta CSV')">📥 CSV</button>
+    </div>
+  </div>
+  <div class="card-body">
+
+    <div class="info info-b"><span class="ic">📊</span><div>
+      Tabela consolidada gerada automaticamente reunindo <strong>todos os contratos e pagamentos</strong> em uma visão única. Alimentada por:<br>
+      • Contratos PF (Bolsa/RPA) → competências mensais<br>
+      • Contratos CLT → folha mensal<br>
+      • Contratos PJ → pagamentos<br>
+      A automação roda diariamente (ou sob demanda) e popula a tabela <code>saes_execucao</code>.
+    </div></div>
+
+    <!-- FILTROS -->
+    <div class="filter-bar">
+      <label>Filtros:</label>
+      <select><option>Todos os Módulos</option><option selected>TED</option><option>OPAS</option></select>
+      <select><option>Todos os Projetos</option><option selected>TED 2024/001</option><option>TED 2023/045</option></select>
+      <select><option>Todos PEPs</option><option selected>PEP-DAET-001</option></select>
+      <select><option>Todos Departamentos</option><option selected>DAET</option></select>
+      <select><option>Todos Status</option><option>Pago</option><option>Compromissado</option><option>Cancelado</option></select>
+      <input type="month" value="2025-01" style="width:130px" title="Competência de">
+      <span style="color:#8395a7">a</span>
+      <input type="month" value="2025-03" style="width:130px" title="Competência até">
+      <button class="btn btn-sm btn-blue">🔍 Filtrar</button>
+    </div>
+
+    <!-- KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px">
+      <div style="background:#fff;border:1px solid #dfe4ea;border-radius:10px;padding:14px">
+        <div style="font-size:10px;color:#8395a7;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Total Registros</div>
+        <div style="font-size:22px;font-weight:700;font-family:'IBM Plex Mono';color:#0969c3">342</div>
+      </div>
+      <div style="background:#fff;border:1px solid #dfe4ea;border-radius:10px;padding:14px">
+        <div style="font-size:10px;color:#8395a7;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Pagos</div>
+        <div style="font-size:22px;font-weight:700;font-family:'IBM Plex Mono';color:#0e7a5c">298</div>
+      </div>
+      <div style="background:#fff;border:1px solid #dfe4ea;border-radius:10px;padding:14px">
+        <div style="font-size:10px;color:#8395a7;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Compromissados</div>
+        <div style="font-size:22px;font-weight:700;font-family:'IBM Plex Mono';color:#f39c12">38</div>
+      </div>
+      <div style="background:#fff;border:1px solid #dfe4ea;border-radius:10px;padding:14px">
+        <div style="font-size:10px;color:#8395a7;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Cancelados</div>
+        <div style="font-size:22px;font-weight:700;font-family:'IBM Plex Mono';color:#c0392b">6</div>
+      </div>
+      <div style="background:#fff;border:1px solid #dfe4ea;border-radius:10px;padding:14px">
+        <div style="font-size:10px;color:#8395a7;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Valor Total Executado</div>
+        <div style="font-size:18px;font-weight:700;font-family:'IBM Plex Mono';color:#0e7a5c">R$ 2.845.600</div>
+      </div>
+    </div>
+
+    <!-- TABELA -->
+    <div style="overflow-x:auto">
+      <table class="sub-table">
+        <thead><tr>
+          <th>Projeto</th><th>PEP</th><th>ID Registro</th><th>Tipo</th><th>Depto</th><th>Nome</th><th>CPF</th><th>Valor</th><th>Início</th><th>Fim</th><th>Competência</th><th>Status</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="primary">TED 2024/001</td><td class="mono">PEP-DAET-001</td><td class="mono">CLT-2024-0045</td>
+            <td><span class="badge badge-blue">CLT</span></td><td>DAET</td><td>João da Silva</td><td class="mono">123.456.789-00</td>
+            <td class="mono" style="color:#0e7a5c">R$ 8.500,00</td><td>15/04/2024</td><td>14/04/2026</td><td class="mono">Jan/2025</td>
+            <td><span class="exec-status"><span class="exec-dot pago"></span> Pago</span></td>
+          </tr>
+          <tr>
+            <td class="primary">TED 2024/001</td><td class="mono">PEP-DAET-001</td><td class="mono">CLT-2024-0045</td>
+            <td><span class="badge badge-blue">CLT</span></td><td>DAET</td><td>João da Silva</td><td class="mono">123.456.789-00</td>
+            <td class="mono" style="color:#0e7a5c">R$ 8.500,00</td><td>15/04/2024</td><td>14/04/2026</td><td class="mono">Fev/2025</td>
+            <td><span class="exec-status"><span class="exec-dot pago"></span> Pago</span></td>
+          </tr>
+          <tr>
+            <td class="primary">TED 2024/001</td><td class="mono">PEP-DAET-001</td><td class="mono">CLT-2024-0045</td>
+            <td><span class="badge badge-blue">CLT</span></td><td>DAET</td><td>João da Silva</td><td class="mono">123.456.789-00</td>
+            <td class="mono" style="color:#f39c12">R$ 8.500,00</td><td>15/04/2024</td><td>14/04/2026</td><td class="mono">Mar/2025</td>
+            <td><span class="exec-status"><span class="exec-dot comp"></span> Compromissado</span></td>
+          </tr>
+          <tr>
+            <td class="primary">TED 2024/001</td><td class="mono">PEP-DAET-002</td><td class="mono">PF-2024-0089</td>
+            <td><span class="badge badge-orange">Bolsista</span></td><td>DECAN</td><td>Ana Carolina Mendes</td><td class="mono">987.654.321-00</td>
+            <td class="mono" style="color:#0e7a5c">R$ 6.000,00</td><td>01/03/2024</td><td>14/03/2025</td><td class="mono">Jan/2025</td>
+            <td><span class="exec-status"><span class="exec-dot pago"></span> Pago</span></td>
+          </tr>
+          <tr>
+            <td class="primary">TED 2024/001</td><td class="mono">PEP-DAET-002</td><td class="mono">PF-2024-0089</td>
+            <td><span class="badge badge-orange">Bolsista</span></td><td>DECAN</td><td>Ana Carolina Mendes</td><td class="mono">987.654.321-00</td>
+            <td class="mono" style="color:#0e7a5c">R$ 6.000,00</td><td>01/03/2024</td><td>14/03/2025</td><td class="mono">Fev/2025</td>
+            <td><span class="exec-status"><span class="exec-dot pago"></span> Pago</span></td>
+          </tr>
+          <tr>
+            <td class="primary">TED 2024/001</td><td class="mono">PEP-DAET-001</td><td class="mono">PJ-2024-0012</td>
+            <td><span class="badge" style="background:#8e44ad15;color:#8e44ad">PJ</span></td><td>DAET</td><td>TechConsult LTDA</td><td class="mono">12.345.678/0001-90</td>
+            <td class="mono" style="color:#0e7a5c">R$ 45.000,00</td><td>01/06/2024</td><td>31/12/2024</td><td class="mono">Jan/2025</td>
+            <td><span class="exec-status"><span class="exec-dot pago"></span> Pago</span></td>
+          </tr>
+          <tr style="background:#fce8e805">
+            <td class="primary">TED 2024/001</td><td class="mono">PEP-DAET-003</td><td class="mono">PF-2024-0102</td>
+            <td><span class="badge badge-orange">RPA</span></td><td>DAET</td><td>Roberto Lima</td><td class="mono">456.789.123-00</td>
+            <td class="mono" style="color:#c0392b;text-decoration:line-through">R$ 3.800,00</td><td>01/01/2025</td><td>30/06/2025</td><td class="mono">Fev/2025</td>
+            <td><span class="exec-status"><span class="exec-dot canc"></span> Cancelado</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:12px;color:#8395a7">Mostrando 7 de 342 registros (filtro aplicado)</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-sm btn-ghost">« Anterior</button>
+        <span style="font-size:12px;color:#8395a7;padding:6px 0">Página 1 de 49</span>
+        <button class="btn btn-sm btn-ghost">Próxima »</button>
+      </div>
+    </div>
+
+    <!-- AUTOMAÇÃO -->
+    <div style="margin-top:24px;background:#f4f6f9;border:1px solid #dfe4ea;border-radius:12px;padding:18px">
+      <h4 style="font-size:13px;font-weight:700;margin-bottom:10px">⚙️ Automação — Como a tabela é populada</h4>
+      <div style="font-size:12px;color:#4a5e73;line-height:1.8">
+        <strong>Power Automate (Flow):</strong> Roda diariamente ou sob demanda.<br>
+        1. Consulta <code>saes_contratoclts</code> (ativos) → gera 1 registro/mês por contrato<br>
+        2. Consulta <code>saes_contratopfs</code> (ativos) → gera 1 registro/mês<br>
+        3. Consulta <code>saes_contratopjs</code> (pagamentos) → 1 registro por pagamento<br>
+        4. Popula <code>saes_execucao</code> com: projeto, PEP, ID registro, depto, nome, CPF, valor, datas, competência, status<br>
+        <br>
+        <strong>Alternativa JS:</strong> O dashboard calcula em tempo real a partir dos contratos (sem tabela extra), mas com tabela própria fica mais rápido para consultas e exportações.
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button class="btn btn-sm btn-blue" onclick="alert('Roda o Flow de sincronização agora')">⚡ Sincronizar Agora</button>
+        <span style="font-size:11px;color:#8395a7;padding:6px 0">Última sync: 19/03/2026 às 06:00</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- 3. EXPORTAÇÃO PDF / EXCEL                         -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="mp" id="p-export">
+<div class="card">
+  <div class="card-header"><h2>📥 Exportação — PDF, Excel e CSV</h2></div>
+  <div class="card-body">
+
+    <div class="info info-b"><span class="ic">📥</span><div>
+      Botões de exportação disponíveis em <strong>todas as tabelas</strong> do sistema. Três formatos: PDF (relatório formatado), Excel (.xlsx com formatação), CSV (dados brutos).
+    </div></div>
+
+    <!-- Exemplo visual -->
+    <div class="section">
+      <div class="st st-b">🖼️ Como aparece na toolbar de cada tabela</div>
+      <div style="background:#fff;border:1px solid #dfe4ea;border-radius:12px;overflow:hidden">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid #dfe4ea;flex-wrap:wrap">
+          <input placeholder="🔍 Buscar..." style="background:#f4f6f9;border:1px solid #dfe4ea;padding:8px 14px;border-radius:8px;font-size:13px;width:260px;font-family:inherit;outline:none">
+          <span style="flex:1"></span>
+          <span style="font-size:12px;color:#8395a7;font-family:'IBM Plex Mono'">47 registros</span>
+          <button class="btn btn-sm btn-pdf">📄 PDF</button>
+          <button class="btn btn-sm btn-excel">📊 Excel</button>
+          <button class="btn btn-sm btn-csv">📥 CSV</button>
+          <button class="btn btn-sm btn-ghost">🧹 Limpar</button>
+          <button class="btn btn-sm btn-primary">+ Novo</button>
+        </div>
+        <div style="padding:30px;text-align:center;color:#b0b8c4;font-size:13px">[ tabela de dados aqui ]</div>
+      </div>
+    </div>
+
+    <!-- PDF Preview -->
+    <div class="section">
+      <div class="st st-b">📄 Exemplo de PDF Gerado</div>
+      <div style="background:#fff;border:2px solid #dfe4ea;border-radius:12px;padding:30px;max-width:700px;margin:0 auto;box-shadow:0 4px 20px rgba(0,0,0,.08)">
+        <!-- Header -->
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;padding-bottom:16px;border-bottom:3px solid #0e7a5c">
+          <div>
+            <div style="font-size:18px;font-weight:700;color:#0e7a5c">SISPROJ SAES</div>
+            <div style="font-size:12px;color:#8395a7">Ministério da Saúde — CGPROJ/SAES</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:14px;font-weight:700">Projetos TED</div>
+            <div style="font-size:11px;color:#8395a7">Gerado em 19/03/2026 às 15:30</div>
+            <div style="font-size:11px;color:#8395a7">Filtro: Vigentes | DAET</div>
+          </div>
+        </div>
+        <!-- KPI summary -->
+        <div style="display:flex;gap:16px;margin-bottom:20px">
+          <div style="flex:1;background:#f4f6f9;border-radius:8px;padding:12px;text-align:center"><div style="font-size:10px;color:#8395a7;text-transform:uppercase">Total</div><div style="font-size:20px;font-weight:700;color:#0e7a5c">12</div></div>
+          <div style="flex:1;background:#f4f6f9;border-radius:8px;padding:12px;text-align:center"><div style="font-size:10px;color:#8395a7;text-transform:uppercase">Valor Aprovado</div><div style="font-size:16px;font-weight:700;color:#0969c3">R$ 48,2 Mi</div></div>
+          <div style="flex:1;background:#f4f6f9;border-radius:8px;padding:12px;text-align:center"><div style="font-size:10px;color:#8395a7;text-transform:uppercase">% Execução</div><div style="font-size:20px;font-weight:700;color:#d35400">64,3%</div></div>
+        </div>
+        <!-- Table preview -->
+        <table style="width:100%;border-collapse:collapse;font-size:10px">
+          <thead><tr style="background:#0e7a5c;color:#fff"><th style="padding:6px 8px;text-align:left">Projeto</th><th style="padding:6px 8px">Situação</th><th style="padding:6px 8px;text-align:right">Aprovado</th><th style="padding:6px 8px;text-align:right">Executado</th><th style="padding:6px 8px;text-align:right">%</th></tr></thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #e8ecf2"><td style="padding:6px 8px">TED 2024/001</td><td style="padding:6px 8px;text-align:center"><span style="background:#e6f7f2;color:#0e7a5c;padding:2px 8px;border-radius:6px;font-size:9px;font-weight:600">Vigente</span></td><td style="padding:6px 8px;text-align:right;font-family:'IBM Plex Mono'">12.450.000</td><td style="padding:6px 8px;text-align:right;font-family:'IBM Plex Mono'">9.840.000</td><td style="padding:6px 8px;text-align:right;font-weight:600;color:#0e7a5c">79%</td></tr>
+            <tr style="border-bottom:1px solid #e8ecf2"><td style="padding:6px 8px">TED 2024/018</td><td style="padding:6px 8px;text-align:center"><span style="background:#e6f7f2;color:#0e7a5c;padding:2px 8px;border-radius:6px;font-size:9px;font-weight:600">Vigente</span></td><td style="padding:6px 8px;text-align:right;font-family:'IBM Plex Mono'">5.340.000</td><td style="padding:6px 8px;text-align:right;font-family:'IBM Plex Mono'">2.800.000</td><td style="padding:6px 8px;text-align:right;font-weight:600;color:#d35400">52%</td></tr>
+            <tr><td style="padding:6px 8px;color:#8395a7;font-style:italic" colspan="5">... mais 10 registros</td></tr>
+          </tbody>
+        </table>
+        <!-- Footer -->
+        <div style="margin-top:20px;padding-top:12px;border-top:1px solid #e8ecf2;display:flex;justify-content:space-between;font-size:9px;color:#b0b8c4">
+          <span>SISPROJ SAES — CGPROJ/SAES — Ministério da Saúde</span>
+          <span>Página 1 de 3</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tecnologia -->
+    <div style="margin-top:24px;background:#f4f6f9;border:1px solid #dfe4ea;border-radius:12px;padding:18px">
+      <h4 style="font-size:13px;font-weight:700;margin-bottom:10px">🔧 Implementação</h4>
+      <table class="sub-table" style="margin:0">
+        <thead><tr><th>Formato</th><th>Biblioteca JS</th><th>Conteúdo</th></tr></thead>
+        <tbody>
+          <tr><td class="primary">📄 PDF</td><td class="mono">jsPDF + jsPDF-AutoTable</td><td>Header institucional + KPIs + tabela formatada + rodapé paginado</td></tr>
+          <tr><td class="primary">📊 Excel</td><td class="mono">SheetJS (xlsx)</td><td>Planilha formatada com header, dados, totalizadores, colunas auto-ajustadas</td></tr>
+          <tr><td class="primary">📥 CSV</td><td class="mono">Nativo JS (Blob)</td><td>Dados brutos com BOM UTF-8, separador ";" para Excel BR</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+</div>
+
+</div>
+
+<script>
+function showM(id,btn,cls){document.querySelectorAll('.mp').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.main-tab').forEach(b=>b.className='main-tab');document.getElementById('p-'+id).classList.add('active');btn.classList.add(cls);}
+function selectCBO(code,desc){document.getElementById('cbo-code').value=code;document.getElementById('cbo-desc').value=desc;alert(`CBO selecionado: ${code} — ${desc}`);}
+function simCBOSearch(){/* simulação */}
+function simCalcSalary(){/* simulação */}
+</script>
+</body>
+</html>

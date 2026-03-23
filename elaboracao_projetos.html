@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elaboração de Projetos v2</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="dark"]{--navy:#131E2E;--navy-light:#1A2840;--surface:#162234;--surface-raised:#1C2D42;--surface-hover:#243A54;--border:#263D58;--border-light:#2E4A68;--text-primary:#E8ECF2;--text-secondary:#9BB0C4;--text-muted:#6B8399;--accent-green:#2A9D8F;--accent-blue:#1474B7;--accent-red:#CC2222;--accent-orange:#d35400;--accent-yellow:#f39c12;--accent-purple:#8e44ad;--radius:8px;--radius-lg:12px;--font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace}
+[data-theme="light"]{--navy:#f0f2f5;--navy-light:#e4e8ed;--surface:#ffffff;--surface-raised:#ffffff;--surface-hover:#eef1f5;--border:#dfe4ea;--border-light:#cdd5de;--text-primary:#1a2332;--text-secondary:#4a5e73;--text-muted:#8395a7;--accent-green:#0e7a5c;--accent-blue:#0969c3;--accent-red:#c0392b;--accent-orange:#d35400;--accent-yellow:#f39c12;--accent-purple:#8e44ad}
+*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%;font-family:var(--font);background:var(--navy);color:var(--text-primary)}button{font-family:var(--font);cursor:pointer;border:none}::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:3px}
+
+.shell{height:100vh;overflow-y:auto;padding:28px}
+.page-header{display:flex;align-items:center;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.page-header h1{font-size:22px;font-weight:700;flex:1}
+.btn{padding:8px 18px;border-radius:var(--radius);font-size:12px;font-weight:600;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--accent-green);color:#fff}.btn-primary:hover{filter:brightness(1.15)}
+.btn-ghost{background:transparent;color:var(--text-secondary);border:1px solid var(--border)}.btn-ghost:hover{background:var(--surface-hover)}
+.btn-sm{font-size:11px;padding:6px 12px}
+.theme-toggle{background:var(--surface-hover);border:1px solid var(--border);border-radius:var(--radius);padding:6px 12px;font-size:16px;cursor:pointer}.theme-toggle:hover{background:var(--border)}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px}
+.kpi-card{background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-align:center;position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kpi-card.purple::before{background:var(--accent-purple)}
+.kpi-card.blue::before{background:var(--accent-blue)}
+.kpi-card.green::before{background:var(--accent-green)}
+.kpi-card.yellow::before{background:var(--accent-yellow)}
+.kpi-card.red::before{background:var(--accent-red)}
+.kpi-icon{font-size:22px;margin-bottom:4px}
+.kpi-value{font-size:26px;font-weight:700;font-family:var(--mono)}
+.kpi-label{font-size:10px;color:var(--text-muted);margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+
+/* PIPELINE */
+.pipeline{display:flex;gap:4px;margin-bottom:28px;padding:6px;background:var(--surface-raised);border:1px solid var(--border);border-radius:14px}
+.pipe-col{flex:1;text-align:center;padding:12px 8px;border-radius:10px;transition:all .2s;cursor:pointer;position:relative}
+.pipe-col:hover{background:var(--surface-hover)}
+.pipe-col.active{background:var(--navy)}
+.pipe-col .p-icon{font-size:22px;margin-bottom:4px}
+.pipe-col .p-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.pipe-col .p-count{font-size:20px;font-weight:700;font-family:var(--mono);margin:4px 0}
+.pipe-arrow{display:flex;align-items:center;color:var(--border-light);font-size:16px;flex-shrink:0}
+
+/* PROJECT CARD */
+.project-list{display:flex;flex-direction:column;gap:16px}
+.project-card{background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:border .2s}
+.project-card:hover{border-color:var(--accent-green)}
+.pc-header{padding:18px 20px;display:flex;align-items:center;gap:16px;cursor:pointer}
+.pc-header .pc-icon{font-size:28px}
+.pc-header .pc-info{flex:1}
+.pc-header .pc-title{font-size:15px;font-weight:700;margin-bottom:3px}
+.pc-header .pc-meta{font-size:11px;color:var(--text-muted);display:flex;gap:12px}
+.pc-header .pc-pct{font-size:18px;font-weight:700;font-family:var(--mono)}
+.pc-progress{height:6px;background:var(--navy);margin:0 20px}
+.pc-progress .fill{height:100%;border-radius:3px;transition:width .5s}
+
+/* PHASES */
+.pc-phases{padding:16px 20px;display:none}
+.pc-phases.open{display:block}
+.phase-card{border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:10px;transition:border .2s}
+.phase-card.current{border-color:var(--accent-blue);background:rgba(20,116,183,.03)}
+.phase-card.done{border-color:var(--accent-green);opacity:.8}
+.phase-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.phase-header .ph-icon{font-size:18px}
+.phase-header .ph-title{flex:1;font-size:13px;font-weight:700}
+.phase-header .ph-pct{font-size:12px;font-weight:600;font-family:var(--mono)}
+.phase-bar{height:5px;background:var(--navy);border-radius:3px;overflow:hidden;margin-bottom:10px}
+.phase-bar .fill{height:100%;border-radius:3px}
+
+.task-item{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}
+.task-item:last-child{border:none}
+.task-check{width:20px;height:20px;border-radius:5px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;flex-shrink:0;transition:all .15s}
+.task-check.done{background:var(--accent-green);border-color:var(--accent-green);color:#fff}
+.task-check:hover{border-color:var(--accent-green)}
+.task-label{flex:1;color:var(--text-secondary)}
+.task-label.done{text-decoration:line-through;color:var(--text-muted)}
+.task-resp{font-size:10px;color:var(--text-muted);padding:2px 8px;background:var(--navy);border-radius:6px}
+.task-date{font-size:10px;color:var(--text-muted);font-family:var(--mono)}
+
+@media(max-width:900px){.kpi-row{grid-template-columns:repeat(3,1fr)}.pipeline{flex-wrap:wrap}.pipe-arrow{display:none}}
+@media(max-width:600px){.kpi-row{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <div class="page-header">
+    <h1>🔧 Elaboração de Projetos</h1>
+    <button class="theme-toggle" onclick="document.documentElement.setAttribute('data-theme',document.documentElement.getAttribute('data-theme')==='light'?'dark':'light')">🌓</button>
+    <button class="btn btn-primary">＋ Novo Projeto em Elaboração</button>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-row">
+    <div class="kpi-card purple"><div class="kpi-icon">📝</div><div class="kpi-value" style="color:var(--accent-purple)">3</div><div class="kpi-label">Em Concepção</div></div>
+    <div class="kpi-card blue"><div class="kpi-icon">📋</div><div class="kpi-value" style="color:var(--accent-blue)">2</div><div class="kpi-label">Plano de Trabalho</div></div>
+    <div class="kpi-card yellow"><div class="kpi-icon">⚖️</div><div class="kpi-value" style="color:var(--accent-yellow)">1</div><div class="kpi-label">Análise Jurídica</div></div>
+    <div class="kpi-card green"><div class="kpi-icon">✅</div><div class="kpi-value" style="color:var(--accent-green)">2</div><div class="kpi-label">Formalização</div></div>
+    <div class="kpi-card red"><div class="kpi-icon">📊</div><div class="kpi-value" style="color:var(--text-primary)">8</div><div class="kpi-label">Total em Pipeline</div></div>
+  </div>
+
+  <!-- PIPELINE VISUAL -->
+  <div class="pipeline">
+    <div class="pipe-col active" style="color:var(--accent-purple)"><div class="p-icon">💡</div><div class="p-count">3</div><div class="p-label">Concepção</div></div>
+    <div class="pipe-arrow">▸</div>
+    <div class="pipe-col" style="color:var(--accent-blue)"><div class="p-icon">📋</div><div class="p-count">2</div><div class="p-label">Plano de Trabalho</div></div>
+    <div class="pipe-arrow">▸</div>
+    <div class="pipe-col" style="color:var(--accent-yellow)"><div class="p-icon">⚖️</div><div class="p-count">1</div><div class="p-label">Análise Jurídica</div></div>
+    <div class="pipe-arrow">▸</div>
+    <div class="pipe-col" style="color:var(--accent-green)"><div class="p-icon">✅</div><div class="p-count">2</div><div class="p-label">Formalização</div></div>
+  </div>
+
+  <!-- PROJECT LIST -->
+  <div class="project-list">
+
+    <!-- Projeto 1 - Em Análise Jurídica (59%) -->
+    <div class="project-card" id="proj1">
+      <div class="pc-header" onclick="togglePhases('proj1')">
+        <div class="pc-icon">⚖️</div>
+        <div class="pc-info">
+          <div class="pc-title">TED 2026/003 — Rede de Urgência e Emergência</div>
+          <div class="pc-meta"><span>🏢 DAET</span><span>🏛️ Fiocruz</span><span>💰 R$ 6.200.000</span><span>📅 Início prev.: Jul/2026</span></div>
+        </div>
+        <div class="pc-pct" style="color:var(--accent-yellow)">59%</div>
+      </div>
+      <div class="pc-progress"><div class="fill" style="width:59%;background:var(--accent-yellow)"></div></div>
+      <div class="pc-phases" id="proj1-phases">
+        <!-- Fase 1 DONE -->
+        <div class="phase-card done">
+          <div class="phase-header"><span class="ph-icon">💡</span><span class="ph-title">Fase 1 — Concepção</span><span class="ph-pct" style="color:var(--accent-green)">100%</span></div>
+          <div class="phase-bar"><div class="fill" style="width:100%;background:var(--accent-green)"></div></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Definir escopo e objetivos</span><span class="task-resp">Henrique</span><span class="task-date">10/01</span></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Identificar instituição parceira</span><span class="task-resp">Henrique</span><span class="task-date">15/01</span></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Reunião de alinhamento</span><span class="task-resp">Equipe</span><span class="task-date">22/01</span></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Análise de viabilidade</span><span class="task-resp">CGPROJ</span><span class="task-date">28/01</span></div>
+        </div>
+        <!-- Fase 2 DONE -->
+        <div class="phase-card done">
+          <div class="phase-header"><span class="ph-icon">📋</span><span class="ph-title">Fase 2 — Plano de Trabalho</span><span class="ph-pct" style="color:var(--accent-green)">100%</span></div>
+          <div class="phase-bar"><div class="fill" style="width:100%;background:var(--accent-green)"></div></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Elaborar plano de aplicação</span><span class="task-resp">Analista</span><span class="task-date">05/02</span></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Definir metas e resultados</span><span class="task-resp">Coordenador</span><span class="task-date">10/02</span></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Elaborar cronograma de desembolso</span><span class="task-resp">Analista</span><span class="task-date">15/02</span></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Definir equipe técnica</span><span class="task-resp">Coordenador</span><span class="task-date">18/02</span></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Validar com instituição parceira</span><span class="task-resp">Fiocruz</span><span class="task-date">25/02</span></div>
+        </div>
+        <!-- Fase 3 CURRENT -->
+        <div class="phase-card current">
+          <div class="phase-header"><span class="ph-icon">⚖️</span><span class="ph-title">Fase 3 — Análise Jurídica e Técnica</span><span class="ph-pct" style="color:var(--accent-blue)">25%</span></div>
+          <div class="phase-bar"><div class="fill" style="width:25%;background:var(--accent-blue)"></div></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Parecer técnico CGPROJ</span><span class="task-resp">CGPROJ</span><span class="task-date">10/03</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Análise CONJUR</span><span class="task-resp">CONJUR</span><span class="task-date" style="color:var(--accent-yellow)">prev. 28/03</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Ajustes pós-parecer</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Aprovação do Secretário</span><span class="task-resp">Secretário</span><span class="task-date">—</span></div>
+        </div>
+        <!-- Fase 4 PENDING -->
+        <div class="phase-card">
+          <div class="phase-header"><span class="ph-icon">✅</span><span class="ph-title">Fase 4 — Formalização</span><span class="ph-pct" style="color:var(--text-muted)">0%</span></div>
+          <div class="phase-bar"><div class="fill" style="width:0%"></div></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Assinatura das partes</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Publicação no DOU</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Cadastro no SISPROJ</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Primeiro empenho</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Projeto 2 - Em Plano de Trabalho (33%) -->
+    <div class="project-card" id="proj2">
+      <div class="pc-header" onclick="togglePhases('proj2')">
+        <div class="pc-icon">📋</div>
+        <div class="pc-info">
+          <div class="pc-title">TED 2026/004 — Saúde Mental Comunitária</div>
+          <div class="pc-meta"><span>🏢 DESMAD</span><span>🏛️ UFRJ</span><span>💰 R$ 3.400.000</span><span>📅 Início prev.: Set/2026</span></div>
+        </div>
+        <div class="pc-pct" style="color:var(--accent-blue)">33%</div>
+      </div>
+      <div class="pc-progress"><div class="fill" style="width:33%;background:var(--accent-blue)"></div></div>
+      <div class="pc-phases" id="proj2-phases">
+        <div class="phase-card done">
+          <div class="phase-header"><span class="ph-icon">💡</span><span class="ph-title">Fase 1 — Concepção</span><span class="ph-pct" style="color:var(--accent-green)">100%</span></div>
+          <div class="phase-bar"><div class="fill" style="width:100%;background:var(--accent-green)"></div></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Definir escopo e objetivos</span><span class="task-resp">Coord. DESMAD</span><span class="task-date">05/01</span></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Identificar instituição parceira</span><span class="task-resp">Coord. DESMAD</span><span class="task-date">12/01</span></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Reunião de alinhamento</span><span class="task-resp">Equipe + UFRJ</span><span class="task-date">20/01</span></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Análise de viabilidade</span><span class="task-resp">CGPROJ</span><span class="task-date">30/01</span></div>
+        </div>
+        <div class="phase-card current">
+          <div class="phase-header"><span class="ph-icon">📋</span><span class="ph-title">Fase 2 — Plano de Trabalho</span><span class="ph-pct" style="color:var(--accent-blue)">40%</span></div>
+          <div class="phase-bar"><div class="fill" style="width:40%;background:var(--accent-blue)"></div></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Elaborar plano de aplicação</span><span class="task-resp">Analista</span><span class="task-date">10/02</span></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Definir metas e resultados</span><span class="task-resp">Coordenador</span><span class="task-date">18/02</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Elaborar cronograma de desembolso</span><span class="task-resp">Analista</span><span class="task-date" style="color:var(--accent-yellow)">prev. 25/03</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Definir equipe técnica</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Validar com instituição parceira</span><span class="task-resp">UFRJ</span><span class="task-date">—</span></div>
+        </div>
+        <div class="phase-card">
+          <div class="phase-header"><span class="ph-icon">⚖️</span><span class="ph-title">Fase 3 — Análise Jurídica e Técnica</span><span class="ph-pct" style="color:var(--text-muted)">0%</span></div>
+          <div class="phase-bar"><div class="fill" style="width:0%"></div></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Parecer técnico CGPROJ</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Análise CONJUR</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Ajustes pós-parecer</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Aprovação do Secretário</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+        </div>
+        <div class="phase-card">
+          <div class="phase-header"><span class="ph-icon">✅</span><span class="ph-title">Fase 4 — Formalização</span><span class="ph-pct" style="color:var(--text-muted)">0%</span></div>
+          <div class="phase-bar"><div class="fill" style="width:0%"></div></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Assinatura das partes</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Publicação no DOU</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Cadastro no SISPROJ</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Primeiro empenho</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Projeto 3 - Em Concepção (12%) -->
+    <div class="project-card" id="proj3">
+      <div class="pc-header" onclick="togglePhases('proj3')">
+        <div class="pc-icon">💡</div>
+        <div class="pc-info">
+          <div class="pc-title">OPAS TC 2026/001 — Doenças Tropicais Negligenciadas</div>
+          <div class="pc-meta"><span>🏢 DAET</span><span>🌎 OPAS/OMS</span><span>💰 R$ 12.000.000</span><span>📅 Início prev.: Jan/2027</span></div>
+        </div>
+        <div class="pc-pct" style="color:var(--accent-purple)">12%</div>
+      </div>
+      <div class="pc-progress"><div class="fill" style="width:12%;background:var(--accent-purple)"></div></div>
+      <div class="pc-phases" id="proj3-phases">
+        <div class="phase-card current">
+          <div class="phase-header"><span class="ph-icon">💡</span><span class="ph-title">Fase 1 — Concepção</span><span class="ph-pct" style="color:var(--accent-blue)">50%</span></div>
+          <div class="phase-bar"><div class="fill" style="width:50%;background:var(--accent-blue)"></div></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Definir escopo e objetivos</span><span class="task-resp">Coord. DAET</span><span class="task-date">15/02</span></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Identificar instituição parceira</span><span class="task-resp">Coord. DAET</span><span class="task-date">22/02</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Reunião de alinhamento</span><span class="task-resp">OPAS/OMS</span><span class="task-date" style="color:var(--accent-yellow)">prev. 28/03</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Análise de viabilidade</span><span class="task-resp">CGPROJ</span><span class="task-date">—</span></div>
+        </div>
+        <div class="phase-card">
+          <div class="phase-header"><span class="ph-icon">📋</span><span class="ph-title">Fase 2 — Plano de Trabalho</span><span class="ph-pct" style="color:var(--text-muted)">0%</span></div>
+          <div class="phase-bar"><div class="fill" style="width:0%"></div></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Elaborar plano de aplicação</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Definir metas e resultados</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Elaborar cronograma de desembolso</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Definir equipe técnica</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Validar com OPAS/OMS</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+        </div>
+        <div class="phase-card">
+          <div class="phase-header"><span class="ph-icon">⚖️</span><span class="ph-title">Fase 3 — Análise Jurídica e Técnica</span><span class="ph-pct" style="color:var(--text-muted)">0%</span></div>
+          <div class="phase-bar"><div class="fill" style="width:0%"></div></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Parecer técnico CGPROJ</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Análise CONJUR</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Ajustes pós-parecer</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Aprovação do Secretário</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+        </div>
+        <div class="phase-card">
+          <div class="phase-header"><span class="ph-icon">✅</span><span class="ph-title">Fase 4 — Formalização</span><span class="ph-pct" style="color:var(--text-muted)">0%</span></div>
+          <div class="phase-bar"><div class="fill" style="width:0%"></div></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Assinatura das partes</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Publicação no DOU</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Cadastro no SISPROJ</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Primeiro empenho</span><span class="task-resp">—</span><span class="task-date">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Projeto 4 - Formalização (88%) -->
+    <div class="project-card" id="proj4">
+      <div class="pc-header" onclick="togglePhases('proj4')">
+        <div class="pc-icon">✅</div>
+        <div class="pc-info">
+          <div class="pc-title">TED 2026/002 — Modernização Laboratorial</div>
+          <div class="pc-meta"><span>🏢 DRAC</span><span>🏛️ Fiocruz</span><span>💰 R$ 4.800.000</span><span>📅 Publicação prev.: Abr/2026</span></div>
+        </div>
+        <div class="pc-pct" style="color:var(--accent-green)">88%</div>
+      </div>
+      <div class="pc-progress"><div class="fill" style="width:88%;background:var(--accent-green)"></div></div>
+      <div class="pc-phases" id="proj4-phases">
+        <div class="phase-card done">
+          <div class="phase-header"><span class="ph-icon">💡</span><span class="ph-title">Fase 1 — Concepção</span><span class="ph-pct" style="color:var(--accent-green)">100%</span></div>
+          <div class="phase-bar"><div class="fill" style="width:100%;background:var(--accent-green)"></div></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Definir escopo e objetivos</span><span class="task-resp">Coord. DRAC</span><span class="task-date">10/10/25</span></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Identificar instituição parceira</span><span class="task-resp">Coord. DRAC</span><span class="task-date">18/10/25</span></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Reunião de alinhamento</span><span class="task-resp">Equipe + Fiocruz</span><span class="task-date">25/10/25</span></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Análise de viabilidade</span><span class="task-resp">CGPROJ</span><span class="task-date">05/11/25</span></div>
+        </div>
+        <div class="phase-card done">
+          <div class="phase-header"><span class="ph-icon">📋</span><span class="ph-title">Fase 2 — Plano de Trabalho</span><span class="ph-pct" style="color:var(--accent-green)">100%</span></div>
+          <div class="phase-bar"><div class="fill" style="width:100%;background:var(--accent-green)"></div></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Elaborar plano de aplicação</span><span class="task-resp">Analista</span><span class="task-date">15/11/25</span></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Definir metas e resultados</span><span class="task-resp">Coordenador</span><span class="task-date">22/11/25</span></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Elaborar cronograma de desembolso</span><span class="task-resp">Analista</span><span class="task-date">28/11/25</span></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Definir equipe técnica</span><span class="task-resp">Coordenador</span><span class="task-date">03/12/25</span></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Validar com instituição parceira</span><span class="task-resp">Fiocruz</span><span class="task-date">12/12/25</span></div>
+        </div>
+        <div class="phase-card done">
+          <div class="phase-header"><span class="ph-icon">⚖️</span><span class="ph-title">Fase 3 — Análise Jurídica e Técnica</span><span class="ph-pct" style="color:var(--accent-green)">100%</span></div>
+          <div class="phase-bar"><div class="fill" style="width:100%;background:var(--accent-green)"></div></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Parecer técnico CGPROJ</span><span class="task-resp">CGPROJ</span><span class="task-date">20/12/25</span></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Análise CONJUR</span><span class="task-resp">CONJUR</span><span class="task-date">15/01/26</span></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Ajustes pós-parecer</span><span class="task-resp">Analista</span><span class="task-date">28/01/26</span></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Aprovação do Secretário</span><span class="task-resp">Secretário</span><span class="task-date">10/02/26</span></div>
+        </div>
+        <div class="phase-card current">
+          <div class="phase-header"><span class="ph-icon">✅</span><span class="ph-title">Fase 4 — Formalização</span><span class="ph-pct" style="color:var(--accent-blue)">50%</span></div>
+          <div class="phase-bar"><div class="fill" style="width:50%;background:var(--accent-blue)"></div></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Assinatura das partes</span><span class="task-resp">Secretário + Fiocruz</span><span class="task-date">05/03/26</span></div>
+          <div class="task-item"><div class="task-check done">✓</div><span class="task-label done">Publicação no DOU</span><span class="task-resp">DOU</span><span class="task-date">18/03/26</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Cadastro no SISPROJ</span><span class="task-resp">Henrique</span><span class="task-date" style="color:var(--accent-yellow)">prev. 25/03</span></div>
+          <div class="task-item"><div class="task-check">○</div><span class="task-label">Primeiro empenho</span><span class="task-resp">Financeiro</span><span class="task-date" style="color:var(--accent-yellow)">prev. 01/04</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function togglePhases(id) {
+  const el = document.getElementById(id + '-phases');
+  el.classList.toggle('open');
+}
+// Open first project by default
+document.getElementById('proj1-phases').classList.add('open');
+</script>
+</body>
+</html>

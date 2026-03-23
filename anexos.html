@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seção de Anexos</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'IBM Plex Sans',sans-serif;background:#f4f6f9;color:#1a2332;min-height:100vh}
+.annotation{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#d63031;color:#fff;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.page{max-width:900px;margin:0 auto;padding:70px 24px 40px}
+
+.form-card{background:#fff;border:1px solid #dfe4ea;border-radius:14px;box-shadow:0 2px 16px rgba(0,0,0,.07);overflow:hidden;margin-bottom:24px}
+.form-header{padding:20px 24px;border-bottom:1px solid #dfe4ea;display:flex;align-items:center;justify-content:space-between}
+.form-header h2{font-size:18px;font-weight:700;display:flex;align-items:center;gap:10px}
+.form-body{padding:24px}
+
+.form-section{margin-bottom:28px}
+.form-section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#0e7a5c;padding-bottom:10px;border-bottom:2px solid #0e7a5c20;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+
+.info-box{background:#0969c308;border:1px solid #0969c325;border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:12px;color:#0969c3;line-height:1.6;display:flex;gap:10px}
+.info-box .ib{font-size:18px;flex-shrink:0}
+
+/* ═══ ANEXOS ═══ */
+
+/* Dropzone */
+.dropzone{border:2px dashed #cdd5de;border-radius:12px;padding:32px 20px;text-align:center;transition:all .2s;cursor:pointer;background:#fafbfc;margin-bottom:20px}
+.dropzone:hover{border-color:#0e7a5c;background:#0e7a5c05}
+.dropzone.dragover{border-color:#0e7a5c;background:#0e7a5c08;transform:scale(1.01)}
+.dropzone .dz-icon{font-size:36px;margin-bottom:10px}
+.dropzone .dz-title{font-size:14px;font-weight:600;color:#1a2332;margin-bottom:4px}
+.dropzone .dz-sub{font-size:12px;color:#8395a7}
+.dropzone .dz-btn{display:inline-block;margin-top:12px;padding:8px 20px;background:#0e7a5c;color:#fff;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:filter .15s}
+.dropzone .dz-btn:hover{filter:brightness(1.1)}
+.dropzone .dz-formats{font-size:10px;color:#b0b8c4;margin-top:8px}
+
+/* Tipo de anexo selector */
+.attach-type-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.attach-type{padding:6px 14px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid #dfe4ea;background:#fff;color:#4a5e73;cursor:pointer;transition:all .15s;font-family:inherit}
+.attach-type:hover{border-color:#0e7a5c;color:#0e7a5c}
+.attach-type.selected{background:#0e7a5c;color:#fff;border-color:#0e7a5c}
+
+/* File list */
+.file-list{display:flex;flex-direction:column;gap:8px}
+.file-item{display:flex;align-items:center;gap:14px;padding:12px 16px;border:1px solid #dfe4ea;border-radius:10px;background:#fff;transition:all .15s}
+.file-item:hover{box-shadow:0 2px 8px rgba(0,0,0,.06);border-color:#cdd5de}
+.file-icon{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.file-icon.pdf{background:#c0392b15;color:#c0392b}
+.file-icon.img{background:#0969c315;color:#0969c3}
+.file-icon.doc{background:#0e7a5c15;color:#0e7a5c}
+.file-icon.other{background:#8395a715;color:#8395a7}
+.file-info{flex:1;min-width:0}
+.file-name{font-size:13px;font-weight:500;color:#1a2332;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.file-meta{font-size:11px;color:#8395a7;display:flex;gap:12px;margin-top:2px}
+.file-meta span{display:flex;align-items:center;gap:4px}
+.file-type-badge{font-size:10px;padding:3px 10px;border-radius:8px;font-weight:600;white-space:nowrap}
+.ftb-contrato{background:#0e7a5c15;color:#0e7a5c}
+.ftb-doc{background:#0969c315;color:#0969c3}
+.ftb-diploma{background:#8e44ad15;color:#8e44ad}
+.ftb-parecer{background:#d3540015;color:#d35400}
+.ftb-pagamento{background:#f39c1215;color:#f39c12}
+.ftb-outro{background:#8395a715;color:#8395a7}
+.file-actions{display:flex;gap:6px;flex-shrink:0}
+.file-actions button{padding:5px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;border:1px solid #dfe4ea;background:#fff;color:#4a5e73;transition:all .15s}
+.file-actions button:hover{background:#eef1f5}
+.file-actions .btn-del{color:#c0392b;border-color:#c0392b30}
+.file-actions .btn-del:hover{background:#fce8e8}
+
+/* Upload progress */
+.file-item.uploading{background:#f4f6f9;border-style:dashed}
+.upload-progress{width:100%;height:4px;background:#e8ecf2;border-radius:2px;margin-top:6px;overflow:hidden}
+.upload-progress .bar{height:100%;background:#0e7a5c;border-radius:2px;transition:width .3s;animation:progressAnim 2s ease-in-out infinite}
+@keyframes progressAnim{0%{width:20%}50%{width:80%}100%{width:95%}}
+
+/* Empty state */
+.attach-empty{text-align:center;padding:24px;color:#8395a7;font-size:13px}
+.attach-empty .ae-icon{font-size:32px;margin-bottom:8px}
+
+/* Stats */
+.attach-stats{display:flex;gap:16px;padding:12px 16px;background:#f4f6f9;border-radius:10px;margin-top:16px;font-size:12px;color:#8395a7}
+.attach-stats span{display:flex;align-items:center;gap:4px}
+.attach-stats .count{font-weight:700;color:#1a2332;font-family:'IBM Plex Mono',monospace}
+
+/* Demo tabs */
+.demo-tabs{display:flex;gap:4px;margin-bottom:24px;background:#fff;border:1px solid #dfe4ea;border-radius:12px;padding:6px}
+.demo-tab{flex:1;padding:12px;text-align:center;border-radius:8px;font-size:13px;font-weight:600;color:#8395a7;cursor:pointer;transition:all .15s;border:none;background:none;font-family:inherit}
+.demo-tab:hover{color:#1a2332;background:#f4f6f9}
+.demo-tab.active{background:#0e7a5c;color:#fff}
+.demo-panel{display:none}.demo-panel.active{display:block}
+</style>
+</head>
+<body>
+
+<div class="annotation">⚠ Seção de Anexos (Dataverse Notes/Annotations)</div>
+
+<div class="page">
+
+<div class="demo-tabs">
+  <button class="demo-tab active" onclick="showD('upload')">📎 Upload (formulário)</button>
+  <button class="demo-tab" onclick="showD('filled')">📂 Com arquivos</button>
+  <button class="demo-tab" onclick="showD('empty')">📭 Vazio</button>
+</div>
+
+<!-- ═══ DEMO 1: UPLOAD ═══ -->
+<div class="demo-panel active" id="d-upload">
+<div class="form-card">
+  <div class="form-header">
+    <h2>📎 Anexos — Modo Upload</h2>
+    <span style="font-size:11px;color:#8395a7">Contrato CLT-2024-0045</span>
+  </div>
+  <div class="form-body">
+
+    <div class="info-box">
+      <span class="ib">💾</span>
+      <div>Anexos são armazenados via <strong>Dataverse Notes/Annotations</strong> (<code>annotation</code> entity). Cada arquivo é vinculado ao registro do contrato por <code>objectid</code>. O tipo do anexo é salvo no campo <code>notetext</code> da annotation.</div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">📤 Adicionar Anexo</div>
+
+      <!-- Tipo selector -->
+      <div style="margin-bottom:14px">
+        <label style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#8395a7;margin-bottom:8px;display:block">1. Selecione o tipo do anexo</label>
+        <div class="attach-type-row">
+          <button class="attach-type selected" onclick="selType(this)">📄 Contrato assinado</button>
+          <button class="attach-type" onclick="selType(this)">🪪 Documentos pessoais</button>
+          <button class="attach-type" onclick="selType(this)">🎓 Diploma / Certificados</button>
+          <button class="attach-type" onclick="selType(this)">📋 Termo / Parecer técnico</button>
+          <button class="attach-type" onclick="selType(this)">💳 Comprovante de pagamento</button>
+          <button class="attach-type" onclick="selType(this)">📁 Outro</button>
+        </div>
+      </div>
+
+      <!-- Dropzone -->
+      <label style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#8395a7;margin-bottom:8px;display:block">2. Envie o arquivo</label>
+      <div class="dropzone" id="dropzone"
+        ondragover="event.preventDefault();this.classList.add('dragover')"
+        ondragleave="this.classList.remove('dragover')"
+        ondrop="event.preventDefault();this.classList.remove('dragover');simulateUpload()"
+        onclick="simulateUpload()">
+        <div class="dz-icon">📂</div>
+        <div class="dz-title">Arraste o arquivo aqui</div>
+        <div class="dz-sub">ou clique para selecionar</div>
+        <div class="dz-btn">Selecionar arquivo</div>
+        <div class="dz-formats">PDF, JPG, PNG, DOC, DOCX, XLS, XLSX — máx. 5MB</div>
+      </div>
+
+      <!-- Descrição opcional -->
+      <div style="margin-top:12px">
+        <label style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#8395a7;margin-bottom:6px;display:block">3. Descrição (opcional)</label>
+        <input type="text" placeholder="Ex: Contrato assinado em 15/04/2024 — via digital" style="width:100%;padding:10px 14px;border:1px solid #dfe4ea;border-radius:8px;font-size:13px;font-family:inherit;background:#f4f6f9;outline:none">
+      </div>
+    </div>
+
+    <!-- Uploading simulation -->
+    <div class="form-section">
+      <div class="form-section-title">📊 Upload em andamento</div>
+      <div class="file-list">
+        <div class="file-item uploading">
+          <div class="file-icon pdf">📄</div>
+          <div class="file-info">
+            <div class="file-name">Contrato_CLT-2024-0045_assinado.pdf</div>
+            <div class="upload-progress"><div class="bar"></div></div>
+            <div class="file-meta" style="margin-top:4px"><span>⏳ Enviando para Dataverse...</span><span>2.4 MB</span></div>
+          </div>
+          <div class="file-actions">
+            <button class="btn-del">✕ Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- ═══ DEMO 2: COM ARQUIVOS ═══ -->
+<div class="demo-panel" id="d-filled">
+<div class="form-card">
+  <div class="form-header">
+    <h2>📎 Anexos</h2>
+    <span style="font-size:11px;color:#8395a7">Contrato CLT-2024-0045 — João da Silva Santos</span>
+  </div>
+  <div class="form-body">
+
+    <div class="form-section">
+      <div class="form-section-title">📂 Arquivos Anexados (6)</div>
+
+      <!-- Filtro rápido -->
+      <div class="attach-type-row" style="margin-bottom:16px">
+        <button class="attach-type selected" onclick="selType(this)" style="background:#1a2332;color:#fff;border-color:#1a2332">Todos (6)</button>
+        <button class="attach-type" onclick="selType(this)">📄 Contrato (1)</button>
+        <button class="attach-type" onclick="selType(this)">🪪 Documentos (2)</button>
+        <button class="attach-type" onclick="selType(this)">🎓 Diploma (1)</button>
+        <button class="attach-type" onclick="selType(this)">📋 Parecer (1)</button>
+        <button class="attach-type" onclick="selType(this)">💳 Pagamento (1)</button>
+      </div>
+
+      <div class="file-list">
+
+        <!-- 1. Contrato assinado -->
+        <div class="file-item">
+          <div class="file-icon pdf">📄</div>
+          <div class="file-info">
+            <div class="file-name">Contrato_CLT-2024-0045_assinado.pdf</div>
+            <div class="file-meta">
+              <span>📅 15/04/2024</span>
+              <span>📦 2.4 MB</span>
+              <span>👤 henrique.garcia</span>
+            </div>
+          </div>
+          <span class="file-type-badge ftb-contrato">📄 Contrato assinado</span>
+          <div class="file-actions">
+            <button onclick="alert('Visualiza o PDF inline ou em nova aba')">👁️</button>
+            <button onclick="alert('Download do arquivo')">⬇️</button>
+            <button class="btn-del" onclick="alert('Confirma exclusão do anexo')">🗑️</button>
+          </div>
+        </div>
+
+        <!-- 2. RG -->
+        <div class="file-item">
+          <div class="file-icon img">🖼️</div>
+          <div class="file-info">
+            <div class="file-name">RG_Joao_Silva.jpg</div>
+            <div class="file-meta">
+              <span>📅 15/04/2024</span>
+              <span>📦 890 KB</span>
+              <span>👤 henrique.garcia</span>
+            </div>
+          </div>
+          <span class="file-type-badge ftb-doc">🪪 Doc. pessoal</span>
+          <div class="file-actions">
+            <button>👁️</button>
+            <button>⬇️</button>
+            <button class="btn-del">🗑️</button>
+          </div>
+        </div>
+
+        <!-- 3. CPF -->
+        <div class="file-item">
+          <div class="file-icon img">🖼️</div>
+          <div class="file-info">
+            <div class="file-name">CPF_Joao_Silva.pdf</div>
+            <div class="file-meta">
+              <span>📅 15/04/2024</span>
+              <span>📦 320 KB</span>
+              <span>👤 henrique.garcia</span>
+            </div>
+          </div>
+          <span class="file-type-badge ftb-doc">🪪 Doc. pessoal</span>
+          <div class="file-actions">
+            <button>👁️</button>
+            <button>⬇️</button>
+            <button class="btn-del">🗑️</button>
+          </div>
+        </div>
+
+        <!-- 4. Diploma -->
+        <div class="file-item">
+          <div class="file-icon pdf">📄</div>
+          <div class="file-info">
+            <div class="file-name">Diploma_Ciencia_Computacao_UnB_2018.pdf</div>
+            <div class="file-meta">
+              <span>📅 16/04/2024</span>
+              <span>📦 1.8 MB</span>
+              <span>👤 henrique.garcia</span>
+            </div>
+          </div>
+          <span class="file-type-badge ftb-diploma">🎓 Diploma</span>
+          <div class="file-actions">
+            <button>👁️</button>
+            <button>⬇️</button>
+            <button class="btn-del">🗑️</button>
+          </div>
+        </div>
+
+        <!-- 5. Parecer -->
+        <div class="file-item">
+          <div class="file-icon doc">📋</div>
+          <div class="file-info">
+            <div class="file-name">Parecer_Tecnico_DAET_2024_001.docx</div>
+            <div class="file-meta">
+              <span>📅 10/04/2024</span>
+              <span>📦 456 KB</span>
+              <span>👤 coord.daet</span>
+            </div>
+          </div>
+          <span class="file-type-badge ftb-parecer">📋 Parecer técnico</span>
+          <div class="file-actions">
+            <button>👁️</button>
+            <button>⬇️</button>
+            <button class="btn-del">🗑️</button>
+          </div>
+        </div>
+
+        <!-- 6. Comprovante -->
+        <div class="file-item">
+          <div class="file-icon pdf">📄</div>
+          <div class="file-info">
+            <div class="file-name">Comprovante_Pgto_Mai2024.pdf</div>
+            <div class="file-meta">
+              <span>📅 05/05/2024</span>
+              <span>📦 198 KB</span>
+              <span>👤 financeiro.saes</span>
+            </div>
+          </div>
+          <span class="file-type-badge ftb-pagamento">💳 Comprovante pgto</span>
+          <div class="file-actions">
+            <button>👁️</button>
+            <button>⬇️</button>
+            <button class="btn-del">🗑️</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Stats -->
+      <div class="attach-stats">
+        <span>📎 <span class="count">6</span> arquivos</span>
+        <span>📦 <span class="count">6.1 MB</span> total</span>
+        <span>📅 Último: <span class="count">05/05/2024</span></span>
+        <span style="margin-left:auto">
+          <button onclick="alert('Download de todos os anexos como ZIP')" style="padding:4px 12px;border:1px solid #dfe4ea;border-radius:6px;font-size:11px;font-weight:600;background:#fff;color:#4a5e73;cursor:pointer;font-family:inherit">⬇️ Baixar todos (.zip)</button>
+        </span>
+      </div>
+
+    </div>
+
+    <!-- Adicionar mais -->
+    <div class="form-section">
+      <div class="form-section-title">📤 Adicionar mais</div>
+      <div class="attach-type-row">
+        <button class="attach-type" onclick="selType(this)">📄 Contrato</button>
+        <button class="attach-type" onclick="selType(this)">🪪 Documentos</button>
+        <button class="attach-type" onclick="selType(this)">🎓 Diploma</button>
+        <button class="attach-type" onclick="selType(this)">📋 Parecer</button>
+        <button class="attach-type" onclick="selType(this)">💳 Pagamento</button>
+        <button class="attach-type" onclick="selType(this)">📁 Outro</button>
+      </div>
+      <div class="dropzone" style="padding:20px">
+        <div style="display:flex;align-items:center;justify-content:center;gap:12px">
+          <span style="font-size:20px">📂</span>
+          <span style="font-size:13px;color:#4a5e73;font-weight:500">Arraste ou clique para adicionar arquivo</span>
+          <span style="font-size:10px;color:#b0b8c4">PDF, JPG, PNG, DOC, XLS — máx 5MB</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- ═══ DEMO 3: VAZIO ═══ -->
+<div class="demo-panel" id="d-empty">
+<div class="form-card">
+  <div class="form-header">
+    <h2>📎 Anexos</h2>
+    <span style="font-size:11px;color:#8395a7">Contrato PF-2024-0089 — Ana Carolina Mendes</span>
+  </div>
+  <div class="form-body">
+
+    <div class="form-section">
+      <div class="form-section-title">📂 Arquivos Anexados</div>
+      <div class="attach-empty">
+        <div class="ae-icon">📭</div>
+        <p>Nenhum anexo adicionado a este contrato.</p>
+        <p style="font-size:11px;margin-top:4px">Adicione documentos como contrato assinado, diplomas, pareceres e comprovantes.</p>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">📤 Adicionar Anexo</div>
+      <div class="attach-type-row">
+        <button class="attach-type" onclick="selType(this)">📄 Contrato</button>
+        <button class="attach-type" onclick="selType(this)">🪪 Documentos</button>
+        <button class="attach-type" onclick="selType(this)">🎓 Diploma</button>
+        <button class="attach-type" onclick="selType(this)">📋 Parecer</button>
+        <button class="attach-type" onclick="selType(this)">💳 Pagamento</button>
+        <button class="attach-type" onclick="selType(this)">📁 Outro</button>
+      </div>
+      <div class="dropzone">
+        <div class="dz-icon">📂</div>
+        <div class="dz-title">Arraste o arquivo aqui</div>
+        <div class="dz-sub">ou clique para selecionar</div>
+        <div class="dz-btn">Selecionar arquivo</div>
+        <div class="dz-formats">PDF, JPG, PNG, DOC, DOCX, XLS, XLSX — máx. 5MB</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- ═══ NOTA TÉCNICA ═══ -->
+<div class="form-card" style="margin-top:24px">
+  <div class="form-header"><h2>🔧 Nota Técnica — Implementação</h2></div>
+  <div class="form-body" style="font-size:13px;line-height:1.8;color:#4a5e73">
+    <p><strong>Storage:</strong> Dataverse <code>annotation</code> (Notes/Annotations)</p>
+    <p><strong>Campos usados:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:12px">
+      <thead><tr style="background:#f4f6f9"><th style="padding:8px 12px;text-align:left;border-bottom:1px solid #dfe4ea">Campo</th><th style="padding:8px 12px;text-align:left;border-bottom:1px solid #dfe4ea">Uso</th></tr></thead>
+      <tbody>
+        <tr><td style="padding:6px 12px;border-bottom:1px solid #dfe4ea;font-family:'IBM Plex Mono';font-size:11px">objectid</td><td style="padding:6px 12px;border-bottom:1px solid #dfe4ea">ID do contrato (saes_contratopfid / saes_contratocltid)</td></tr>
+        <tr><td style="padding:6px 12px;border-bottom:1px solid #dfe4ea;font-family:'IBM Plex Mono';font-size:11px">subject</td><td style="padding:6px 12px;border-bottom:1px solid #dfe4ea">Tipo do anexo (ex: "contrato_assinado", "diploma", "parecer")</td></tr>
+        <tr><td style="padding:6px 12px;border-bottom:1px solid #dfe4ea;font-family:'IBM Plex Mono';font-size:11px">notetext</td><td style="padding:6px 12px;border-bottom:1px solid #dfe4ea">Descrição livre do usuário</td></tr>
+        <tr><td style="padding:6px 12px;border-bottom:1px solid #dfe4ea;font-family:'IBM Plex Mono';font-size:11px">filename</td><td style="padding:6px 12px;border-bottom:1px solid #dfe4ea">Nome do arquivo original</td></tr>
+        <tr><td style="padding:6px 12px;border-bottom:1px solid #dfe4ea;font-family:'IBM Plex Mono';font-size:11px">documentbody</td><td style="padding:6px 12px;border-bottom:1px solid #dfe4ea">Conteúdo em Base64</td></tr>
+        <tr><td style="padding:6px 12px;border-bottom:1px solid #dfe4ea;font-family:'IBM Plex Mono';font-size:11px">mimetype</td><td style="padding:6px 12px;border-bottom:1px solid #dfe4ea">MIME type (application/pdf, image/jpeg, etc.)</td></tr>
+        <tr><td style="padding:6px 12px;font-family:'IBM Plex Mono';font-size:11px">filesize</td><td style="padding:6px 12px">Tamanho em bytes</td></tr>
+      </tbody>
+    </table>
+    <p><strong>API:</strong></p>
+    <pre style="background:#f4f6f9;padding:14px;border-radius:8px;font-size:11px;font-family:'IBM Plex Mono';overflow-x:auto;margin:8px 0;line-height:1.6;color:#1a2332">// Upload
+POST /api/data/v9.2/annotations
+{
+  "<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="caa5a8a0afa9bea3ae95b9abafb995a9a5a4beb8abbea5baac8aa5aeabbeabe4a8a3a4ae">[email&#160;protected]</a>": "saes_contratopfs({id})",
+  "subject": "contrato_assinado",
+  "notetext": "Contrato assinado em 15/04/2024",
+  "filename": "Contrato_CLT-2024-0045.pdf",
+  "documentbody": "&lt;base64&gt;",
+  "mimetype": "application/pdf"
+}
+
+// Listar
+GET /api/data/v9.2/annotations
+  ?$filter=_objectid_value eq '{contrato_id}'
+  &$select=subject,notetext,filename,filesize,mimetype,createdon
+  &$orderby=createdon desc</pre>
+    <p><strong>Limite:</strong> 5MB por annotation (padrão Dataverse). Para arquivos maiores, considerar SharePoint integration futuramente.</p>
+  </div>
+</div>
+
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+function showD(id){document.querySelectorAll('.demo-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.demo-tab').forEach(b=>b.classList.remove('active'));document.getElementById('d-'+id).classList.add('active');event.target.classList.add('active');window.scrollTo(0,0)}
+function selType(el){const row=el.closest('.attach-type-row');row.querySelectorAll('.attach-type').forEach(b=>{b.classList.remove('selected');b.st

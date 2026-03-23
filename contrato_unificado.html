@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contrato Unificado v2</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'IBM Plex Sans',sans-serif;background:#f4f6f9;color:#1a2332;min-height:100vh}
+.annotation{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#d63031;color:#fff;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,.2);white-space:nowrap}
+.page{max-width:1100px;margin:0 auto;padding:70px 24px 40px}
+.demo-tabs{display:flex;gap:4px;margin-bottom:24px;background:#fff;border:1px solid #dfe4ea;border-radius:12px;padding:6px}
+.demo-tab{flex:1;padding:12px;text-align:center;border-radius:8px;font-size:13px;font-weight:600;color:#8395a7;cursor:pointer;transition:all .15s;border:none;background:none;font-family:inherit}
+.demo-tab:hover{color:#1a2332;background:#f4f6f9}.demo-tab.active{background:#0e7a5c;color:#fff}
+.demo-panel{display:none}.demo-panel.active{display:block}
+.form-card{background:#fff;border:1px solid #dfe4ea;border-radius:14px;box-shadow:0 2px 16px rgba(0,0,0,.07);overflow:hidden}
+.form-header{padding:20px 24px;border-bottom:1px solid #dfe4ea;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.form-header h2{font-size:18px;font-weight:700;display:flex;align-items:center;gap:10px}
+.form-body{padding:24px}
+.form-section{margin-bottom:28px}
+.form-section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#0e7a5c;padding-bottom:10px;border-bottom:2px solid #0e7a5c20;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.form-grid{display:grid;gap:16px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}.g4{grid-template-columns:1fr 1fr 1fr 1fr}.full{grid-column:1/-1}
+.field{display:flex;flex-direction:column}
+.field label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#8395a7;margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.field label .req{color:#c0392b;font-size:13px}
+.field input,.field select,.field textarea{padding:10px 14px;border:1px solid #dfe4ea;border-radius:8px;font-size:13px;font-family:inherit;background:#f4f6f9;color:#1a2332;outline:none;transition:all .15s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#0e7a5c;background:#fff}
+.field textarea{resize:vertical;min-height:80px}.field .hint{font-size:10px;color:#b0b8c4;margin-top:4px}
+.field input:disabled,.field select:disabled{background:#e8ecf2;color:#8395a7;cursor:not-allowed}
+.lookup-field{position:relative}.lookup-field input{padding-right:36px}
+.lookup-field .lk{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:14px;color:#8395a7;cursor:pointer}
+.currency-field{position:relative}.currency-field input{padding-left:36px;text-align:right;font-family:'IBM Plex Mono',monospace}
+.currency-field .pfx{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:12px;color:#8395a7;font-weight:600}
+.form-footer{padding:16px 24px;border-top:1px solid #dfe4ea;display:flex;align-items:center;justify-content:space-between;background:#fafbfc}
+.btn{padding:9px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;border:none;transition:all .15s}
+.btn-primary{background:#0e7a5c;color:#fff}.btn-primary:hover{filter:brightness(1.1)}
+.btn-danger{background:#c0392b;color:#fff}.btn-ghost{background:#fff;color:#4a5e73;border:1px solid #dfe4ea}
+.btn-ghost:hover{background:#eef1f5}.btn-blue{background:#0969c3;color:#fff}.btn-blue:hover{filter:brightness(1.1)}
+.tag{font-size:9px;padding:2px 6px;border-radius:6px;font-weight:600;margin-left:4px}
+.tag-clt{background:#0969c320;color:#0969c3}.tag-auto{background:#0e7a5c15;color:#0e7a5c}.tag-chain{background:#d3540020;color:#d35400}
+.sit-auto{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600}
+.sit-auto.ativo{background:#e6f7f2;color:#0e7a5c;border:1px solid #0e7a5c30}
+.sit-auto.elaboracao{background:#e3f0fc;color:#0969c3;border:1px solid #0969c330}
+.sit-auto.encerrado{background:#fce8e8;color:#c0392b;border:1px solid #c0392b30}
+.info-box{background:#0969c308;border:1px solid #0969c325;border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:12px;color:#0969c3;line-height:1.6;display:flex;gap:10px}
+.info-box .ib{font-size:18px;flex-shrink:0}.info-box.warn{background:#f39c1208;border-color:#f39c1225;color:#d35400}
+.chain-arrow{display:flex;align-items:center;gap:8px;margin:8px 0}
+.chain-step{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid #dfe4ea;background:#fff}
+.chain-step.filled{background:#0e7a5c10;border-color:#0e7a5c40;color:#0e7a5c}
+.vinculo-selector{display:flex;gap:8px;margin-bottom:20px;padding:16px;background:#f4f6f9;border-radius:12px;border:1px solid #dfe4ea}
+.vinculo-option{flex:1;padding:14px;border-radius:10px;text-align:center;cursor:pointer;border:2px solid transparent;background:#fff;transition:all .2s}
+.vinculo-option:hover{border-color:#dfe4ea;transform:translateY(-1px)}.vinculo-option.selected{border-color:#0e7a5c;background:#0e7a5c08}
+.vinculo-option.disabled{opacity:.4;pointer-events:none}
+.vo-icon{font-size:24px;margin-bottom:6px}.vo-label{font-size:13px;font-weight:600;color:#1a2332}
+.vo-desc{font-size:10px;color:#8395a7;margin-top:2px}.vo-tag{font-size:9px;padding:2px 8px;border-radius:8px;font-weight:600;margin-top:6px;display:inline-block}
+.clt-section{position:relative;padding-left:12px;border-left:3px solid #0969c3}
+.timeline-list{position:relative;padding-left:24px}
+.timeline-list::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:#dfe4ea}
+.timeline-item{position:relative;padding:14px 18px;margin-bottom:14px;background:#fff;border:1px solid #dfe4ea;border-radius:10px;transition:all .15s}
+.timeline-item:hover{box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.timeline-item::before{content:'';position:absolute;left:-21px;top:20px;width:10px;height:10px;border-radius:50%;border:2px solid #dfe4ea;background:#fff}
+.timeline-item.active::before{border-color:#0e7a5c;background:#0e7a5c}
+.timeline-item.enc::before{border-color:#c0392b;background:#c0392b}
+.ti-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.ti-title{font-size:13px;font-weight:600;color:#1a2332}
+.ti-badge{font-size:10px;padding:3px 10px;border-radius:10px;font-weight:600}
+.ti-badge.ativo{background:#e6f7f2;color:#0e7a5c}.ti-badge.enc{background:#fce8e8;color:#c0392b}
+.ti-details{display:flex;gap:16px;font-size:12px;color:#8395a7;flex-wrap:wrap}
+.ti-details span{display:flex;align-items:center;gap:4px}
+.ti-actions{margin-top:10px;display:flex;gap:6px}
+.ti-actions button{padding:5px 14px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;border:1px solid #dfe4ea;background:#fff;color:#4a5e73}
+.ti-actions button:hover{background:#eef1f5}.ti-actions .btn-renew{background:#0969c3;color:#fff;border:none}
+.summary-grid{margin-top:24px;background:#f4f6f9;border:1px solid #dfe4ea;border-radius:12px;padding:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.sg-label{font-size:10px;color:#8395a7;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+.sg-value{font-size:22px;font-weight:700;font-family:'IBM Plex Mono',monospace}
+@media(max-width:700px){.g2,.g3,.g4{grid-template-columns:1fr}.vinculo-selector{flex-direction:column}.summary-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="annotation">Situação automática · PEP→Projeto · Consultor só OPAS · Rubrica fixa</div>
+<div class="page">
+
+<div class="demo-tabs">
+  <button class="demo-tab active" onclick="showD('ted')">📋 Novo (TED)</button>
+  <button class="demo-tab" onclick="showD('opas')">🌐 Novo (OPAS)</button>
+  <button class="demo-tab" onclick="showD('clt')">👷 CLT preenchido</button>
+  <button class="demo-tab" onclick="showD('pf')">🎓 Bolsista preenchido</button>
+  <button class="demo-tab" onclick="showD('hist')">📜 Histórico</button>
+</div>
+
+<!-- ═══ NOVO CONTRATO TED ═══ -->
+<div class="demo-panel active" id="d-ted">
+<div class="form-card">
+  <div class="form-header"><h2>📋 Novo Contrato</h2><span style="padding:4px 14px;border-radius:8px;font-size:11px;font-weight:700;background:#0e7a5c15;color:#0e7a5c">📁 Módulo TED</span></div>
+  <div class="form-body">
+    <div class="info-box"><span class="ib">⚡</span><div><strong>Regras automáticas:</strong><br>• <strong>Situação</strong> — 100% automática pelas datas (sem campo editável)<br>• <strong>Projeto</strong> — preenchido ao selecionar PEP (PEP → Projeto)<br>• <strong>Rubrica</strong> — fixa: PF ou CLT (sem edição)<br>• <strong>Consultor</strong> — disponível apenas no módulo OPAS</div></div>
+
+    <div class="form-section">
+      <div class="form-section-title">👤 Tipo de Vínculo</div>
+      <div class="vinculo-selector">
+        <div class="vinculo-option" onclick="sel(this,'clt','ted')"><div class="vo-icon">👷</div><div class="vo-label">CLT</div><div class="vo-desc">Regime CLT via fundação</div></div>
+        <div class="vinculo-option" onclick="sel(this,'bolsista','ted')"><div class="vo-icon">🎓</div><div class="vo-label">Bolsista</div><div class="vo-desc">Bolsa pesquisa/extensão</div></div>
+        <div class="vinculo-option" onclick="sel(this,'rpa','ted')"><div class="vo-icon">📄</div><div class="vo-label">RPA</div><div class="vo-desc">Recibo Pgto Autônomo</div></div>
+        <div class="vinculo-option disabled"><div class="vo-icon">💼</div><div class="vo-label">Consultor</div><div class="vo-desc">Apenas módulo OPAS</div><span class="vo-tag" style="background:#c0392b15;color:#c0392b">Indisponível</span></div>
+      </div>
+    </div>
+
+    <div id="ted-fields" style="opacity:.3;pointer-events:none">
+      <div class="form-section"><div class="form-section-title">📋 Identificação</div>
+        <div class="form-grid g3">
+          <div class="field"><label>Nº Contrato <span class="req">*</span></label><input placeholder="Auto ou manual"></div>
+          <div class="field"><label>Pessoa <span class="req">*</span></label><div class="lookup-field"><input placeholder="Buscar pessoa..."><span class="lk">🔍</span></div></div>
+          <div class="field"><label>Tipo Registro</label><select><option selected>Novo</option><option>Renovação</option><option>Substituição</option><option>Aditivo</option></select></div>
+        </div>
+      </div>
+
+      <div class="form-section"><div class="form-section-title">🔗 PEP → Projeto <span class="tag tag-chain">Encadeamento automático</span></div>
+        <div class="info-box warn"><span class="ib">🔗</span><div>Selecione o <strong>PEP</strong>. O <strong>Projeto</strong> será preenchido automaticamente pelo relacionamento no Dataverse.</div></div>
+        <div class="chain-arrow"><span class="chain-step" id="cp1">1. Selecione o PEP</span><span style="color:#b0b8c4;font-size:16px">→</span><span class="chain-step" id="cp2">2. Projeto (auto)</span></div>
+        <div class="form-grid g3" style="margin-top:12px">
+          <div class="field"><label>PEP <span class="req">*</span></label><div class="lookup-field"><input placeholder="Buscar PEP..." id="pep-ted" oninput="chain('ted')"><span class="lk">🔍</span></div></div>
+          <div class="field"><label>Projeto <span class="tag tag-auto">Auto</span></label><input id="proj-ted" disabled placeholder="← Preenchido pelo PEP"><span class="hint">Readonly — vem do PEP</span></div>
+          <div class="field"><label>Rubrica <span class="tag tag-auto">Fixa</span></label><input id="rub-ted" disabled value="" style="font-weight:600"><span class="hint">PF ou CLT — automática pelo vínculo</span></div>
+        </div>
+      </div>
+
+      <div class="form-section"><div class="form-section-title">📊 Situação <span class="tag tag-auto">100% Automática</span></div>
+        <div class="form-grid g4">
+          <div class="field"><label id="ldt-ted">Data Início <span class="req">*</span></label><input type="date" id="di-ted" onchange="calcS('ted')"><span class="hint" id="hdt-ted">Admissão (CLT) ou assinatura (PF)</span></div>
+          <div class="field"><label>Data Final <span class="req">*</span></label><input type="date" id="df-ted" onchange="calcS('ted')"></div>
+          <div class="field"><label>Data 1º Pagamento</label><input type="date"></div>
+          <div class="field"><label>Situação Calculada</label><div id="sit-ted" class="sit-auto elaboracao">⏳ Preencha as datas</div><span class="hint">hoje &lt; início → Em Elaboração · início ≤ hoje ≤ final → Ativo · hoje &gt; final → Encerrado</span></div>
+        </div>
+      </div>
+
+      <div class="form-section clt-section" id="clt-ted" style="display:none"><div class="form-section-title">👷 Dados CLT <span class="tag tag-clt">Exclusivo CLT</span></div>
+        <div class="form-grid g4">
+          <div class="field"><label>Cargo</label><input placeholder="Ex: Analista de Dados"></div>
+          <div class="field"><label>Matrícula CLT</label><input placeholder="Matrícula fundação"></div>
+          <div class="field"><label>Substituído</label><input placeholder="Pessoa substituída"></div>
+          <div class="field"><label>Salário Líquido</label><div class="currency-field"><span class="pfx">R$</span><input placeholder="0,00"></div></div>
+        </div>
+      </div>
+
+      <div class="form-section"><div class="form-section-title">💰 Valores</div>
+        <div class="form-grid g4">
+          <div class="field"><label id="lv-ted">Valor Mensal <span class="req">*</span></label><div class="currency-field"><span class="pfx">R$</span><input placeholder="0,00"></div><span class="hint" id="hv-ted">Salário bruto (CLT) ou valor da bolsa</span></div>
+          <div class="field"><label>Custo Previsto Contrato</label><div class="currency-field"><span class="pfx">R$</span><input placeholder="0,00"></div></div>
+          <div class="field"><label>Custo Previsto Projeto</label><div class="currency-field"><span class="pfx">R$</span><input placeholder="0,00"></div></div>
+          <div class="field"><label>Valor Executado</label><div class="currency-field"><span class="pfx">R$</span><input placeholder="0,00"></div></div>
+        </div>
+      </div>
+
+      <div class="form-section"><div class="form-section-title">📝 Observações</div><div class="field full"><textarea placeholder="Observações..."></textarea></div></div>
+    </div>
+  </div>
+  <div class="form-footer"><div><button class="btn btn-danger">🗑️ Excluir</button></div><div style="display:flex;gap:8px"><button class="btn btn-ghost">Cancelar</button><button class="btn btn-primary">💾 Salvar</button></div></div>
+</div></div>
+
+<!-- ═══ NOVO CONTRATO OPAS ═══ -->
+<div class="demo-panel" id="d-opas">
+<div class="form-card">
+  <div class="form-header"><h2>📋 Novo Contrato</h2><span style="padding:4px 14px;border-radius:8px;font-size:11px;font-weight:700;background:#0969c315;color:#0969c3">🌐 Módulo OPAS</span></div>
+  <div class="form-body">
+    <div class="info-box"><span class="ib">🌐</span><div>Módulo OPAS — <strong>Consultor disponível</strong>. Mesmas regras automáticas.</div></div>
+    <div class="form-section"><div class="form-section-title">👤 Tipo de Vínculo</div>
+      <div class="vinculo-selector">
+        <div class="vinculo-option"><div class="vo-icon">👷</div><div class="vo-label">CLT</div></div>
+        <div class="vinculo-option"><div class="vo-icon">🎓</div><div class="vo-label">Bolsista</div></div>
+        <div class="vinculo-option"><div class="vo-icon">📄</div><div class="vo-label">RPA</div></div>
+        <div class="vinculo-option selected" style="border-color:#0e7a5c"><div class="vo-icon">💼</div><div class="vo-label">Consultor</div><div class="vo-desc">Consultoria OPAS</div><span class="vo-tag" style="background:#0e7a5c15;color:#0e7a5c">✅ Disponível</span></div>
+      </div>
+    </div>
+    <div class="form-section"><div class="form-section-title">📋 Consultor OPAS — Dados preenchidos</div>
+      <div class="form-grid g3">
+        <div class="field"><label>Nº Contrato</label><input value="OPAS-CONS-2024-012"></div>
+        <div class="field"><label>Pessoa</label><div class="lookup-field"><input value="Dr. Carlos Eduardo"><span class="lk">🔍</span></div></div>
+        <div class="field"><label>Tipo Registro</label><select><option selected>Novo</option></select></div>
+      </div></div>
+    <div class="form-section"><div class="form-section-title">🔗 Vinculação</div>
+      <div class="form-grid g3">
+        <div class="field"><label>PEP</label><div class="lookup-field"><input value="PEP-OPAS-DESMAD-001"><span class="lk">🔍</span></div></div>
+        <div class="field"><label>Projeto <span class="tag tag-auto">Auto</span></label><input disabled value="OPAS/BRA-2024 — Saúde Mental" style="color:#0e7a5c;font-weight:600"></div>
+        <div class="field"><label>Rubrica <span class="tag tag-auto">Fixa</span></label><input disabled value="PF" style="font-weight:700;color:#d35400"></div>
+      </div></div>
+    <div class="form-section"><div class="form-section-title">📊 Situação <span class="tag tag-auto">Automática</span></div>
+      <div class="form-grid g4">
+        <div class="field"><label>Data Assinatura</label><input type="date" value="2024-06-01"></div>
+        <div class="field"><label>Data Final</label><input type="date" value="2025-06-30"></div>
+        <div class="field"><label>1º Pagamento</label><input type="date" value="2024-07-05"></div>
+        <div class="field"><label>Situação</label><div class="sit-auto ativo">🟢 Ativo</div><span class="hint">01/06/2024 ≤ hoje ≤ 30/06/2025</span></div>
+      </div></div>
+    <div class="form-section"><div class="form-section-title">💰 Valores</div>
+      <div class="form-grid g4">
+        <div class="field"><label>Valor Consultoria</label><div class="currency-field"><span class="pfx">R$</span><input value="15.000,00"></div></div>
+        <div class="field"><label>Custo Previsto</label><div class="currency-field"><span class="pfx">R$</span><input value="195.000,00"></div></div>
+        <div class="field"><label>Custo Projeto</label><div class="currency-field"><span class="pfx">R$</span><input value="195.000,00"></div></div>
+        <div class="field"><label>Executado</label><div class="currency-field"><span class="pfx">R$</span><input value="75.000,00"></div></div>
+      </div></div>
+  </div>
+  <div class="form-footer"><div><button class="btn btn-danger">🗑️</button></div><div style="display:flex;gap:8px"><button class="btn btn-ghost">Cancelar</button><button class="btn btn-primary">💾 Salvar</button></div></div>
+</div></div>
+
+<!-- ═══ CLT PREENCHIDO ═══ -->
+<div class="demo-panel" id="d-clt">
+<div class="form-card">
+  <div class="form-header"><h2>📋 CLT-2024-0045</h2><div style="display:flex;gap:6px"><span style="padding:4px 12px;border-radius:8px;font-size:11px;font-weight:700;background:#0969c320;color:#0969c3">👷 CLT</span><span class="sit-auto ativo" style="padding:4px 12px;font-size:11px">🟢 Ativo</span><span style="padding:4px 12px;border-radius:8px;font-size:11px;font-weight:700;background:#e3f0fc;color:#0969c3">Renovação</span></div></div>
+  <div class="form-body">
+    <div class="form-grid g3"><div class="field"><label>Pessoa</label><input value="João da Silva Santos" disabled></div><div class="field"><label>PEP</label><input value="PEP-DAET-001" disabled></div><div class="field"><label>Projeto <span class="tag tag-auto">Auto</span></label><input disabled value="TED 2024/001 — Fortalecimento Rede" style="color:#0e7a5c;font-weight:600"></div></div>
+    <div class="clt-section" style="margin-top:24px"><div class="form-section-title">👷 Dados CLT <span class="tag tag-clt">CLT</span></div>
+      <div class="form-grid g4"><div class="field"><label>Cargo</label><input value="Analista de Dados Sênior" disabled></div><div class="field"><label>Matrícula</label><input value="FNS-2024-1234" disabled></div><div class="field"><label>Substituído</label><input value="Maria Souza Oliveira" disabled></div><div class="field"><label>Salário Líquido</label><div class="currency-field"><span class="pfx">R$</span><input value="6.240,00" disabled></div></div></div></div>
+    <div style="margin-top:24px"><div class="form-section-title">💰 Valores</div>
+      <div class="form-grid g4"><div class="field"><label>Salário Bruto</label><div class="currency-field"><span class="pfx">R$</span><input value="8.500,00" disabled></div></div><div class="field"><label>Rubrica <span class="tag tag-auto">Fixa</span></label><input value="CLT" disabled style="font-weight:700;color:#0969c3"></div><div class="field"><label>Custo Previsto</label><div class="currency-field"><span class="pfx">R$</span><input value="306.000,00" disabled></div></div><div class="field"><label>Executado</label><div class="currency-field"><span class="pfx">R$</span><input value="114.750,00" disabled style="color:#0e7a5c;font-weight:600"></div></div></div></div>
+    <div style="margin-top:24px"><div class="form-section-title">📅 Datas → Situação</div>
+      <div class="form-grid g4"><div class="field"><label>Admissão</label><input value="15/04/2024" disabled></div><div class="field"><label>Data Final</label><input value="14/04/2026" disabled></div><div class="field"><label>1º Pagamento</label><input value="05/05/2024" disabled></div><div class="field"><label>Situação <span class="tag tag-auto">Auto</span></label><div class="sit-auto ativo">🟢 Ativo</div><span class="hint">15/04/2024 ≤ hoje ≤ 14/04/2026</span></div></div></div>
+  </div>
+  <div class="form-footer"><div><button class="btn btn-danger">🗑️ Excluir</button></div><div style="display:flex;gap:8px"><button class="btn btn-blue">🔄 Renovar</button><button class="btn btn-primary">✏️ Editar</button></div></div>
+</div></div>
+
+<!-- ═══ BOLSISTA PREENCHIDO ═══ -->
+<div class="demo-panel" id="d-pf">
+<div class="form-card">
+  <div class="form-header"><h2>📋 PF-2024-0089</h2><div style="display:flex;gap:6px"><span style="padding:4px 12px;border-radius:8px;font-size:11px;font-weight:700;background:#d3540020;color:#d35400">🎓 Bolsista</span><span class="sit-auto ativo" style="padding:4px 12px;font-size:11px">🟢 Ativo</span></div></div>
+  <div class="form-body">
+    <div class="form-grid g3"><div class="field"><label>Pessoa</label><input value="Ana Carolina Mendes" disabled></div><div class="field"><label>PEP</label><input value="PEP-DECAN-003" disabled></div><div class="field"><label>Projeto <span class="tag tag-auto">Auto</span></label><input disabled value="TED 2024/018 — Qualificação SAES" style="color:#0e7a5c;font-weight:600"></div></div>
+    <div style="margin-top:24px"><div class="form-section-title">💰 Valores</div>
+      <div class="form-grid g4"><div class="field"><label>Valor da Bolsa</label><div class="currency-field"><span class="pfx">R$</span><input value="6.000,00" disabled></div></div><div class="field"><label>Rubrica <span class="tag tag-auto">Fixa</span></label><input value="PF" disabled style="font-weight:700;color:#d35400"></div><div class="field"><label>Custo Previsto</label><div class="currency-field"><span class="pfx">R$</span><input value="72.000,00" disabled></div></div><div class="field"><label>Executado</label><div class="currency-field"><span class="pfx">R$</span><input value="24.000,00" disabled style="color:#0e7a5c;font-weight:600"></div></div></div></div>
+    <div style="margin-top:24px"><div class="form-section-title">📅 Datas → Situação</div>
+      <div class="form-grid g4"><div class="field"><label>Assinatura</label><input value="01/03/2024" disabled></div><div class="field"><label>Data Final</label><input value="14/03/2025" disabled></div><div class="field"><label>1º Pagamento</label><input value="05/04/2024" disabled></div><div class="field"><label>Situação <span class="tag tag-auto">Auto</span></label><div class="sit-auto ativo">🟢 Ativo</div><span class="hint">01/03/2024 ≤ hoje ≤ 14/03/2025</span></div></div></div>
+  </div>
+  <div class="form-footer"><div><button class="btn btn-danger">🗑️ Excluir</button></div><div style="display:flex;gap:8px"><button class="btn btn-blue">🔄 Renovar</button><button class="btn btn-primary">✏️ Editar</button></div></div>
+</div></div>
+
+<!-- ═══ HISTÓRICO ═══ -->
+<div class="demo-panel" id="d-hist">
+<div class="form-card">
+  <div class="form-header"><h2>👤 João da Silva Santos — Histórico</h2></div>
+  <div class="form-body">
+    <div class="info-box"><span class="ib">💡</span><div>Cada contrato = <strong>registro independente</strong>. O botão <strong>"🔄 Renovar"</strong> cria novo registro (tipo Renovação) e marca o anterior como Encerrado. A <strong>situação</strong> é recalculada automaticamente pelas datas.</div></div>
+    <div class="timeline-list">
+      <div class="timeline-item active">
+        <div class="ti-header"><span class="ti-title">CLT-2024-0045 — Analista Sênior</span><span class="ti-badge ativo">🟢 Ativo</span></div>
+        <div class="ti-details"><span>👷 CLT</span><span>📅 15/04/2024 → 14/04/2026</span><span>💰 R$ 8.500/mês</span><span>🏷️ CLT</span><span style="background:#e3f0fc;padding:2px 8px;border-radius:6px;color:#0969c3;font-weight:600">Renovação</span></div>
+        <div class="ti-details" style="margin-top:4px"><span>📁 TED 2024/001</span><span>🏢 DAET</span></div>
+        <div class="ti-actions"><button>✏️ Editar</button><button class="btn-renew" onclick="alert('Cria novo registro:\n• Tipo: Renovação\n• Copia pessoa + PEP/Projeto\n• Situação: calculada pelas novas datas\n\nMarca CLT-2024-0045 como Encerrado')">🔄 Renovar</button><button>⏹️ Encerrar</button></div>
+      </div>
+      <div class="timeline-item enc">
+        <div class="ti-header"><span class="ti-title">CLT-2022-0089 — Analista Pleno</span><span class="ti-badge enc">⏹️ Encerrado</span></div>
+        <div class="ti-details"><span>👷 CLT</span><span>📅 01/06/2022 → 14/04/2024</span><span>💰 R$ 7.200/mês</span><span>🏷️ CLT</span></div>
+        <div class="ti-actions"><button>👁️ Ver</button></div>
+      </div>
+      <div class="timeline-item enc">
+        <div class="ti-header"><span class="ti-title">PF-2021-0034 — Bolsista</span><span class="ti-badge enc">⏹️ Encerrado</span></div>
+        <div class="ti-details"><span>🎓 Bolsista</span><span>📅 15/03/2021 → 31/05/2022</span><span>💰 R$ 4.500/mês</span><span>🏷️ PF</span></div>
+        <div class="ti-actions"><button>👁️ Ver</button></div>
+      </div>
+      <div class="timeline-item enc">
+        <div class="ti-header"><span class="ti-title">PF-2020-0112 — RPA Técnico</span><span class="ti-badge enc">⏹️ Encerrado</span></div>
+        <div class="ti-details"><span>📄 RPA</span><span>📅 01/08/2020 → 28/02/2021</span><span>💰 R$ 3.800/mês</span><span>🏷️ PF</span></div>
+        <div class="ti-actions"><button>👁️ Ver</button></div>
+      </div>
+    </div>
+    <div class="summary-grid">
+      <div><div class="sg-label">Total Contratos</div><div class="sg-value" style="color:#0e7a5c">4</div></div>
+      <div><div class="sg-label">Tempo Total</div><div class="sg-value" style="color:#0969c3">4a 8m</div></div>
+      <div><div class="sg-label">Valor Acumulado</div><div class="sg-value" style="color:#0e7a5c;font-size:18px">R$ 348.200</div></div>
+      <div><div class="sg-label">Vínculo Atual</div><div class="sg-value" style="font-size:16px;color:#0969c3">👷 CLT</div></div>
+    </div>
+  </div>
+</div></div>
+
+</div>
+
+<script>
+function showD(id){document.querySelectorAll('.demo-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.demo-tab').forEach(b=>b.classList.remove('active'));document.getElementById('d-'+id).classList.add('active');event.target.classList.add('active');window.scrollTo(0,0)}
+function sel(el,tipo,mod){el.closest('.vinculo-selector').querySelectorAll('.vinculo-option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');const f=document.getElementById(mod+'-fields');f.style.opacity='1';f.style.pointerEvents='auto';const cs=document.getElementById('clt-'+mod),rb=document.getElementById('rub-'+mod),lv=document.getElementById('lv-'+mod),hv=document.getElementById('hv-'+mod),ld=document.getElementById('ldt-'+mod),hd=document.getElementById('hdt-'+mod);if(tipo==='clt'){if(cs)cs.style.display='';if(rb)rb.value='CLT';if(lv)lv.innerHTML='Salário Bruto <span class="req">*</span>';if(hv)hv.textContent='Salário bruto mensal CLT';if(ld)ld.innerHTML='Data Admissão <span class="req">*</span>';if(hd)hd.textContent='Data de admissão CLT'}else{if(cs)cs.style.display='none';if(rb)rb.value='PF';const l={bolsista:'Valor da Bolsa',rpa:'Valor RPA',consultor:'Valor Consultoria'};if(lv)lv.innerHTML=(l[tipo]||'Valor Mensal')+' <span class="req">*</span>';if(hv)hv.textContent=tipo==='bolsista'?'Valor mensal da bolsa':'Valor mensal do serviço';if(ld)ld.innerHTML='Data Assinatura <span class="req">*</span>';if(hd)hd.textContent='Data de assinatura'}}
+function chain(mod){const p=document.getElementById('pep-'+mod).value,pr=document.getElementById('proj-'+mod),s1=document.getElementById('cp1'),s2=document.getElementById('cp2');if(p.length>3){pr.value='TED 2024/001 — Fortalecimento Rede (auto)';pr.style.color='#0e7a5c';pr.style.fontWeight='600';s1.classList.add('filled');s2.classList.add('filled')}else{pr.value='';pr.style.color='';pr.style.fontWeight='';s1.classList.remove('filled');s2.classList.remove('filled')}}
+function calcS(mod){const i=document.getElementById('di-'+mod).value,f=document.getElementById('df-'+mod).value,el=document.getElementById('sit-'+mod);if(!i||!f){el.className='sit-auto elaboracao';el.textContent='⏳ Preencha as datas';return}const h=new Date();h.setHours(0,0,0,0);const di=new Date(i),df=new Date(f);di.setHours(0,0,0,0);df.setHours(0,0,0,0);if(h<di){el.className='sit-auto elaboracao';el.textContent='📝 Em Elaboração'}else if(h>df){el.className='sit-auto encerrado';el.textContent='⏹️ Encerrado'}else{el.className='sit-auto ativo';el.textContent='🟢 Ativo'}}
+</script>
+</body>
+</html>

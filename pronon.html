@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRONON / PRONAS</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0E1520;--surface:#151E2C;--raised:#1A2738;--hover:#213348;--border:#263D58;--green:#2A9D8F;--blue:#1474B7;--red:#CC2222;--orange:#D35400;--purple:#8E44AD;--yellow:#F39C12;--pink:#E91E8E;--text:#E8ECF2;--muted:#6B8399;--mono:'IBM Plex Mono',monospace;--font:'IBM Plex Sans',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
+.page{max-width:1200px;margin:0 auto;padding:24px}
+.header{display:flex;align-items:center;justify-content:space-between;padding:16px 0 24px;border-bottom:1px solid var(--border);margin-bottom:32px}
+.header h1{font-size:28px;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header .sub{font-size:12px;color:var(--muted);margin-top:4px}
+.badge{padding:4px 12px;border-radius:8px;font-size:11px;font-weight:600}
+.layout{display:grid;grid-template-columns:260px 1fr;gap:24px}
+.sidebar{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;height:fit-content;position:sticky;top:24px}
+.nav-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);padding:12px 12px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;font-size:13px;color:var(--muted);cursor:pointer;border-radius:8px;transition:all .15s;border-left:3px solid transparent}
+.nav-item:hover{background:var(--hover);color:var(--text)}
+.nav-item.active{background:var(--hover);color:var(--purple);border-left-color:var(--purple);font-weight:600}
+.nav-item .icon{font-size:16px;width:20px;text-align:center}
+.nav-count{margin-left:auto;font-size:10px;font-family:var(--mono);padding:2px 6px;border-radius:4px;background:var(--bg)}
+.section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--purple);padding-bottom:10px;border-bottom:2px solid rgba(142,68,173,.15);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card{background:var(--raised);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:12px}
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px}
+.kpi{background:var(--raised);border:1px solid var(--border);border-radius:10px;padding:16px}
+.kpi .label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.kpi .value{font-size:24px;font-weight:700;font-family:var(--mono)}
+.kpi .detail{font-size:10px;color:var(--muted);margin-top:4px}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl thead th{padding:10px 14px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);text-align:left;border-bottom:1px solid var(--border);background:var(--surface)}
+.tbl tbody td{padding:10px 14px;border-bottom:1px solid var(--border)}
+.tbl tbody tr:hover{background:var(--hover)}
+.primary{color:var(--text);font-weight:500}
+.mono{font-family:var(--mono);font-size:11px}
+.badge-sm{display:inline-block;padding:3px 10px;border-radius:8px;font-size:10px;font-weight:600}
+.tabs{display:flex;gap:2px;border-bottom:2px solid var(--border);margin-bottom:20px;overflow-x:auto}
+.tab{padding:10px 16px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all .15s}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--purple);border-bottom-color:var(--purple)}
+.form-grid{display:grid;gap:14px}
+.form-grid-2{grid-template-columns:1fr 1fr}
+.form-grid-3{grid-template-columns:1fr 1fr 1fr}
+.form-grid-4{grid-template-columns:1fr 1fr 1fr 1fr}
+.form-group label{display:block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px}
+.form-group input,.form-group select,.form-group textarea{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;font-size:13px;font-family:var(--font)}
+.form-group textarea{min-height:80px;resize:vertical}
+.readonly{background:var(--surface)!important;color:var(--muted)!important}
+.auto-tag{font-size:9px;padding:2px 6px;border-radius:6px;font-weight:600;margin-left:6px;background:rgba(142,68,173,.1);color:var(--purple)}
+.progress-bar{height:8px;background:var(--bg);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;border-radius:4px}
+
+/* CLASSIFICATION MATRIX */
+.class-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.class-card{background:var(--raised);border:2px solid var(--border);border-radius:12px;padding:18px;text-align:center;transition:all .2s}
+.class-card:hover{border-color:var(--purple);transform:translateY(-2px)}
+.class-card .icon{font-size:32px;margin-bottom:8px}
+.class-card h4{font-size:14px;font-weight:700;margin-bottom:4px}
+.class-card p{font-size:11px;color:var(--muted)}
+.class-card .count{font-size:22px;font-weight:700;font-family:var(--mono);color:var(--purple);margin-top:8px}
+
+/* EQUIPMENT */
+.equip-card{display:flex;gap:16px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px}
+.equip-icon{font-size:28px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:var(--bg);border-radius:10px}
+.equip-info{flex:1}
+.equip-info h4{font-size:13px;font-weight:600;margin-bottom:2px}
+.equip-info p{font-size:11px;color:var(--muted)}
+.equip-valor{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--green)}
+
+/* POLICY TAGS */
+.policy-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.policy-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;align-items:center;gap:10px}
+.policy-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.policy-name{font-size:12px;font-weight:500}
+.policy-count{margin-left:auto;font-size:10px;font-family:var(--mono);color:var(--muted)}
+
+@media(max-width:768px){.layout{grid-template-columns:1fr}.sidebar{display:none}.kpi-row{grid-template-columns:1fr 1fr}.class-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="page">
+  <!-- HEADER -->
+  <div class="header">
+    <div>
+      <h1>🎗️ PRONON / PRONAS</h1>
+      <div class="sub">Programa Nacional de Apoio à Atenção Oncológica (PRONON) e Programa Nacional de Apoio à Atenção da Saúde da Pessoa com Deficiência (PRONAS/PCD)</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="badge" style="background:rgba(142,68,173,.15);color:var(--purple)">408 Projetos</span>
+      <span class="badge" style="background:rgba(42,157,143,.15);color:var(--green)">390 Equipamentos</span>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="nav-title">VISÃO GERAL</div>
+      <div class="nav-item active"><span class="icon">📊</span>Dashboard<span class="nav-count">—</span></div>
+
+      <div class="nav-title">PROJETOS</div>
+      <div class="nav-item"><span class="icon">📁</span>Projetos PRONON<span class="nav-count">408</span></div>
+      <div class="nav-item"><span class="icon">🏷️</span>Classificação<span class="nav-count">191</span></div>
+      <div class="nav-item"><span class="icon">🔬</span>Equipamentos<span class="nav-count">390</span></div>
+
+      <div class="nav-title">REFERÊNCIA</div>
+      <div class="nav-item"><span class="icon">📜</span>Políticas PRONON<span class="nav-count">120</span></div>
+      <div class="nav-item"><span class="icon">📐</span>Critérios de Classificação<span class="nav-count">52</span></div>
+      <div class="nav-item"><span class="icon">🗂️</span>Áreas de Atuação<span class="nav-count">4</span></div>
+
+      <div class="nav-title" style="margin-top:24px;border-top:1px solid var(--border);padding-top:16px">PRONAS/PCD</div>
+      <div class="nav-item"><span class="icon">♿</span>Projetos PRONAS<span class="nav-count">—</span></div>
+      <div class="nav-item"><span class="icon">📐</span>Critérios PRONAS<span class="nav-count">52</span></div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div>
+      <!-- ═══ DASHBOARD ═══ -->
+      <div class="section-title">📊 Dashboard PRONON</div>
+      <div class="kpi-row">
+        <div class="kpi"><div class="label">Projetos</div><div class="value" style="color:var(--purple)">408</div><div class="detail">Total cadastrados</div></div>
+        <div class="kpi"><div class="label">Equipamentos</div><div class="value" style="color:var(--green)">390</div><div class="detail">Registrados</div></div>
+        <div class="kpi"><div class="label">Classificações</div><div class="value" style="color:var(--blue)">191</div><div class="detail">Projetos classificados</div></div>
+        <div class="kpi"><div class="label">Políticas</div><div class="value" style="color:var(--orange)">120</div><div class="detail">Vinculadas</div></div>
+        <div class="kpi"><div class="label">Critérios</div><div class="value" style="color:var(--yellow)">52</div><div class="detail">De classificação</div></div>
+      </div>
+
+      <!-- ═══ CLASSIFICAÇÃO DOS PROJETOS ═══ -->
+      <div class="section-title">🏷️ Classificação dos Projetos (191)</div>
+      <div class="class-grid">
+        <div class="class-card">
+          <div class="icon">🔬</div>
+          <h4>Pesquisa</h4>
+          <p>Pesquisa clínica e translacional em oncologia</p>
+          <div class="count">87</div>
+        </div>
+        <div class="class-card">
+          <div class="icon">🎓</div>
+          <h4>Formação</h4>
+          <p>Capacitação e formação de recursos humanos</p>
+          <div class="count">62</div>
+        </div>
+        <div class="class-card">
+          <div class="icon">🏥</div>
+          <h4>Prestação de Serviço</h4>
+          <p>Atendimento, diagnóstico e tratamento</p>
+          <div class="count">42</div>
+        </div>
+      </div>
+
+      <!-- ═══ TABELA PROJETOS ═══ -->
+      <div class="section-title" style="margin-top:32px">📁 Projetos PRONON (408)</div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div style="display:flex;gap:8px">
+            <input placeholder="🔍 Buscar projeto..." style="padding:8px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:13px;width:260px">
+            <select style="padding:8px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px">
+              <option>Todos</option><option>Pesquisa</option><option>Formação</option><option>Prestação de Serviço</option>
+            </select>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button style="padding:7px 16px;border-radius:8px;font-size:12px;font-weight:600;background:var(--red);color:#fff;border:none;cursor:pointer">📄 PDF</button>
+            <button style="padding:7px 16px;border-radius:8px;font-size:12px;font-weight:600;background:var(--green);color:#fff;border:none;cursor:pointer">📊 Excel</button>
+            <button style="padding:7px 16px;border-radius:8px;font-size:12px;font-weight:600;background:var(--purple);color:#fff;border:none;cursor:pointer">+ Novo Projeto</button>
+          </div>
+        </div>
+        <table class="tbl">
+          <thead><tr><th>Nº Projeto</th><th>Instituição</th><th>Classificação</th><th>UF</th><th>Situação</th><th style="text-align:right">Valor Aprovado</th><th style="text-align:right">Incentivo Fiscal</th></tr></thead>
+          <tbody>
+            <tr><td class="primary mono">PRONON-2024-0142</td><td>Instituto Nacional de Câncer — INCA</td><td><span class="badge-sm" style="background:rgba(20,116,183,.15);color:var(--blue)">🔬 Pesquisa</span></td><td>RJ</td><td><span class="badge-sm" style="background:rgba(42,157,143,.15);color:var(--green)">✅ Aprovado</span></td><td class="mono" style="text-align:right">R$ 2.800.000</td><td class="mono" style="text-align:right;color:var(--green)">R$ 2.240.000</td></tr>
+            <tr><td class="primary mono">PRONON-2024-0138</td><td>Hospital de Amor (Barretos)</td><td><span class="badge-sm" style="background:rgba(142,68,173,.15);color:var(--purple)">🏥 Serviço</span></td><td>SP</td><td><span class="badge-sm" style="background:rgba(42,157,143,.15);color:var(--green)">✅ Aprovado</span></td><td class="mono" style="text-align:right">R$ 5.200.000</td><td class="mono" style="text-align:right;color:var(--green)">R$ 4.160.000</td></tr>
+            <tr><td class="primary mono">PRONON-2024-0125</td><td>A.C. Camargo Cancer Center</td><td><span class="badge-sm" style="background:rgba(243,156,18,.15);color:var(--yellow)">🎓 Formação</span></td><td>SP</td><td><span class="badge-sm" style="background:rgba(243,156,18,.15);color:var(--yellow)">🟡 Em Análise</span></td><td class="mono" style="text-align:right">R$ 1.500.000</td><td class="mono" style="text-align:right;color:var(--muted)">—</td></tr>
+            <tr><td class="primary mono">PRONON-2023-0098</td><td>Hospital Erasto Gaertner</td><td><span class="badge-sm" style="background:rgba(20,116,183,.15);color:var(--blue)">🔬 Pesquisa</span></td><td>PR</td><td><span class="badge-sm" style="background:rgba(204,34,34,.15);color:var(--red)">⏹️ Encerrado</span></td><td class="mono" style="text-align:right">R$ 980.000</td><td class="mono" style="text-align:right;color:var(--green)">R$ 784.000</td></tr>
+          </tbody>
+        </table>
+        <div style="text-align:center;padding:12px;font-size:11px;color:var(--muted)">Mostrando 4 de 408 registros</div>
+      </div>
+
+      <!-- ═══ FORMULÁRIO PROJETO ═══ -->
+      <div class="section-title" style="margin-top:32px">📝 Formulário — Projeto PRONON</div>
+      <div class="tabs">
+        <div class="tab active">📋 Dados do Projeto</div>
+        <div class="tab">🏷️ Classificação</div>
+        <div class="tab">🔬 Equipamentos</div>
+        <div class="tab">📜 Políticas Vinculadas</div>
+        <div class="tab">📐 Critérios</div>
+        <div class="tab">💰 Incentivo Fiscal</div>
+        <div class="tab">📎 Anexos</div>
+      </div>
+      <div class="card">
+        <div class="section-title">📋 Identificação</div>
+        <div class="form-grid form-grid-3">
+          <div class="form-group"><label>Nome do Projeto <span style="color:var(--red)">*</span></label><input value="Pesquisa em Imunoterapia para Câncer de Pulmão"></div>
+          <div class="form-group"><label>Nº Projeto PRONON</label><input value="PRONON-2024-0142" class="mono"></div>
+          <div class="form-group"><label>Programa</label><select><option selected>PRONON</option><option>PRONAS/PCD</option></select></div>
+        </div>
+        <div class="form-grid form-grid-3">
+          <div class="form-group"><label>Instituição <span style="color:var(--red)">*</span></label><input value="Instituto Nacional de Câncer — INCA"></div>
+          <div class="form-group"><label>CNPJ</label><input value="00.394.544/0001-43" class="mono"></div>
+          <div class="form-group"><label>UF</label><select><option selected>RJ</option><option>SP</option><option>PR</option></select></div>
+        </div>
+        <div class="form-grid form-grid-3">
+          <div class="form-group"><label>Classificação <span style="color:var(--red)">*</span></label><select><option selected>Pesquisa</option><option>Formação</option><option>Prestação de Serviço</option></select></div>
+          <div class="form-group"><label>Área de Atuação</label><select><option selected>Oncologia Clínica</option><option>Oncologia Cirúrgica</option><option>Radioterapia</option><option>Cuidados Paliativos</option></select></div>
+          <div class="form-group"><label>Situação <span class="auto-tag">Auto</span></label><input value="Aprovado" class="readonly"></div>
+        </div>
+
+        <div class="section-title" style="margin-top:24px">💰 Valores e Incentivo Fiscal</div>
+        <div class="form-grid form-grid-4">
+          <div class="form-group"><label>Valor Total do Projeto</label><input value="R$ 2.800.000,00" class="mono"></div>
+          <div class="form-group"><label>Incentivo Fiscal (80%) <span class="auto-tag">Auto</span></label><input value="R$ 2.240.000,00" class="readonly mono" style="color:var(--green)"></div>
+          <div class="form-group"><label>Contrapartida (20%) <span class="auto-tag">Auto</span></label><input value="R$ 560.000,00" class="readonly mono"></div>
+          <div class="form-group"><label>Valor Captado</label><input value="R$ 1.800.000,00" class="mono" style="color:var(--yellow)"></div>
+        </div>
+        <div style="background:rgba(142,68,173,.08);border:1px solid rgba(142,68,173,.2);border-radius:10px;padding:14px;margin-top:12px;font-size:12px;color:var(--purple);display:flex;gap:10px">
+          <span style="font-size:16px">💡</span>
+          <div>O PRONON permite dedução de até <strong>1% do IR devido</strong> por Pessoa Jurídica. O incentivo fiscal cobre até <strong>80%</strong> do valor aprovado para projetos de pesquisa, e <strong>100%</strong> para prestação de serviço.</div>
+        </div>
+
+        <div class="section-title" style="margin-top:24px">📅 Vigência</div>
+        <div class="form-grid form-grid-4">
+          <div class="form-group"><label>Portaria de Aprovação</label><input value="Portaria GM/MS nº 1.234/2024"></div>
+          <div class="form-group"><label>Data Publicação DOU</label><input type="date" value="2024-04-15"></div>
+          <div class="form-group"><label>Data Início</label><input type="date" value="2024-05-01"></div>
+          <div class="form-group"><label>Data Término</label><input type="date" value="2027-04-30"></div>
+        </div>
+
+        <div class="section-title" style="margin-top:24px">📝 Objeto</div>
+        <div class="form-group"><label>Descrição</label><textarea>Desenvolver pesquisa clínica fase II/III em imunoterapia combinada para tratamento de carcinoma de pulmão não-pequenas células (NSCLC) avançado, com foco em pacientes do SUS, incluindo identificação de biomarcadores preditivos de resposta terapêutica.</textarea></div>
+      </div>
+
+      <!-- ═══ ABA: EQUIPAMENTOS ═══ -->
+      <div class="section-title" style="margin-top:32px">🔬 Aba: Equipamentos (390 registros)</div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <span style="font-size:12px;color:var(--muted)">8 equipamentos neste projeto</span>
+          <button style="padding:7px 16px;border-radius:8px;font-size:12px;font-weight:600;background:var(--purple);color:#fff;border:none;cursor:pointer">+ Novo Equipamento</button>
+        </div>
+        <div class="equip-card">
+          <div class="equip-icon">🔬</div>
+          <div class="equip-info">
+            <h4>Sequenciador de Nova Geração (NGS)</h4>
+            <p>Illumina NovaSeq 6000 · Quantidade: 1 · Destino: INCA — Lab. de Biologia Molecular</p>
+          </div>
+          <div>
+            <div class="equip-valor">R$ 1.200.000</div>
+            <span class="badge-sm" style="background:rgba(42,157,143,.15);color:var(--green);margin-top:4px">✅ Adquirido</span>
+          </div>
+        </div>
+        <div class="equip-card">
+          <div class="equip-icon">💊</div>
+          <div class="equip-info">
+            <h4>Citômetro de Fluxo Multiparamétrico</h4>
+            <p>BD FACSymphony A5 · Quantidade: 2 · Destino: INCA — Lab. de Imunologia</p>
+          </div>
+          <div>
+            <div class="equip-valor">R$ 850.000</div>
+            <span class="badge-sm" style="background:rgba(243,156,18,.15);color:var(--yellow);margin-top:4px">🟡 Em licitação</span>
+          </div>
+        </div>
+        <div class="equip-card">
+          <div class="equip-icon">🖥️</div>
+          <div class="equip-info">
+            <h4>Estação de Análise Bioinformática</h4>
+            <p>Dell PowerEdge R750 · Quantidade: 3 · Destino: INCA — Núcleo de Bioinformática</p>
+          </div>
+          <div>
+            <div class="equip-valor">R$ 180.000</div>
+            <span class="badge-sm" style="background:rgba(20,116,183,.15);color:var(--blue);margin-top:4px">📋 Processo</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ ABA: POLÍTICAS ═══ -->
+      <div class="section-title" style="margin-top:32px">📜 Aba: Políticas PRONON (120)</div>
+      <div class="card">
+        <div class="policy-grid">
+          <div class="policy-card"><div class="policy-dot" style="background:var(--purple)"></div><div class="policy-name">PNPCC — Política Nac. Prev. Controle Câncer</div><div class="policy-count">42</div></div>
+          <div class="policy-card"><div class="policy-dot" style="background:var(--blue)"></div><div class="policy-name">Rede de Atenção Oncológica</div><div class="policy-count">28</div></div>
+          <div class="policy-card"><div class="policy-dot" style="background:var(--green)"></div><div class="policy-name">Plano de Ações Estratégicas — DCNT</div><div class="policy-count">22</div></div>
+          <div class="policy-card"><div class="policy-dot" style="background:var(--orange)"></div><div class="policy-name">Política Nacional de Ciência e Tecnologia</div><div class="policy-count">15</div></div>
+          <div class="policy-card"><div class="policy-dot" style="background:var(--red)"></div><div class="policy-name">Política Nacional de Cuidados Paliativos</div><div class="policy-count">8</div></div>
+          <div class="policy-card"><div class="policy-dot" style="background:var(--yellow)"></div><div class="policy-name">Outras Políticas</div><div class="policy-count">5</div></div>
+        </div>
+      </div>
+
+      <!-- ═══ ABA: CRITÉRIOS DE CLASSIFICAÇÃO ═══ -->
+      <div class="section-title" style="margin-top:32px">📐 Aba: Critérios de Classificação (52)</div>
+      <div class="card">
+        <table class="tbl">
+          <thead><tr><th>Critério</th><th>Tipo</th><th style="text-align:center">Peso</th><th style="text-align:center">Nota Mín.</th><th>Descrição</th></tr></thead>
+          <tbody>
+            <tr><td class="primary">C1 — Relevância para o SUS</td><td><span class="badge-sm" style="background:rgba(142,68,173,.15);color:var(--purple)">Eliminatório</span></td><td class="mono" style="text-align:center">30%</td><td class="mono" style="text-align:center">7,0</td><td style="font-size:11px;color:var(--muted)">Alinhamento com as prioridades do SUS e impacto na população</td></tr>
+            <tr><td class="primary">C2 — Qualificação Técnica</td><td><span class="badge-sm" style="background:rgba(20,116,183,.15);color:var(--blue)">Classificatório</span></td><td class="mono" style="text-align:center">25%</td><td class="mono" style="text-align:center">6,0</td><td style="font-size:11px;color:var(--muted)">Currículo da equipe, infraestrutura, experiência prévia</td></tr>
+            <tr><td class="primary">C3 — Viabilidade Financeira</td><td><span class="badge-sm" style="background:rgba(20,116,183,.15);color:var(--blue)">Classificatório</span></td><td class="mono" style="text-align:center">20%</td><td class="mono" style="text-align:center">5,0</td><td style="font-size:11px;color:var(--muted)">Coerência do orçamento, captação, contrapartida</td></tr>
+            <tr><td class="primary">C4 — Inovação</td><td><span class="badge-sm" style="background:rgba(243,156,18,.15);color:var(--yellow)">Bonificação</span></td><td class="mono" style="text-align:center">15%</td><td class="mono" style="text-align:center">—</td><td style="font-size:11px;color:var(--muted)">Originalidade, potencial de transferência tecnológica</td></tr>
+            <tr><td class="primary">C5 — Abrangência Territorial</td><td><span class="badge-sm" style="background:rgba(243,156,18,.15);color:var(--yellow)">Bonificação</span></td><td class="mono" style="text-align:center">10%</td><td class="mono" style="text-align:center">—</td><td style="font-size:11px;color:var(--muted)">Capilaridade, regiões atendidas, foco em áreas carentes</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ═══ PRONAS/PCD (placeholder) ═══ -->
+      <div class="section-title" style="margin-top:32px">♿ PRONAS/PCD — Programa Nacional de Apoio à Atenção da Saúde da Pessoa com Deficiência</div>
+      <div class="card" style="text-align:center;padding:40px">
+        <div style="font-size:48px;margin-bottom:12px">♿</div>
+        <div style="font-size:16px;font-weight:600;margin-bottom:6px">Módulo PRONAS/PCD</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Compartilha os mesmos critérios de classificação e áreas de atuação do PRONON, com foco em reabilitação e assistência à pessoa com deficiência.</div>
+        <div style="display:flex;gap:8px;justify-content:center">
+          <span class="badge-sm" style="background:rgba(142,68,173,.15);color:var(--purple)">Mesma estrutura do PRONON</span>
+          <span class="badge-sm" style="background:rgba(243,156,18,.15);color:var(--yellow)">Em construção</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>

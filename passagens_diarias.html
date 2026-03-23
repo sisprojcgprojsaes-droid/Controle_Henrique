@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Passagens e Diárias</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'IBM Plex Sans',sans-serif;background:#f4f6f9;color:#1a2332;min-height:100vh}
+.annotation{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#d63031;color:#fff;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.page{max-width:1200px;margin:0 auto;padding:70px 24px 40px}
+
+/* Main tabs */
+.main-tabs{display:flex;gap:4px;margin-bottom:24px;background:#fff;border:1px solid #dfe4ea;border-radius:12px;padding:6px}
+.main-tab{flex:1;padding:14px;text-align:center;border-radius:8px;font-size:13px;font-weight:600;color:#8395a7;cursor:pointer;transition:all .15s;border:none;background:none;font-family:inherit}
+.main-tab:hover{color:#1a2332;background:#f4f6f9}
+.main-tab.a1{background:#f39c12;color:#fff}.main-tab.a2{background:#0969c3;color:#fff}.main-tab.a3{background:#0e7a5c;color:#fff}
+.mp{display:none}.mp.active{display:block}
+
+/* Card */
+.card{background:#fff;border:1px solid #dfe4ea;border-radius:14px;box-shadow:0 2px 16px rgba(0,0,0,.07);overflow:hidden;margin-bottom:24px}
+.card-header{padding:18px 24px;border-bottom:1px solid #dfe4ea;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.card-header h2{font-size:17px;font-weight:700;display:flex;align-items:center;gap:10px}
+.card-body{padding:24px}
+.card-footer{padding:14px 24px;border-top:1px solid #dfe4ea;display:flex;justify-content:space-between;background:#fafbfc}
+
+/* Section */
+.section{margin-bottom:28px}
+.st{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding-bottom:10px;border-bottom:2px solid;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.st-y{color:#f39c12;border-color:#f39c1230}.st-b{color:#0969c3;border-color:#0969c330}.st-g{color:#0e7a5c;border-color:#0e7a5c30}
+
+/* Grid */
+.g{display:grid;gap:16px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}.g4{grid-template-columns:1fr 1fr 1fr 1fr}.g5{grid-template-columns:1fr 1fr 1fr 1fr 1fr}.full{grid-column:1/-1}
+
+/* Field */
+.f{display:flex;flex-direction:column}
+.f label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#8395a7;margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.f label .req{color:#c0392b;font-size:13px}
+.f input,.f select,.f textarea{padding:10px 14px;border:1px solid #dfe4ea;border-radius:8px;font-size:13px;font-family:inherit;background:#f4f6f9;color:#1a2332;outline:none;transition:all .15s}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:#0e7a5c;background:#fff}
+.f textarea{resize:vertical;min-height:70px}
+.f .hint{font-size:10px;color:#b0b8c4;margin-top:4px}
+.f input:disabled{background:#e8ecf2;color:#8395a7;cursor:not-allowed}
+.lk{position:relative}.lk input{padding-right:36px}.lk .ico{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:14px;color:#8395a7;cursor:pointer}
+.cur{position:relative}.cur input{padding-left:36px;text-align:right;font-family:'IBM Plex Mono',monospace}.cur .pfx{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:12px;color:#8395a7;font-weight:600}
+
+/* Tags */
+.tag{font-size:9px;padding:2px 6px;border-radius:6px;font-weight:600;margin-left:4px}
+.tag-auto{background:#0e7a5c15;color:#0e7a5c}.tag-link{background:#0969c315;color:#0969c3}.tag-gab{background:#f39c1215;color:#f39c12}
+
+/* Buttons */
+.btn{padding:9px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;border:none;transition:all .15s}
+.btn-primary{background:#0e7a5c;color:#fff}.btn-primary:hover{filter:brightness(1.1)}
+.btn-blue{background:#0969c3;color:#fff}.btn-blue:hover{filter:brightness(1.1)}
+.btn-yellow{background:#f39c12;color:#fff}.btn-yellow:hover{filter:brightness(1.1)}
+.btn-danger{background:#c0392b;color:#fff}
+.btn-ghost{background:#fff;color:#4a5e73;border:1px solid #dfe4ea}.btn-ghost:hover{background:#eef1f5}
+.btn-sm{padding:6px 14px;font-size:12px}
+
+/* Info */
+.info{border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:12px;line-height:1.6;display:flex;gap:10px}
+.info .ic{font-size:18px;flex-shrink:0}
+.info-b{background:#0969c308;border:1px solid #0969c325;color:#0969c3}
+.info-y{background:#f39c1208;border:1px solid #f39c1225;color:#d35400}
+.info-g{background:#0e7a5c08;border:1px solid #0e7a5c25;color:#0e7a5c}
+
+/* Sit */
+.sit{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:8px;font-size:11px;font-weight:600}
+.sit-v{background:#e6f7f2;color:#0e7a5c}.sit-p{background:#e3f0fc;color:#0969c3}.sit-e{background:#fce8e8;color:#c0392b}
+.sit-ap{background:#f39c1215;color:#d35400}.sit-dev{background:#8e44ad15;color:#8e44ad}
+
+/* Table */
+.sub-table{width:100%;border-collapse:collapse}
+.sub-table thead th{padding:8px 12px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#8395a7;text-align:left;background:#f4f6f9;border-bottom:1px solid #dfe4ea}
+.sub-table tbody td{padding:10px 12px;font-size:12px;color:#4a5e73;border-bottom:1px solid #dfe4ea}
+.sub-table tbody tr:hover{background:#eef1f5;cursor:pointer}
+.sub-table .primary{color:#1a2332;font-weight:500}
+.sub-table .mono{font-family:'IBM Plex Mono',monospace;font-size:11px}
+.badge{font-size:10px;padding:3px 10px;border-radius:10px;font-weight:600;display:inline-block}
+.badge-green{background:#e6f7f2;color:#0e7a5c}.badge-red{background:#fce8e8;color:#c0392b}
+.badge-blue{background:#e3f0fc;color:#0969c3}.badge-orange{background:#fef3e2;color:#d35400}
+.badge-purple{background:#8e44ad15;color:#8e44ad}.badge-yellow{background:#f39c1215;color:#f39c12}
+.sub-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sub-header h4{font-size:13px;font-weight:600;color:#1a2332;display:flex;align-items:center;gap:8px}
+.sub-count{font-size:11px;color:#8395a7;font-family:'IBM Plex Mono',monospace}
+
+/* KPI row */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px}
+.kpi{background:#fff;border:1px solid #dfe4ea;border-radius:12px;padding:16px 18px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.kpi .kl{font-size:10px;color:#8395a7;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+.kpi .kv{font-size:22px;font-weight:700;font-family:'IBM Plex Mono',monospace}
+.kpi .ks{font-size:11px;color:#8395a7;margin-top:4px}
+
+/* Workflow steps */
+.workflow{display:flex;gap:4px;margin-bottom:24px;align-items:center;flex-wrap:wrap}
+.wf-step{padding:10px 18px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid #dfe4ea;background:#fff;color:#8395a7;position:relative}
+.wf-step.done{background:#e6f7f2;color:#0e7a5c;border-color:#0e7a5c30}
+.wf-step.current{background:#0969c3;color:#fff;border-color:#0969c3}
+.wf-step.pending{background:#f4f6f9;color:#b0b8c4}
+.wf-arrow{color:#cdd5de;font-size:16px}
+
+/* Import area */
+.import-area{border:2px dashed #f39c12;border-radius:12px;padding:32px;text-align:center;background:#f39c1205;margin-bottom:24px;cursor:pointer;transition:all .2s}
+.import-area:hover{background:#f39c1210;border-color:#d35400}
+.import-area .ia-icon{font-size:40px;margin-bottom:12px}
+.import-area .ia-title{font-size:15px;font-weight:600;color:#1a2332;margin-bottom:4px}
+.import-area .ia-sub{font-size:12px;color:#8395a7}
+.import-area .ia-btn{display:inline-block;margin-top:14px;padding:10px 24px;background:#f39c12;color:#fff;border-radius:8px;font-size:13px;font-weight:600}
+.import-area .ia-formats{font-size:10px;color:#b0b8c4;margin-top:8px}
+
+/* Approval card */
+.approval-card{border:2px solid #f39c12;border-radius:12px;padding:20px;background:#fff;margin-bottom:16px}
+.approval-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.approval-header h4{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.approval-meta{display:flex;gap:16px;font-size:12px;color:#8395a7;margin-bottom:14px;flex-wrap:wrap}
+.approval-meta span{display:flex;align-items:center;gap:4px}
+.approval-actions{display:flex;gap:8px;margin-top:14px}
+
+/* Comparison */
+.compare-row{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:start;margin-bottom:20px}
+.compare-col{background:#fff;border:1px solid #dfe4ea;border-radius:10px;padding:16px}
+.compare-col h5{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#8395a7;margin-bottom:10px}
+.compare-vs{display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#b0b8c4;padding-top:30px}
+
+@media(max-width:700px){.g2,.g3,.g4,.g5{grid-template-columns:1fr}.main-tabs{flex-direction:column}.compare-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="annotation">⚠ Passagens e Diárias (Cadastro + Planejamento Aprovado)</div>
+<div class="page">
+
+<div class="main-tabs">
+  <button class="main-tab a1" onclick="showM('cad',this,'a1')">✈️ Cadastro de Solicitação</button>
+  <button class="main-tab" onclick="showM('plan',this,'a2')">📋 Planejamento Aprovado (Gabinete)</button>
+  <button class="main-tab" onclick="showM('painel',this,'a3')">📊 Painel Consolidado</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- 1. CADASTRO INDIVIDUAL DE PASSAGEM / DIÁRIA       -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="mp active" id="p-cad">
+<div class="card">
+  <div class="card-header">
+    <h2>✈️ Nova Solicitação de Passagem e Diária</h2>
+    <div style="display:flex;gap:6px">
+      <span style="padding:4px 14px;border-radius:8px;font-size:11px;font-weight:700;background:#f39c1215;color:#f39c12">Transversal (TED + OPAS)</span>
+    </div>
+  </div>
+  <div class="card-body">
+
+    <div class="info info-b"><span class="ic">✈️</span><div>Cadastro individual de solicitação de viagem (passagem e/ou diária). Vinculado a um <strong>TED</strong> ou <strong>TC OPAS</strong> via PEP/Projeto. Pode ser originado manualmente ou a partir do <strong>planejamento aprovado pelo Gabinete</strong>.</div></div>
+
+    <!-- WORKFLOW -->
+    <div style="margin-bottom:20px">
+      <label style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#8395a7;margin-bottom:8px;display:block">Fluxo da Solicitação</label>
+      <div class="workflow">
+        <div class="wf-step done">📝 Rascunho</div>
+        <span class="wf-arrow">→</span>
+        <div class="wf-step current">📤 Enviada</div>
+        <span class="wf-arrow">→</span>
+        <div class="wf-step pending">✅ Aprovada</div>
+        <span class="wf-arrow">→</span>
+        <div class="wf-step pending">🎫 Emitida</div>
+        <span class="wf-arrow">→</span>
+        <div class="wf-step pending">✈️ Realizada</div>
+        <span class="wf-arrow">→</span>
+        <div class="wf-step pending">📄 Prestação Contas</div>
+      </div>
+    </div>
+
+    <!-- IDENTIFICAÇÃO -->
+    <div class="section">
+      <div class="st st-y">📋 Identificação</div>
+      <div class="g g4">
+        <div class="f"><label>Nº Solicitação <span class="req">*</span></label><input value="SOLIC-2025-0048" placeholder="Auto-gerado"></div>
+        <div class="f"><label>Origem</label><select><option selected>Cadastro Manual</option><option>Planejamento Gabinete</option></select><span class="hint">Indica se veio do planejamento aprovado</span></div>
+        <div class="f"><label>Situação <span class="tag tag-auto">Auto</span></label><span class="sit sit-p" style="margin-top:2px">📤 Enviada</span></div>
+        <div class="f"><label>Nº Planejamento <span class="tag tag-gab">Gabinete</span></label><input value="" disabled placeholder="— Somente se origem = Planejamento"><span class="hint">Ref. ao lote aprovado pelo Gabinete</span></div>
+      </div>
+    </div>
+
+    <!-- VINCULAÇÃO -->
+    <div class="section">
+      <div class="st st-y">🔗 Vinculação ao Projeto</div>
+      <div class="g g4">
+        <div class="f"><label>Módulo <span class="req">*</span></label><select><option selected>TED</option><option>OPAS</option></select></div>
+        <div class="f"><label>PEP <span class="req">*</span></label><div class="lk"><input placeholder="Buscar PEP..."><span class="ico">🔍</span></div></div>
+        <div class="f"><label>Projeto <span class="tag tag-auto">Auto via PEP</span></label><input disabled placeholder="← Preenchido pelo PEP"></div>
+        <div class="f"><label>Departamento <span class="tag tag-auto">Auto via Projeto</span></label><input disabled placeholder="← Preenchido pelo Projeto"></div>
+      </div>
+    </div>
+
+    <!-- VIAJANTE -->
+    <div class="section">
+      <div class="st st-y">👤 Viajante</div>
+      <div class="g g3">
+        <div class="f"><label>Pessoa <span class="req">*</span></label><div class="lk"><input placeholder="Buscar pessoa..."><span class="ico">🔍</span></div></div>
+        <div class="f"><label>CPF <span class="tag tag-auto">Auto via Pessoa</span></label><input disabled placeholder="← Preenchido"></div>
+        <div class="f"><label>Vínculo <span class="tag tag-auto">Auto via Pessoa</span></label><input disabled placeholder="← Preenchido"></div>
+      </div>
+    </div>
+
+    <!-- TIPO -->
+    <div class="section">
+      <div class="st st-y">🎫 Tipo da Solicitação</div>
+      <div class="g g3">
+        <div class="f"><label>Tipo Solicitação <span class="req">*</span></label>
+          <select>
+            <option value="">— Selecione —</option>
+            <option>Apenas Passagem</option>
+            <option>Apenas Diária</option>
+            <option selected>Passagem e Diária</option>
+          </select>
+        </div>
+        <div class="f"><label>Tipo Viagem <span class="req">*</span></label>
+          <select><option selected>Nacional</option><option>Internacional</option></select>
+        </div>
+        <div class="f"><label>Tipo Passagem</label>
+          <select><option selected>Aérea</option><option>Rodoviária</option><option>Não se aplica</option></select>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRAJETO -->
+    <div class="section">
+      <div class="st st-y">📍 Trajeto</div>
+      <div class="g g4">
+        <div class="f"><label>Cidade Origem</label><input value="Brasília"></div>
+        <div class="f"><label>UF Origem</label><input value="DF" maxlength="2" style="text-transform:uppercase"></div>
+        <div class="f"><label>Cidade Destino <span class="req">*</span></label><input placeholder="Ex: São Paulo"></div>
+        <div class="f"><label>UF Destino <span class="req">*</span></label><input placeholder="SP" maxlength="2" style="text-transform:uppercase"></div>
+      </div>
+      <div class="g g3" style="margin-top:16px">
+        <div class="f"><label>Destino Final</label><input placeholder="Local/evento específico"></div>
+        <div class="f"><label>Data Ida <span class="req">*</span></label><input type="date"></div>
+        <div class="f"><label>Data Retorno <span class="req">*</span></label><input type="date"></div>
+      </div>
+    </div>
+
+    <!-- VALORES PASSAGEM -->
+    <div class="section" id="sec-passagem">
+      <div class="st st-y">🎫 Passagem</div>
+      <div class="g g4">
+        <div class="f"><label>Cia Aérea</label><input placeholder="Ex: LATAM, GOL"></div>
+        <div class="f"><label>Trecho</label><input placeholder="BSB → GRU → BSB"></div>
+        <div class="f"><label>Valor Passagem <span class="req">*</span></label><div class="cur"><span class="pfx">R$</span><input placeholder="0,00"></div></div>
+        <div class="f"><label>ID Passagem (externo)</label><input placeholder="Nº no sistema SCDP/externo"></div>
+      </div>
+    </div>
+
+    <!-- VALORES DIÁRIAS -->
+    <div class="section" id="sec-diarias">
+      <div class="st st-y">🏨 Diárias</div>
+      <div class="g g5">
+        <div class="f"><label>Qtd Diárias <span class="req">*</span></label><input type="number" step="0.5" placeholder="Ex: 3.5"></div>
+        <div class="f"><label>Valor Unitário</label><div class="cur"><span class="pfx">R$</span><input placeholder="320,11"></div></div>
+        <div class="f"><label>Total Diárias <span class="tag tag-auto">Calc.</span></label><div class="cur"><span class="pfx">R$</span><input disabled placeholder="← Qtd × Valor" style="color:#0e7a5c;font-weight:700"></div></div>
+        <div class="f"><label>Adicional Deslocamento</label><div class="cur"><span class="pfx">R$</span><input placeholder="0,00"></div></div>
+        <div class="f"><label>ID Diárias (externo)</label><input placeholder="Nº SCDP"></div>
+      </div>
+    </div>
+
+    <!-- TOTAIS -->
+    <div class="section">
+      <div class="st st-g">💰 Totais</div>
+      <div class="g g4">
+        <div class="f"><label>Total Passagem <span class="tag tag-auto">Auto</span></label><div class="cur"><span class="pfx">R$</span><input disabled value="" style="color:#0969c3;font-weight:700"></div></div>
+        <div class="f"><label>Total Diárias <span class="tag tag-auto">Auto</span></label><div class="cur"><span class="pfx">R$</span><input disabled value="" style="color:#0969c3;font-weight:700"></div></div>
+        <div class="f"><label>Reembolso</label><div class="cur"><span class="pfx">R$</span><input placeholder="0,00"></div></div>
+        <div class="f"><label>Custo Total <span class="tag tag-auto">Calc.</span></label><div class="cur"><span class="pfx">R$</span><input disabled value="" style="color:#0e7a5c;font-weight:700;font-size:15px"></div><span class="hint">Passagem + Diárias + Reembolso</span></div>
+      </div>
+    </div>
+
+    <!-- JUSTIFICATIVA / OBJETIVO -->
+    <div class="section">
+      <div class="st st-y">📝 Justificativa</div>
+      <div class="g g2">
+        <div class="f"><label>Objetivo da Viagem <span class="req">*</span></label><textarea placeholder="Descreva o objetivo da viagem (reunião, evento, supervisão, etc.)..."></textarea></div>
+        <div class="f"><label>Observações</label><textarea placeholder="Observações adicionais..."></textarea></div>
+      </div>
+    </div>
+
+    <!-- CANCELAMENTO -->
+    <div class="section">
+      <div class="st" style="color:#c0392b;border-color:#c0392b30">⚠️ Cancelamento (se aplicável)</div>
+      <div class="g g2">
+        <div class="f"><label>Cancelado?</label><select><option selected>Não</option><option>Sim — Antes da emissão</option><option>Sim — Após emissão (reembolso)</option><option>Sim — No-show</option></select></div>
+        <div class="f"><label>Motivo Cancelamento</label><textarea placeholder="Preencher apenas se cancelado..."></textarea></div>
+      </div>
+    </div>
+
+    <!-- ANEXOS -->
+    <div class="section">
+      <div class="st st-y">📎 Anexos</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        <button class="btn-sm btn-ghost">📄 Bilhete aéreo</button>
+        <button class="btn-sm btn-ghost">🧾 Recibo diárias</button>
+        <button class="btn-sm btn-ghost">📋 Relatório viagem</button>
+        <button class="btn-sm btn-ghost">📁 Outro</button>
+      </div>
+      <div style="border:2px dashed #dfe4ea;border-radius:10px;padding:20px;text-align:center;color:#8395a7;font-size:13px;cursor:pointer">
+        📂 Arraste ou clique para anexar arquivo <span style="font-size:10px;color:#b0b8c4;display:block;margin-top:4px">PDF, JPG, PNG — máx 5MB</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-danger">🗑️ Excluir</button>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost">Cancelar</button>
+      <button class="btn btn-ghost">💾 Salvar Rascunho</button>
+      <button class="btn btn-yellow">📤 Enviar para Aprovação</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- 2. PLANEJAMENTO APROVADO PELO GABINETE            -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="mp" id="p-plan">
+<div class="card">
+  <div class="card-header">
+    <h2>📋 Planejamento de Passagens e Diárias — Aprovado pelo Gabinete</h2>
+    <div style="display:flex;gap:6px">
+      <span style="padding:4px 14px;border-radius:8px;font-size:11px;font-weight:700;background:#f39c1215;color:#f39c12">📋 Planejamento</span>
+    </div>
+  </div>
+  <div class="card-body">
+
+    <div class="info info-y"><span class="ic">📋</span><div>O <strong>Gabinete SAES</strong> aprova periodicamente um lote de viagens planejadas. Este módulo recebe o planejamento, registra as viagens aprovadas e permite gerar solicitações individuais a partir dele. Cada item do planejamento vira uma solicitação vinculada ao lote.</div></div>
+
+    <!-- IMPORT -->
+    <div class="section">
+      <div class="st st-b">📥 Receber Planejamento</div>
+      <div class="import-area" onclick="alert('Abre seletor de arquivo — aceita XLSX ou CSV do Gabinete')">
+        <div class="ia-icon">📥</div>
+        <div class="ia-title">Importar Planejamento do Gabinete</div>
+        <div class="ia-sub">Faça upload da planilha aprovada com as viagens planejadas</div>
+        <div class="ia-btn">Selecionar arquivo (.xlsx / .csv)</div>
+        <div class="ia-formats">O sistema lê as colunas: Nome, CPF, Destino, Data Ida, Data Retorno, Diárias, Valor Estimado, Projeto/PEP</div>
+      </div>
+
+      <div style="text-align:center;color:#8395a7;font-size:13px;margin-bottom:16px">— ou cadastre manualmente —</div>
+
+      <button class="btn btn-blue" onclick="alert('Abre formulário para cadastrar manualmente um lote de planejamento')">+ Cadastrar Lote Manualmente</button>
+    </div>
+
+    <!-- LOTE RECEBIDO (simulado) -->
+    <div class="section">
+      <div class="st st-b">📋 Lote: PLAN-GAB-2025-003</div>
+
+      <div class="approval-card">
+        <div class="approval-header">
+          <h4>📋 PLAN-GAB-2025-003 — Planejamento Março/2025</h4>
+          <span class="sit sit-ap">📋 Aprovado pelo Gabinete</span>
+        </div>
+        <div class="approval-meta">
+          <span>📅 Aprovação: 28/02/2025</span>
+          <span>👤 Aprovador: Secretário SAES</span>
+          <span>📄 Despacho: SEI 25000.987654/2025</span>
+          <span>✈️ 12 viagens</span>
+          <span>💰 Valor total: R$ 48.600,00</span>
+        </div>
+      </div>
+
+      <!-- VIAGENS DO LOTE -->
+      <div class="sub-header"><h4>✈️ Viagens do Planejamento <span class="sub-count">(12 viagens — 8 processadas, 4 pendentes)</span></h4>
+        <div style="display:flex;gap:6px">
+          <button class="btn-sm btn-yellow" onclick="alert('Gera solicitações individuais para todas as viagens pendentes do lote')">⚡ Gerar Todas Solicitações</button>
+          <button class="btn-sm btn-ghost">📥 CSV</button>
+        </div>
+      </div>
+
+      <table class="sub-table">
+        <thead><tr>
+          <th><input type="checkbox" title="Selecionar todos"></th>
+          <th>Viajante</th><th>Destino</th><th>Ida</th><th>Retorno</th><th>Diárias</th><th>Vl. Estimado</th><th>Projeto</th><th>Status</th><th></th>
+        </tr></thead>
+        <tbody>
+          <tr style="background:#e6f7f205">
+            <td><input type="checkbox"></td>
+            <td class="primary">João da Silva</td><td>São Paulo/SP</td><td>10/03</td><td>13/03</td><td class="mono">3,5</td><td class="mono">R$ 4.520</td><td>TED 2024/001</td>
+            <td><span class="badge badge-green">✅ Solicitação gerada</span></td>
+            <td><button class="btn-sm btn-ghost" onclick="alert('Abre a solicitação SOLIC-2025-0041')">🔗</button></td>
+          </tr>
+          <tr style="background:#e6f7f205">
+            <td><input type="checkbox"></td>
+            <td class="primary">Maria Souza</td><td>Manaus/AM</td><td>12/03</td><td>15/03</td><td class="mono">3,0</td><td class="mono">R$ 5.200</td><td>TED 2024/001</td>
+            <td><span class="badge badge-green">✅ Solicitação gerada</span></td>
+            <td><button class="btn-sm btn-ghost">🔗</button></td>
+          </tr>
+          <tr style="background:#e6f7f205">
+            <td><input type="checkbox"></td>
+            <td class="primary">Carlos Eduardo</td><td>Recife/PE</td><td>17/03</td><td>19/03</td><td class="mono">2,5</td><td class="mono">R$ 3.100</td><td>TED 2024/018</td>
+            <td><span class="badge badge-green">✅ Solicitação gerada</span></td>
+            <td><button class="btn-sm btn-ghost">🔗</button></td>
+          </tr>
+          <tr style="background:#e6f7f205">
+            <td><input type="checkbox"></td>
+            <td class="primary">Ana Mendes</td><td>Belém/PA</td><td>18/03</td><td>21/03</td><td class="mono">3,5</td><td class="mono">R$ 4.800</td><td>TC-OPAS-2024</td>
+            <td><span class="badge badge-green">✅ Solicitação gerada</span></td>
+            <td><button class="btn-sm btn-ghost">🔗</button></td>
+          </tr>
+          <!-- ... mais 4 processadas ... -->
+          <tr style="background:#e6f7f205">
+            <td><input type="checkbox"></td>
+            <td>...</td><td colspan="8" style="color:#8395a7;font-style:italic">+ 4 viagens já processadas</td>
+          </tr>
+
+          <!-- PENDENTES -->
+          <tr style="background:#f39c1208">
+            <td><input type="checkbox" checked></td>
+            <td class="primary">Roberto Lima</td><td>Porto Alegre/RS</td><td>24/03</td><td>26/03</td><td class="mono">2,5</td><td class="mono">R$ 3.400</td><td>TED 2024/001</td>
+            <td><span class="badge badge-yellow">⏳ Pendente</span></td>
+            <td><button class="btn-sm btn-blue" onclick="alert('Gera solicitação individual para esta viagem')">⚡ Gerar</button></td>
+          </tr>
+          <tr style="background:#f39c1208">
+            <td><input type="checkbox" checked></td>
+            <td class="primary">Fernanda Costa</td><td>Salvador/BA</td><td>25/03</td><td>28/03</td><td class="mono">3,0</td><td class="mono">R$ 4.100</td><td>TED 2023/045</td>
+            <td><span class="badge badge-yellow">⏳ Pendente</span></td>
+            <td><button class="btn-sm btn-blue">⚡ Gerar</button></td>
+          </tr>
+          <tr style="background:#f39c1208">
+            <td><input type="checkbox" checked></td>
+            <td class="primary">Paulo Mendes</td><td>Curitiba/PR</td><td>27/03</td><td>29/03</td><td class="mono">2,0</td><td class="mono">R$ 2.800</td><td>TC-OPAS-2024</td>
+            <td><span class="badge badge-yellow">⏳ Pendente</span></td>
+            <td><button class="btn-sm btn-blue">⚡ Gerar</button></td>
+          </tr>
+          <tr style="background:#fce8e808">
+            <td><input type="checkbox"></td>
+            <td class="primary">Luciana Alves</td><td>Fortaleza/CE</td><td>28/03</td><td>30/03</td><td class="mono">2,5</td><td class="mono">R$ 3.600</td><td>TED 2024/018</td>
+            <td><span class="badge badge-red">❌ Cancelada</span></td>
+            <td><button class="btn-sm btn-ghost" style="color:#c0392b">Ver motivo</button></td>
+          </tr>
+        </tbody>
+        <tfoot><tr style="background:#f4f6f9;font-weight:700">
+          <td></td><td>TOTAL (12 viagens)</td><td colspan="3"></td><td class="mono">35,0</td><td class="mono" style="color:#0e7a5c">R$ 48.600</td><td colspan="3"></td>
+        </tr></tfoot>
+      </table>
+    </div>
+
+    <!-- LOTES ANTERIORES -->
+    <div class="section">
+      <div class="st st-b">📚 Lotes Anteriores</div>
+      <table class="sub-table">
+        <thead><tr><th>Nº Lote</th><th>Período</th><th>Aprovação</th><th>Viagens</th><th>Valor Total</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          <tr><td class="primary">PLAN-GAB-2025-003</td><td>Março/2025</td><td>28/02/2025</td><td class="mono">12</td><td class="mono">R$ 48.600</td><td><span class="badge badge-orange">8/12 processadas</span></td><td><button class="btn-sm btn-ghost">Abrir</button></td></tr>
+          <tr><td class="primary">PLAN-GAB-2025-002</td><td>Fevereiro/2025</td><td>31/01/2025</td><td class="mono">9</td><td class="mono">R$ 35.200</td><td><span class="badge badge-green">✅ Completo</span></td><td><button class="btn-sm btn-ghost">Abrir</button></td></tr>
+          <tr><td class="primary">PLAN-GAB-2025-001</td><td>Janeiro/2025</td><td>20/12/2024</td><td class="mono">6</td><td class="mono">R$ 22.100</td><td><span class="badge badge-green">✅ Completo</span></td><td><button class="btn-sm btn-ghost">Abrir</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- 3. PAINEL CONSOLIDADO                             -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="mp" id="p-painel">
+<div class="card">
+  <div class="card-header">
+    <h2>📊 Painel — Passagens e Diárias</h2>
+    <div style="display:flex;gap:8px;align-items:center">
+      <select style="padding:6px 12px;border:1px solid #dfe4ea;border-radius:6px;font-size:12px;font-family:inherit"><option>Todos os Módulos</option><option>TED</option><option>OPAS</option></select>
+      <select style="padding:6px 12px;border:1px solid #dfe4ea;border-radius:6px;font-size:12px;font-family:inherit"><option>2025</option><option>2024</option></select>
+      <select style="padding:6px 12px;border:1px solid #dfe4ea;border-radius:6px;font-size:12px;font-family:inherit"><option>Todos Departamentos</option><option>DAET</option><option>DGH</option><option>DESMAD</option></select>
+    </div>
+  </div>
+  <div class="card-body">
+
+    <!-- KPIs -->
+    <div class="kpi-row">
+      <div class="kpi"><div class="kl">Total Solicitações</div><div class="kv" style="color:#0969c3">87</div><div class="ks">2025 — até hoje</div></div>
+      <div class="kpi"><div class="kl">Aprovadas</div><div class="kv" style="color:#0e7a5c">72</div><div class="ks">82,8%</div></div>
+      <div class="kpi"><div class="kl">Pendentes</div><div class="kv" style="color:#f39c12">11</div><div class="ks">Em análise</div></div>
+      <div class="kpi"><div class="kl">Canceladas</div><div class="kv" style="color:#c0392b">4</div></div>
+      <div class="kpi"><div class="kl">Total Passagens</div><div class="kv" style="color:#0969c3;font-size:17px">R$ 156.400</div></div>
+      <div class="kpi"><div class="kl">Total Diárias</div><div class="kv" style="color:#0969c3;font-size:17px">R$ 89.200</div></div>
+      <div class="kpi"><div class="kl">Custo Total</div><div class="kv" style="color:#0e7a5c;font-size:17px">R$ 245.600</div><div class="ks">Passagens + Diárias</div></div>
+    </div>
+
+    <!-- PLANEJADO vs REALIZADO -->
+    <div class="section">
+      <div class="st st-g">📊 Planejado (Gabinete) × Executado</div>
+      <div class="compare-row">
+        <div class="compare-col" style="border-color:#f39c1240">
+          <h5 style="color:#f39c12">📋 Planejado (Lotes aprovados)</h5>
+          <div class="g g2" style="gap:10px">
+            <div><span style="font-size:10px;color:#8395a7">Viagens planejadas</span><br><strong style="font-size:20px;font-family:'IBM Plex Mono'">27</strong></div>
+            <div><span style="font-size:10px;color:#8395a7">Valor estimado</span><br><strong style="font-size:18px;font-family:'IBM Plex Mono';color:#f39c12">R$ 105.900</strong></div>
+          </div>
+        </div>
+        <div class="compare-vs">vs</div>
+        <div class="compare-col" style="border-color:#0e7a5c40">
+          <h5 style="color:#0e7a5c">✅ Executado (Solicitações realizadas)</h5>
+          <div class="g g2" style="gap:10px">
+            <div><span style="font-size:10px;color:#8395a7">Viagens realizadas</span><br><strong style="font-size:20px;font-family:'IBM Plex Mono'">23</strong></div>
+            <div><span style="font-size:10px;color:#8395a7">Valor real</span><br><strong style="font-size:18px;font-family:'IBM Plex Mono';color:#0e7a5c">R$ 98.340</strong></div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:12px;color:#8395a7">
+        Aderência ao planejamento: <strong style="color:#0e7a5c">85,2%</strong> das viagens · <strong style="color:#0e7a5c">92,9%</strong> do valor estimado
+      </div>
+    </div>
+
+    <!-- RANKING -->
+    <div class="section">
+      <div class="st st-g">🏆 Top Viajantes (2025)</div>
+      <table class="sub-table">
+        <thead><tr><th>#</th><th>Pessoa</th><th>Vínculo</th><th>Viagens</th><th>Diárias</th><th>Valor Total</th><th>Depto</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">1</td><td class="primary">Dr. Carlos Eduardo</td><td><span class="badge badge-blue">Servidor</span></td><td class="mono">8</td><td class="mono">28,5</td><td class="mono" style="color:#0e7a5c">R$ 32.400</td><td>DAET</td></tr>
+          <tr><td class="mono">2</td><td class="primary">Ana Carolina Mendes</td><td><span class="badge badge-orange">Bolsista</span></td><td class="mono">6</td><td class="mono">21,0</td><td class="mono" style="color:#0e7a5c">R$ 24.800</td><td>DECAN</td></tr>
+          <tr><td class="mono">3</td><td class="primary">João da Silva</td><td><span class="badge badge-blue">CLT</span></td><td class="mono">5</td><td class="mono">17,5</td><td class="mono" style="color:#0e7a5c">R$ 19.200</td><td>DAET</td></tr>
+          <tr><td class="mono">4</td><td class="primary">Maria Souza</td><td><span class="badge badge-blue">Servidor</span></td><td class="mono">5</td><td class="mono">15,0</td><td class="mono" style="color:#0e7a5c">R$ 18.600</td><td>DGH</td></tr>
+          <tr><td class="mono">5</td><td class="primary">Paulo Mendes</td><td><span class="badge badge-purple">Consultor</span></td><td class="mono">4</td><td class="mono">14,0</td><td class="mono" style="color:#0e7a5c">R$ 16.300</td><td>DESMAD</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- POR DESTINO -->
+    <div class="section">
+      <div class="st st-g">📍 Destinos mais frequentes</div>
+      <div class="g g5" style="margin-bottom:12px">
+        <div class="kpi"><div class="kl">São Paulo/SP</div><div class="kv" style="font-size:18px;color:#0969c3">14</div></div>
+        <div class="kpi"><div class="kl">Rio de Janeiro/RJ</div><div class="kv" style="font-size:18px;color:#0969c3">9</div></div>
+        <div class="kpi"><div class="kl">Manaus/AM</div><div class="kv" style="font-size:18px;color:#0969c3">7</div></div>
+        <div class="kpi"><div class="kl">Recife/PE</div><div class="kv" style="font-size:18px;color:#0969c3">6</div></div>
+        <div class="kpi"><div class="kl">Belém/PA</div><div class="kv" style="font-size:18px;color:#0969c3">5</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+</div>
+
+<script>
+function showM(id,btn,cls){document.querySelectorAll('.mp').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.main-tab').forEach(b=>b.className='main-tab');document.getElementById('p-'+id).classList.add('active');btn.classList.add(cls)}
+</script>
+</body>
+</html>

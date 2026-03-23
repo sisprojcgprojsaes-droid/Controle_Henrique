@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alterações Contratuais</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'IBM Plex Sans',sans-serif;background:#f4f6f9;color:#1a2332;min-height:100vh}
+.annotation{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#d63031;color:#fff;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.page{max-width:1200px;margin:0 auto;padding:70px 24px 40px}
+.tabs{display:flex;gap:4px;margin-bottom:24px;background:#fff;border:1px solid #dfe4ea;border-radius:12px;padding:6px;flex-wrap:wrap}
+.tab{flex:1;padding:12px 8px;text-align:center;border-radius:8px;font-size:12px;font-weight:600;color:#8395a7;cursor:pointer;transition:all .15s;border:none;background:none;font-family:inherit;min-width:140px}
+.tab:hover{color:#1a2332;background:#f4f6f9}
+.tab.a1{background:#0e7a5c;color:#fff}.tab.a2{background:#0969c3;color:#fff}.tab.a3{background:#d35400;color:#fff}.tab.a4{background:#8e44ad;color:#fff}.tab.a5{background:#1a2332;color:#fff}
+.mp{display:none}.mp.active{display:block}
+.card{background:#fff;border:1px solid #dfe4ea;border-radius:14px;box-shadow:0 2px 16px rgba(0,0,0,.07);overflow:hidden;margin-bottom:24px}
+.card-header{padding:18px 24px;border-bottom:1px solid #dfe4ea;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.card-header h2{font-size:17px;font-weight:700;display:flex;align-items:center;gap:10px}
+.card-body{padding:24px}
+.card-footer{padding:14px 24px;border-top:1px solid #dfe4ea;display:flex;justify-content:space-between;background:#fafbfc}
+.section{margin-bottom:28px}
+.st{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding-bottom:10px;border-bottom:2px solid;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.st-g{color:#0e7a5c;border-color:#0e7a5c30}.st-b{color:#0969c3;border-color:#0969c330}.st-o{color:#d35400;border-color:#d3540030}.st-r{color:#c0392b;border-color:#c0392b30}
+.g{display:grid;gap:16px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}.g4{grid-template-columns:1fr 1fr 1fr 1fr}.full{grid-column:1/-1}
+.f{display:flex;flex-direction:column}
+.f label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#8395a7;margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.f label .req{color:#c0392b;font-size:13px}
+.f input,.f select,.f textarea{padding:10px 14px;border:1px solid #dfe4ea;border-radius:8px;font-size:13px;font-family:inherit;background:#f4f6f9;color:#1a2332;outline:none;transition:all .15s}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:#0e7a5c;background:#fff}
+.f textarea{resize:vertical;min-height:70px}
+.f .hint{font-size:10px;color:#b0b8c4;margin-top:4px}
+.f input:disabled{background:#e8ecf2;color:#8395a7;cursor:not-allowed}
+.lk{position:relative}.lk input{padding-right:36px}.lk .ico{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:14px;color:#8395a7;cursor:pointer}
+.cur{position:relative}.cur input{padding-left:36px;text-align:right;font-family:'IBM Plex Mono',monospace}.cur .pfx{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:12px;color:#8395a7;font-weight:600}
+.tag{font-size:9px;padding:2px 6px;border-radius:6px;font-weight:600;margin-left:4px}
+.tag-auto{background:#0e7a5c15;color:#0e7a5c}.tag-new{background:#d3540015;color:#d35400}.tag-rule{background:#c0392b15;color:#c0392b}
+.btn{padding:9px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;border:none;transition:all .15s}
+.btn-primary{background:#0e7a5c;color:#fff}.btn-blue{background:#0969c3;color:#fff}.btn-danger{background:#c0392b;color:#fff}
+.btn-ghost{background:#fff;color:#4a5e73;border:1px solid #dfe4ea}.btn-ghost:hover{background:#eef1f5}
+.btn-sm{padding:6px 14px;font-size:12px}
+.info{border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:12px;line-height:1.6;display:flex;gap:10px}
+.info .ic{font-size:18px;flex-shrink:0}
+.info-b{background:#0969c308;border:1px solid #0969c325;color:#0969c3}
+.info-g{background:#0e7a5c08;border:1px solid #0e7a5c25;color:#0e7a5c}
+.info-o{background:#d3540008;border:1px solid #d3540025;color:#d35400}
+.info-r{background:#c0392b08;border:1px solid #c0392b25;color:#c0392b}
+.sub-table{width:100%;border-collapse:collapse}
+.sub-table thead th{padding:8px 12px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#8395a7;text-align:left;background:#f4f6f9;border-bottom:1px solid #dfe4ea}
+.sub-table tbody td{padding:10px 12px;font-size:12px;color:#4a5e73;border-bottom:1px solid #dfe4ea}
+.sub-table tbody tr:hover{background:#eef1f5;cursor:pointer}
+.sub-table .primary{color:#1a2332;font-weight:500}
+.sub-table .mono{font-family:'IBM Plex Mono',monospace;font-size:11px}
+.badge{font-size:10px;padding:3px 10px;border-radius:10px;font-weight:600;display:inline-block}
+.badge-green{background:#e6f7f2;color:#0e7a5c}.badge-red{background:#fce8e8;color:#c0392b}
+.badge-blue{background:#e3f0fc;color:#0969c3}.badge-orange{background:#fef3e2;color:#d35400}
+.badge-yellow{background:#f39c1215;color:#f39c12}.badge-purple{background:#8e44ad15;color:#8e44ad}
+.sub-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sub-header h4{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px}
+
+/* Tipo selector visual */
+.tipo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:20px}
+.tipo-card{border:2px solid #dfe4ea;border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;background:#fff}
+.tipo-card:hover{border-color:#0969c3;transform:translateY(-1px)}
+.tipo-card.selected{border-color:#0e7a5c;background:#0e7a5c05}
+.tipo-card.disabled{opacity:.35;pointer-events:none;cursor:not-allowed}
+.tipo-card .tc-icon{font-size:20px;margin-bottom:6px}
+.tipo-card .tc-title{font-size:13px;font-weight:600;color:#1a2332;margin-bottom:2px}
+.tipo-card .tc-desc{font-size:10px;color:#8395a7;line-height:1.4}
+.tipo-card .tc-vinc{margin-top:8px;display:flex;gap:4px}
+.tipo-card .tc-tag{font-size:9px;padding:2px 8px;border-radius:6px;font-weight:600}
+
+/* Change comparison */
+.change-box{background:#f4f6f9;border:1px solid #dfe4ea;border-radius:12px;padding:18px;margin-bottom:16px}
+.change-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #e8ecf2;font-size:13px}
+.change-row:last-child{border:none}
+.change-label{width:160px;font-size:11px;font-weight:600;color:#8395a7;text-transform:uppercase}
+.change-before{flex:1;padding:6px 12px;background:#fce8e8;border-radius:6px;color:#c0392b;font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center}
+.change-arrow{font-size:16px;color:#0e7a5c;font-weight:700}
+.change-after{flex:1;padding:6px 12px;background:#e6f7f2;border-radius:6px;color:#0e7a5c;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;text-align:center}
+
+/* Timeline */
+.timeline-list{position:relative;padding-left:24px}
+.timeline-list::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:#dfe4ea}
+.tl-item{position:relative;padding:14px 18px;margin-bottom:14px;background:#fff;border:1px solid #dfe4ea;border-radius:10px;transition:all .15s}
+.tl-item:hover{box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.tl-item::before{content:'';position:absolute;left:-21px;top:20px;width:10px;height:10px;border-radius:50%;border:2px solid #dfe4ea;background:#fff}
+.tl-item.green::before{border-color:#0e7a5c;background:#0e7a5c}
+.tl-item.blue::before{border-color:#0969c3;background:#0969c3}
+.tl-item.orange::before{border-color:#d35400;background:#d35400}
+.tl-item.red::before{border-color:#c0392b;background:#c0392b}
+.tl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.tl-title{font-size:13px;font-weight:600;color:#1a2332}
+.tl-details{display:flex;gap:16px;font-size:11px;color:#8395a7;flex-wrap:wrap}
+.tl-details span{display:flex;align-items:center;gap:4px}
+
+@media(max-width:700px){.g2,.g3,.g4{grid-template-columns:1fr}.tipo-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="annotation">⚠ Registro de Alterações Contratuais (Bolsa + CLT)</div>
+<div class="page">
+
+<div class="tabs">
+  <button class="tab a1" onclick="showM('tipos',this,'a1')">📋 Tipos de Alteração</button>
+  <button class="tab" onclick="showM('form',this,'a2')">📝 Formulário</button>
+  <button class="tab" onclick="showM('regras',this,'a3')">⚠️ Regras de Negócio</button>
+  <button class="tab" onclick="showM('hist',this,'a4')">📜 Histórico</button>
+  <button class="tab" onclick="showM('rescisao',this,'a5')">🔴 Rescisão</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- 1. TIPOS DE ALTERAÇÃO                             -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="mp active" id="p-tipos">
+<div class="card">
+  <div class="card-header"><h2>📋 Tipos de Alteração Contratual</h2></div>
+  <div class="card-body">
+
+    <div class="info info-g"><span class="ic">📋</span><div>
+      Cada alteração é um <strong>registro filho do contrato</strong> (tabela <code>saes_alteracaocontrato</code>). O contrato original é atualizado automaticamente com os novos valores. O histórico de todas as alterações fica preservado.
+    </div></div>
+
+    <div class="tipo-grid">
+
+      <div class="tipo-card" onclick="alert('Muda o projeto/PEP do contrato. Registros mensais futuros são realocados.')">
+        <div class="tc-icon">📁</div>
+        <div class="tc-title">Alteração de Projeto</div>
+        <div class="tc-desc">Transferir contrato de um TED/PEP para outro. Registros anteriores mantêm o projeto original.</div>
+        <div class="tc-vinc"><span class="tc-tag" style="background:#0969c315;color:#0969c3">CLT</span><span class="tc-tag" style="background:#d3540015;color:#d35400">Bolsa</span><span class="tc-tag" style="background:#8e44ad15;color:#8e44ad">RPA</span></div>
+      </div>
+
+      <div class="tipo-card" onclick="alert('Bolsa/RPA → CLT. Encerra contrato PF e cria novo CLT. Sentido inverso NÃO permitido.')">
+        <div class="tc-icon">🔄</div>
+        <div class="tc-title">Alteração de Vínculo</div>
+        <div class="tc-desc">Bolsa/RPA → CLT (permitido). <strong style="color:#c0392b">CLT → Bolsa NÃO permitido.</strong></div>
+        <div class="tc-vinc"><span class="tc-tag" style="background:#d3540015;color:#d35400">Bolsa → CLT</span><span class="tc-tag" style="background:#8e44ad15;color:#8e44ad">RPA → CLT</span><span class="tc-tag" style="background:#c0392b15;color:#c0392b">❌ CLT → Bolsa</span></div>
+      </div>
+
+      <div class="tipo-card" onclick="alert('Aumenta o valor da bolsa. Registros futuros recebem novo valor. Passados não mudam.')">
+        <div class="tc-icon">💰</div>
+        <div class="tc-title">Aditivo de Valor (Bolsa)</div>
+        <div class="tc-desc">Reajuste no valor da bolsa. Aplicado a partir da data da alteração. Meses anteriores preservados.</div>
+        <div class="tc-vinc"><span class="tc-tag" style="background:#d3540015;color:#d35400">Bolsa</span><span class="tc-tag" style="background:#8e44ad15;color:#8e44ad">RPA</span></div>
+      </div>
+
+      <div class="tipo-card" onclick="alert('Estende o contrato. Gera novos registros mensais para os meses adicionados.')">
+        <div class="tc-icon">📅</div>
+        <div class="tc-title">Aditivo de Tempo (Bolsa)</div>
+        <div class="tc-desc">Estende a vigência. Novos registros mensais são criados automaticamente para os meses adicionais.</div>
+        <div class="tc-vinc"><span class="tc-tag" style="background:#d3540015;color:#d35400">Bolsa</span><span class="tc-tag" style="background:#8e44ad15;color:#8e44ad">RPA</span></div>
+      </div>
+
+      <div class="tipo-card" onclick="alert('Muda cargo e/ou salário. Registros futuros atualizados. Passados preservados.')">
+        <div class="tc-icon">⬆️</div>
+        <div class="tc-title">Promoção de Cargo (CLT)</div>
+        <div class="tc-desc">Mudança de cargo com possível alteração salarial. Salário líquido e custo efetivo recalculados.</div>
+        <div class="tc-vinc"><span class="tc-tag" style="background:#0969c315;color:#0969c3">CLT</span></div>
+      </div>
+
+      <div class="tipo-card" onclick="alert('Muda carga horária e recalcula salário proporcional.')">
+        <div class="tc-icon">🕐</div>
+        <div class="tc-title">Alteração de Carga Horária (CLT)</div>
+        <div class="tc-desc">Muda jornada (ex: 40h → 30h). Salário recalculado proporcionalmente. Custo efetivo atualizado.</div>
+        <div class="tc-vinc"><span class="tc-tag" style="background:#0969c315;color:#0969c3">CLT</span></div>
+      </div>
+
+      <div class="tipo-card" onclick="alert('Encerra contrato. Registros futuros cancelados. Calcula rescisão se CLT.')">
+        <div class="tc-icon" style="color:#c0392b">🔴</div>
+        <div class="tc-title" style="color:#c0392b">Rescisão</div>
+        <div class="tc-desc">Encerramento antecipado do contrato. CLT: calcula verbas rescisórias. PF: encerra pagamentos futuros.</div>
+        <div class="tc-vinc"><span class="tc-tag" style="background:#0969c315;color:#0969c3">CLT</span><span class="tc-tag" style="background:#d3540015;color:#d35400">Bolsa</span><span class="tc-tag" style="background:#8e44ad15;color:#8e44ad">RPA</span></div>
+      </div>
+
+      <div class="tipo-card" onclick="alert('Tipo livre para alterações não categorizadas.')">
+        <div class="tc-icon">📝</div>
+        <div class="tc-title">Outros</div>
+        <div class="tc-desc">Alteração genérica: mudança de coordenação, atualização de dados, correção, etc.</div>
+        <div class="tc-vinc"><span class="tc-tag" style="background:#0969c315;color:#0969c3">CLT</span><span class="tc-tag" style="background:#d3540015;color:#d35400">Bolsa</span><span class="tc-tag" style="background:#8e44ad15;color:#8e44ad">RPA</span></div>
+      </div>
+
+    </div>
+
+    <!-- RESUMO: TIPOS × VÍNCULO -->
+    <div class="section">
+      <div class="st st-b">📊 Matriz: Tipo de Alteração × Vínculo</div>
+      <table class="sub-table">
+        <thead><tr><th>Tipo de Alteração</th><th style="text-align:center">CLT</th><th style="text-align:center">Bolsa</th><th style="text-align:center">RPA</th><th>Efeito nos Registros Mensais</th></tr></thead>
+        <tbody>
+          <tr><td class="primary">📁 Alteração de Projeto</td><td style="text-align:center">✅</td><td style="text-align:center">✅</td><td style="text-align:center">✅</td><td>Futuros realocados ao novo projeto</td></tr>
+          <tr><td class="primary">🔄 Alteração de Vínculo</td><td style="text-align:center"><span style="color:#c0392b;font-weight:700">❌ origem</span></td><td style="text-align:center">✅ → CLT</td><td style="text-align:center">✅ → CLT</td><td>Encerra PF + cria novo CLT com registros</td></tr>
+          <tr><td class="primary">💰 Aditivo de Valor</td><td style="text-align:center">—</td><td style="text-align:center">✅</td><td style="text-align:center">✅</td><td>Futuros com novo valor; passados intactos</td></tr>
+          <tr><td class="primary">📅 Aditivo de Tempo</td><td style="text-align:center">—</td><td style="text-align:center">✅</td><td style="text-align:center">✅</td><td>Cria novos registros mensais adicionais</td></tr>
+          <tr><td class="primary">⬆️ Promoção de Cargo</td><td style="text-align:center">✅</td><td style="text-align:center">—</td><td style="text-align:center">—</td><td>Futuros com novo salário; passados intactos</td></tr>
+          <tr><td class="primary">🕐 Alteração Carga Horária</td><td style="text-align:center">✅</td><td style="text-align:center">—</td><td style="text-align:center">—</td><td>Futuros com salário proporcional</td></tr>
+          <tr><td class="primary" style="color:#c0392b">🔴 Rescisão</td><td style="text-align:center">✅</td><td style="text-align:center">✅</td><td style="text-align:center">✅</td><td>Futuros cancelados; CLT calcula verbas</td></tr>
+          <tr><td class="primary">📝 Outros</td><td style="text-align:center">✅</td><td style="text-align:center">✅</td><td style="text-align:center">✅</td><td>Depende do caso</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- 2. FORMULÁRIO DE ALTERAÇÃO                        -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="mp" id="p-form">
+<div class="card">
+  <div class="card-header">
+    <h2>📝 Nova Alteração Contratual</h2>
+    <span style="padding:4px 14px;border-radius:8px;font-size:11px;font-weight:700;background:#0969c315;color:#0969c3">CLT-2024-0045 — João da Silva</span>
+  </div>
+  <div class="card-body">
+
+    <!-- CONTRATO ATUAL -->
+    <div class="section">
+      <div class="st st-b">📋 Contrato Atual</div>
+      <div class="g g4">
+        <div class="f"><label>Nº Contrato</label><input value="CLT-2024-0045" disabled></div>
+        <div class="f"><label>Pessoa</label><input value="João da Silva Santos" disabled></div>
+        <div class="f"><label>Vínculo</label><input value="CLT" disabled style="color:#0969c3;font-weight:600"></div>
+        <div class="f"><label>Projeto</label><input value="TED 2024/001" disabled></div>
+      </div>
+      <div class="g g4" style="margin-top:12px">
+        <div class="f"><label>Cargo Atual</label><input value="Analista de Dados Pleno" disabled></div>
+        <div class="f"><label>Salário Bruto Atual</label><div class="cur"><span class="pfx">R$</span><input value="8.500,00" disabled></div></div>
+        <div class="f"><label>Carga Horária</label><input value="40h semanais" disabled></div>
+        <div class="f"><label>Data Final</label><input value="14/04/2026" disabled></div>
+      </div>
+    </div>
+
+    <!-- TIPO DE ALTERAÇÃO -->
+    <div class="section">
+      <div class="st st-g">🔧 Tipo de Alteração</div>
+      <div class="g g2">
+        <div class="f"><label>Tipo <span class="req">*</span></label>
+          <select id="sel-tipo" onchange="simTipoChange()">
+            <option value="">— Selecione —</option>
+            <option value="projeto">📁 Alteração de Projeto</option>
+            <option disabled style="color:#c0392b">🔄 Alteração de Vínculo (CLT → Bolsa NÃO permitido)</option>
+            <option disabled>💰 Aditivo de Valor (apenas Bolsa/RPA)</option>
+            <option disabled>📅 Aditivo de Tempo (apenas Bolsa/RPA)</option>
+            <option value="promocao" selected>⬆️ Promoção de Cargo</option>
+            <option value="carga">🕐 Alteração de Carga Horária</option>
+            <option value="rescisao">🔴 Rescisão</option>
+            <option value="outros">📝 Outros</option>
+          </select>
+          <span class="hint">Opções indisponíveis para CLT ficam desabilitadas automaticamente</span>
+        </div>
+        <div class="f"><label>Data da Alteração <span class="req">*</span></label><input type="date" value="2025-05-01"><span class="hint">A partir de quando a alteração entra em vigor</span></div>
+      </div>
+    </div>
+
+    <!-- CAMPOS DINÂMICOS: PROMOÇÃO -->
+    <div class="section" id="sec-promocao">
+      <div class="st st-g">⬆️ Promoção de Cargo</div>
+      <div class="info info-g"><span class="ic">⬆️</span><div>Preencha o novo cargo e/ou novo salário. O salário líquido e custo efetivo serão <strong>recalculados automaticamente</strong>. Registros mensais futuros (≥ Mai/2025) receberão os novos valores. Passados ficam intactos.</div></div>
+
+      <!-- De → Para -->
+      <div class="change-box">
+        <div style="font-size:11px;font-weight:700;color:#8395a7;text-transform:uppercase;margin-bottom:12px">Comparativo: Antes → Depois</div>
+        <div class="change-row">
+          <span class="change-label">Cargo</span>
+          <span class="change-before">Analista de Dados Pleno</span>
+          <span class="change-arrow">→</span>
+          <span class="change-after">Analista de Dados Sênior</span>
+        </div>
+        <div class="change-row">
+          <span class="change-label">CBO</span>
+          <span class="change-before">2124-05</span>
+          <span class="change-arrow">→</span>
+          <span class="change-after">2124-05 (mesmo)</span>
+        </div>
+        <div class="change-row">
+          <span class="change-label">Salário Bruto</span>
+          <span class="change-before">R$ 8.500,00</span>
+          <span class="change-arrow">→</span>
+          <span class="change-after">R$ 10.200,00</span>
+        </div>
+        <div class="change-row">
+          <span class="change-label">Salário Líquido</span>
+          <span class="change-before">R$ 6.240,18</span>
+          <span class="change-arrow">→</span>
+          <span class="change-after">R$ 7.284,50</span>
+        </div>
+        <div class="change-row">
+          <span class="change-label">Custo Efetivo/Mês</span>
+          <span class="change-before">R$ 12.835,00</span>
+          <span class="change-arrow">→</span>
+          <span class="change-after">R$ 15.402,00</span>
+        </div>
+      </div>
+
+      <div class="g g3">
+        <div class="f"><label>Novo Cargo <span class="req">*</span></label><input value="Analista de Dados Sênior"></div>
+        <div class="f"><label>Novo CBO</label><div class="lk"><input value="2124-05"><span class="ico">🔍</span></div></div>
+        <div class="f"><label>Novo Salário Bruto <span class="req">*</span></label><div class="cur"><span class="pfx">R$</span><input value="10.200,00"></div></div>
+      </div>
+      <div class="g g3" style="margin-top:12px">
+        <div class="f"><label>Novo Líquido <span class="tag tag-auto">Calc.</span></label><div class="cur"><span class="pfx">R$</span><input value="7.284,50" disabled style="color:#0e7a5c;font-weight:700"></div></div>
+        <div class="f"><label>Novo Custo Efetivo <span class="tag tag-auto">Calc.</span></label><div class="cur"><span class="pfx">R$</span><input value="15.402,00" disabled style="color:#0969c3;font-weight:700"></div></div>
+        <div class="f"><label>Diferença Mensal <span class="tag tag-auto">Calc.</span></label><div class="cur"><span class="pfx">R$</span><input value="+2.567,00" disabled style="color:#d35400;font-weight:700"></div><span class="hint">Impacto mensal no projeto</span></div>
+      </div>
+    </div>
+
+    <!-- JUSTIFICATIVA -->
+    <div class="section">
+      <div class="st st-g">📝 Justificativa e Anexos</div>
+      <div class="g g2">
+        <div class="f"><label>Justificativa <span class="req">*</span></label><textarea placeholder="Descreva o motivo da alteração...">Promoção de cargo após avaliação de desempenho semestral. Aprovado pela coordenação do projeto em reunião de 15/04/2025.</textarea></div>
+        <div class="f"><label>Observações</label><textarea placeholder="Observações adicionais..."></textarea></div>
+      </div>
+      <div style="margin-top:16px">
+        <div style="font-size:11px;font-weight:600;color:#8395a7;text-transform:uppercase;margin-bottom:8px">📎 Anexos</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+          <button class="btn-sm btn-ghost">📄 Termo de Alteração</button>
+          <button class="btn-sm btn-ghost">📋 Avaliação de Desempenho</button>
+          <button class="btn-sm btn-ghost">📁 Outro</button>
+        </div>
+        <div style="border:2px dashed #dfe4ea;border-radius:10px;padding:16px;text-align:center;color:#8395a7;font-size:12px;cursor:pointer">
+          📂 Arraste ou clique para anexar — PDF, JPG, PNG — máx 5MB
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-ghost">Cancelar</button>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost">Simular Impacto</button>
+      <button class="btn btn-primary" onclick="alert('Salva a alteração:\n1. Cria registro em saes_alteracaocontrato\n2. Atualiza contrato CLT-2024-0045 com novos valores\n3. Registros mensais futuros (≥ Mai/2025) recebem R$ 10.200\n4. Registros passados permanecem R$ 8.500')">💾 Aplicar Alteração</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXEMPLO: BOLSA ADITIVO VALOR -->
+<div class="card">
+  <div class="card-header">
+    <h2>📝 Exemplo: Aditivo de Valor — Bolsista</h2>
+    <span style="padding:4px 14px;border-radius:8px;font-size:11px;font-weight:700;background:#d3540015;color:#d35400">PF-2024-0089 — Ana Mendes</span>
+  </div>
+  <div class="card-body">
+    <div class="change-box">
+      <div style="font-size:11px;font-weight:700;color:#8395a7;text-transform:uppercase;margin-bottom:12px">💰 Aditivo de Valor — Bolsa</div>
+      <div class="change-row"><span class="change-label">Valor Mensal</span><span class="change-before">R$ 6.000,00</span><span class="change-arrow">→</span><span class="change-after">R$ 7.500,00</span></div>
+      <div class="change-row"><span class="change-label">Vigência</span><span class="change-before">01/03/2024 — 14/03/2025</span><span class="change-arrow">=</span><span class="change-after">Sem alteração</span></div>
+    </div>
+    <div class="info info-o"><span class="ic">💡</span><div>Registros mensais de Mar/2025 em diante recebem R$ 7.500. Meses anteriores (já pagos) permanecem R$ 6.000.</div></div>
+  </div>
+</div>
+
+<!-- EXEMPLO: BOLSA ADITIVO TEMPO -->
+<div class="card">
+  <div class="card-header">
+    <h2>📝 Exemplo: Aditivo de Tempo — Bolsista</h2>
+    <span style="padding:4px 14px;border-radius:8px;font-size:11px;font-weight:700;background:#d3540015;color:#d35400">PF-2024-0089 — Ana Mendes</span>
+  </div>
+  <div class="card-body">
+    <div class="change-box">
+      <div style="font-size:11px;font-weight:700;color:#8395a7;text-transform:uppercase;margin-bottom:12px">📅 Aditivo de Tempo — Bolsa</div>
+      <div class="change-row"><span class="change-label">Data Final</span><span class="change-before">14/03/2025</span><span class="change-arrow">→</span><span class="change-after">14/09/2025</span></div>
+      <div class="change-row"><span class="change-label">Meses Adicionais</span><span class="change-before">12 meses</span><span class="change-arrow">→</span><span class="change-after">18 meses (+6)</span></div>
+      <div class="change-row"><span class="change-label">Novos Registros</span><span class="change-before">—</span><span class="change-arrow">→</span><span class="change-after">+6 registros mensais (Abr→Set/2025)</span></div>
+    </div>
+    <div class="info info-o"><span class="ic">💡</span><div>6 novos registros mensais criados automaticamente (Abr/2025 a Set/2025) com valor R$ 6.000 e status "Compromissado".</div></div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- 3. REGRAS DE NEGÓCIO                              -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="mp" id="p-regras">
+<div class="card">
+  <div class="card-header"><h2>⚠️ Regras de Negócio — Alterações Contratuais</h2></div>
+  <div class="card-body">
+
+    <!-- REGRA: Vínculo -->
+    <div class="section">
+      <div class="st st-r">🔒 Regra 1 — Alteração de Vínculo (direção única)</div>
+      <div class="info info-r"><span class="ic">🔒</span><div>
+        <strong>Bolsa → CLT: ✅ Permitido</strong><br>
+        <strong>RPA → CLT: ✅ Permitido</strong><br>
+        <strong style="font-size:14px">CLT → Bolsa/RPA: ❌ NÃO PERMITIDO</strong><br><br>
+        <strong>O que acontece ao alterar Bolsa → CLT:</strong><br>
+        1. Contrato PF é marcado como <strong>Encerrado</strong> (data final = data da alteração)<br>
+        2. Registros mensais futuros do PF são <strong>Cancelados</strong><br>
+        3. Novo contrato CLT é criado automaticamente com tipo "Alteração de Vínculo"<br>
+        4. Novos registros mensais CLT são gerados a partir da data da alteração<br>
+        5. Pessoa mantém o histórico dos dois contratos
+      </div></div>
+    </div>
+
+    <!-- REGRA: Registros mensais -->
+    <div class="section">
+      <div class="st st-o">📅 Regra 2 — Impacto nos Registros Mensais</div>
+      <table class="sub-table">
+        <thead><tr><th>Tipo</th><th>Registros Passados (Pago)</th><th>Registros Compromissados</th><th>Registros Futuros</th></tr></thead>
+        <tbody>
+          <tr><td class="primary">Alteração de Projeto</td><td>❌ Não altera</td><td>🔄 Realoca para novo projeto</td><td>🔄 Realoca para novo projeto</td></tr>
+          <tr><td class="primary">Aditivo de Valor</td><td>❌ Não altera</td><td>💰 Atualiza valor</td><td>💰 Atualiza valor</td></tr>
+          <tr><td class="primary">Aditivo de Tempo</td><td>❌ Não altera</td><td>❌ Não altera</td><td>➕ Cria novos registros</td></tr>
+          <tr><td class="primary">Promoção de Cargo</td><td>❌ Não altera</td><td>💰 Atualiza valor</td><td>💰 Atualiza valor</td></tr>
+          <tr><td class="primary">Alteração Carga Horária</td><td>❌ Não altera</td><td>💰 Recalcula proporcional</td><td>💰 Recalcula proporcional</td></tr>
+          <tr><td class="primary" style="color:#c0392b">Rescisão</td><td>❌ Não altera</td><td>🔴 Cancela</td><td>🔴 Cancela</td></tr>
+          <tr><td class="primary">Alteração de Vínculo</td><td>❌ Não altera</td><td>🔴 Cancela (PF) + ➕ Cria (CLT)</td><td>🔴 Cancela (PF) + ➕ Cria (CLT)</td></tr>
+        </tbody>
+      </table>
+      <div class="info info-o" style="margin-top:16px"><span class="ic">⚠️</span><div><strong>Regra de ouro:</strong> Registros com status "Pago" <strong>NUNCA são alterados</strong>, independente do tipo de alteração.</div></div>
+    </div>
+
+    <!-- REGRA: Anexos -->
+    <div class="section">
+      <div class="st st-b">📎 Regra 3 — Anexos Obrigatórios</div>
+      <table class="sub-table">
+        <thead><tr><th>Tipo</th><th>Anexo Obrigatório</th></tr></thead>
+        <tbody>
+          <tr><td class="primary">Promoção de Cargo</td><td>📄 Termo de Alteração + 📋 Avaliação de Desempenho</td></tr>
+          <tr><td class="primary">Alteração de Vínculo</td><td>📄 Termo de Encerramento (PF) + 📄 Contrato CLT novo</td></tr>
+          <tr><td class="primary">Aditivo de Valor</td><td>📄 Termo Aditivo</td></tr>
+          <tr><td class="primary">Aditivo de Tempo</td><td>📄 Termo Aditivo</td></tr>
+          <tr><td class="primary">Rescisão (CLT)</td><td>📄 Termo de Rescisão + 📄 TRCT</td></tr>
+          <tr><td class="primary">Rescisão (PF)</td><td>📄 Termo de Encerramento</td></tr>
+          <tr><td class="primary">Alteração Carga Horária</td><td>📄 Termo de Alteração</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- 4. HISTÓRICO                                      -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="mp" id="p-hist">
+<div class="card">
+  <div class="card-header"><h2>📜 Histórico de Alterações — João da Silva (CLT-2024-0045)</h2></div>
+  <div class="card-body">
+
+    <div class="info info-b"><span class="ic">📜</span><div>Todas as alterações ficam registradas como filhos do contrato. Cada alteração preserva: tipo, data, valores anteriores × novos, justificativa, anexos, quem fez.</div></div>
+
+    <div class="timeline-list">
+
+      <div class="tl-item green">
+        <div class="tl-header">
+          <span class="tl-title">⬆️ Promoção de Cargo</span>
+          <span class="badge badge-green">Aplicada</span>
+        </div>
+        <div class="tl-details">
+          <span>📅 01/05/2025</span>
+          <span>👤 henrique.garcia</span>
+          <span>📄 2 anexos</span>
+        </div>
+        <div class="change-box" style="margin-top:10px;margin-bottom:0;padding:12px">
+          <div class="change-row" style="padding:4px 0"><span class="change-label" style="width:100px;font-size:10px">Cargo</span><span class="change-before" style="font-size:11px;padding:4px 8px">Pleno</span><span class="change-arrow">→</span><span class="change-after" style="font-size:11px;padding:4px 8px">Sênior</span></div>
+          <div class="change-row" style="padding:4px 0"><span class="change-label" style="width:100px;font-size:10px">Bruto</span><span class="change-before" style="font-size:11px;padding:4px 8px">R$ 8.500</span><span class="change-arrow">→</span><span class="change-after" style="font-size:11px;padding:4px 8px">R$ 10.200</span></div>
+        </div>
+      </div>
+
+      <div class="tl-item blue">
+        <div class="tl-header">
+          <span class="tl-title">📁 Alteração de Projeto</span>
+          <span class="badge badge-blue">Aplicada</span>
+        </div>
+        <div class="tl-details">
+          <span>📅 01/01/2025</span>
+          <span>👤 coord.daet</span>
+          <span>📄 1 anexo</span>
+        </div>
+        <div class="change-box" style="margin-top:10px;margin-bottom:0;padding:12px">
+          <div class="change-row" style="padding:4px 0"><span class="change-label" style="width:100px;font-size:10px">Projeto</span><span class="change-before" style="font-size:11px;padding:4px 8px">TED 2023/045</span><span class="change-arrow">→</span><span class="change-after" style="font-size:11px;padding:4px 8px">TED 2024/001</span></div>
+          <div class="change-row" style="padding:4px 0"><span class="change-label" style="width:100px;font-size:10px">PEP</span><span class="change-before" style="font-size:11px;padding:4px 8px">PEP-DGH-002</span><span class="change-arrow">→</span><span class="change-after" style="font-size:11px;padding:4px 8px">PEP-DAET-001</span></div>
+        </div>
+      </div>
+
+      <div class="tl-item green">
+        <div class="tl-header">
+          <span class="tl-title">✅ Contrato Criado</span>
+          <span class="badge badge-green">Registro inicial</span>
+        </div>
+        <div class="tl-details">
+          <span>📅 15/04/2024</span>
+          <span>👤 henrique.garcia</span>
+          <span>👷 CLT — Analista de Dados Pleno — R$ 8.500</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- 5. RESCISÃO                                       -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="mp" id="p-rescisao">
+<div class="card">
+  <div class="card-header"><h2>🔴 Rescisão Contratual</h2></div>
+  <div class="card-body">
+
+    <div class="info info-r"><span class="ic">🔴</span><div>A rescisão encerra o contrato antecipadamente. Para <strong>CLT</strong>, calcula verbas rescisórias (usa a calculadora salarial já existente). Para <strong>Bolsa/RPA</strong>, encerra pagamentos futuros.</div></div>
+
+    <div class="section">
+      <div class="st st-r">📋 Formulário de Rescisão — CLT</div>
+      <div class="g g3">
+        <div class="f"><label>Contrato</label><input value="CLT-2024-0045 — João da Silva" disabled></div>
+        <div class="f"><label>Data da Rescisão <span class="req">*</span></label><input type="date" value="2025-06-30"></div>
+        <div class="f"><label>Modalidade <span class="req">*</span></label>
+          <select>
+            <option>Demissão sem justa causa</option>
+            <option>Pedido de demissão</option>
+            <option>Justa causa</option>
+            <option selected>Acordo mútuo (art. 484-A)</option>
+          </select>
+        </div>
+      </div>
+      <div class="g g3" style="margin-top:12px">
+        <div class="f"><label>Aviso Prévio Indenizado?</label><select><option selected>Sim</option><option>Não</option></select></div>
+        <div class="f"><label>Férias Vencidas?</label><select><option>Sim</option><option selected>Não</option></select></div>
+        <div class="f"><label>Saldo FGTS</label><div class="cur"><span class="pfx">R$</span><input value="12.240,00"></div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="st st-r">💰 Cálculo Rescisório <span class="tag tag-auto">Usa a calculadora salarial</span></div>
+      <div style="background:#f4f6f9;border:1px solid #dfe4ea;border-radius:12px;padding:18px">
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #e8ecf2;font-size:13px"><span style="color:#4a5e73">Saldo de Salário (30 dias)</span><span style="font-family:'IBM Plex Mono';font-weight:600">R$ 8.500,00</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #e8ecf2;font-size:13px"><span style="color:#4a5e73">Aviso Prévio (33 dias)</span><span style="font-family:'IBM Plex Mono';font-weight:600">R$ 9.350,00</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #e8ecf2;font-size:13px"><span style="color:#4a5e73">13º Proporcional</span><span style="font-family:'IBM Plex Mono';font-weight:600">R$ 4.250,00</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #e8ecf2;font-size:13px"><span style="color:#4a5e73">Férias Proporcionais + 1/3</span><span style="font-family:'IBM Plex Mono';font-weight:600">R$ 5.666,67</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #e8ecf2;font-size:13px"><span style="color:#0e7a5c">Multa FGTS (20% — acordo mútuo)</span><span style="font-family:'IBM Plex Mono';font-weight:600;color:#0e7a5c">R$ 2.448,00</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #e8ecf2;font-size:13px"><span style="color:#c0392b">(-) INSS</span><span style="font-family:'IBM Plex Mono';font-weight:600;color:#c0392b">- R$ 988,09</span></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:15px;font-weight:700;border-top:2px solid #dfe4ea;margin-top:4px"><span>TOTAL LÍQUIDO RESCISÃO</span><span style="font-family:'IBM Plex Mono';color:#0e7a5c">R$ 29.226,58</span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="st st-r">⚙️ O que acontece ao confirmar</div>
+      <div style="font-size:12px;color:#4a5e73;line-height:2">
+        1. Contrato marcado como <strong>Encerrado</strong> (data final = 30/06/2025)<br>
+        2. Registros mensais com competência ≥ Jul/2025 → <strong>Cancelados</strong><br>
+        3. Registro de rescisão criado com todos os valores calculados<br>
+        4. Anexos obrigatórios: <strong>Termo de Rescisão + TRCT</strong><br>
+        5. Situação atualizada automaticamente no Kanban (→ Encerrado)
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="st st-r">📎 Anexos Obrigatórios</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <button class="btn-sm btn-ghost">📄 Termo de Rescisão</button>
+        <button class="btn-sm btn-ghost">📋 TRCT</button>
+        <button class="btn-sm btn-ghost">📁 Outros</button>
+      </div>
+      <div style="border:2px dashed #c0392b30;border-radius:10px;padding:16px;text-align:center;color:#c0392b;font-size:12px;cursor:pointer">
+        📂 Arraste para anexar — obrigatório para confirmar a rescisão
+      </div>
+    </div>
+
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-ghost">Cancelar</button>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost">💾 Salvar Rascunho</button>
+      <button class="btn btn-danger" onclick="alert('Confirma rescisão:\n1. Encerra contrato\n2. Cancela registros futuros\n3. Salva valores rescisórios\n4. Atualiza Kanban')">🔴 Confirmar Rescisão</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESCISÃO PF -->
+<div class="card">
+  <div class="card-header"><h2>🔴 Rescisão — Bolsa/RPA (simplificada)</h2></div>
+  <div class="card-body">
+    <div class="info info-r"><span class="ic">🔴</span><div>Para Bolsa/RPA não há cálculo rescisório CLT. Apenas encerra o contrato e cancela os registros mensais futuros.</div></div>
+    <div class="g g3">
+      <div class="f"><label>Contrato</label><input value="PF-2024-0089 — Ana Mendes" disabled></div>
+      <div class="f"><label>Data da Rescisão <span class="req">*</span></label><input type="date" value="2025-03-14"></div>
+      <div class="f"><label>Motivo <span class="req">*</span></label><select><option>Término natural</option><option selected>Encerramento antecipado</option><option>Desistência do bolsista</option><option>Cancelamento do projeto</option></select></div>
+    </div>
+    <div style="margin-top:12px;font-size:12px;color:#4a5e73;line-height:2">
+      <strong>Efeito:</strong><br>
+      1. Contrato → Encerrado<br>
+      2. Registros mensais futuros → Cancelados<br>
+      3. Último pagamento = mês da rescisão
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
+
+<script>
+function showM(id,btn,cls){document.querySelectorAll('.mp').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(b=>b.className='tab');document.getElementById('p-'+id).classList.add('active');btn.classList.add(cls);window.scrollTo(0,0);}
+function simTipoChange(){}
+</script>
+</body>
+</html>

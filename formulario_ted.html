@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formulário TED v2 (Redesign)</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══ THEME ═══ */
+:root,[data-theme="dark"]{
+  --navy:#131E2E;--navy-light:#1A2840;--navy-mid:#213350;
+  --accent-green:#2A9D8F;--accent-green-dim:#2A9D8F18;--accent-blue:#1474B7;
+  --accent-red:#CC2222;--accent-orange:#d35400;--accent-yellow:#f39c12;--accent-purple:#8e44ad;
+  --text-primary:#E8ECF2;--text-secondary:#9BB0C4;--text-muted:#6B8399;
+  --surface:#162234;--surface-raised:#1C2D42;--surface-hover:#243A54;
+  --border:#263D58;--border-light:#2E4A68;
+  --radius:8px;--radius-lg:12px;--shadow:0 2px 12px rgba(0,0,0,.25);
+  --font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+[data-theme="light"]{
+  --navy:#f0f2f5;--navy-light:#e4e8ed;--navy-mid:#d8dde5;
+  --accent-green:#0e7a5c;--accent-green-dim:#0e7a5c18;--accent-blue:#0969c3;
+  --accent-red:#c0392b;--accent-orange:#d35400;--accent-yellow:#f39c12;--accent-purple:#8e44ad;
+  --text-primary:#1a2332;--text-secondary:#4a5e73;--text-muted:#8395a7;
+  --surface:#ffffff;--surface-raised:#ffffff;--surface-hover:#eef1f5;
+  --border:#dfe4ea;--border-light:#cdd5de;
+  --shadow:0 2px 12px rgba(0,0,0,.07);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;font-family:var(--font);background:var(--navy);color:var(--text-primary)}
+button{font-family:var(--font);cursor:pointer;border:none}
+input,select,textarea{font-family:var(--font)}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:3px}
+
+/* ═══ LAYOUT ═══ */
+.mock-shell{display:flex;height:100vh;overflow:hidden}
+.mock-sidebar{width:260px;background:var(--surface);border-right:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;overflow-y:auto}
+.sidebar-header{padding:16px;border-bottom:1px solid var(--border)}
+.sidebar-header h2{font-size:14px;font-weight:700;color:var(--accent-green)}
+.sidebar-header small{font-size:11px;color:var(--text-muted)}
+.module-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:8px;font-size:11px;font-weight:700;letter-spacing:.5px;margin-top:8px;background:var(--accent-green-dim);color:var(--accent-green)}
+.nav-group{padding:10px 0}
+.nav-group-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-muted);padding:0 16px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;font-size:13px;color:var(--text-secondary);cursor:pointer;transition:all .15s;border-left:3px solid transparent}
+.nav-item:hover{background:var(--surface-hover);color:var(--text-primary)}
+.nav-item.active{background:var(--navy-light);color:var(--accent-green);border-left-color:var(--accent-green);font-weight:600}
+.nav-item .icon{font-size:15px;width:20px;text-align:center}
+.nav-item .badge{margin-left:auto;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;background:var(--accent-green-dim);color:var(--accent-green)}
+
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:50px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0}
+.topbar .breadcrumb{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px}
+.topbar .breadcrumb a{color:var(--accent-green);text-decoration:none;cursor:pointer}
+.topbar .breadcrumb a:hover{text-decoration:underline}
+.topbar .spacer{flex:1}
+.topbar .user-info{font-size:12px;color:var(--text-secondary)}
+
+.content{flex:1;overflow-y:auto;padding:0}
+
+/* ═══ FORM WRAPPER ═══ */
+.form-wrapper{display:flex;flex-direction:column;min-height:100%}
+
+/* ── HERO HEADER ── */
+.form-hero{background:var(--surface);border-bottom:1px solid var(--border);padding:20px 28px 0}
+.form-hero-top{display:flex;align-items:flex-start;gap:16px;margin-bottom:16px}
+.form-hero-info{flex:1}
+.form-hero-title{font-size:22px;font-weight:700;letter-spacing:-.02em;display:flex;align-items:center;gap:12px;margin-bottom:4px}
+.form-hero-subtitle{font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.form-hero-subtitle .sep{color:var(--border-light)}
+
+.sit-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600}
+.sit-badge.vigente{background:rgba(42,157,143,.12);color:var(--accent-green)}
+.sit-badge.elaboracao{background:rgba(20,116,183,.12);color:var(--accent-blue)}
+.sit-badge.encerrado{background:rgba(204,34,34,.12);color:var(--accent-red)}
+
+.form-hero-actions{display:flex;gap:8px;flex-shrink:0;align-items:center}
+
+/* ── METRIC CARDS ── */
+.metric-strip{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-bottom:20px}
+.metric-card{background:var(--navy);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;position:relative;overflow:hidden}
+.metric-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.metric-card.green::before{background:var(--accent-green)}
+.metric-card.blue::before{background:var(--accent-blue)}
+.metric-card.orange::before{background:var(--accent-orange)}
+.metric-card.red::before{background:var(--accent-red)}
+.metric-card.teal::before{background:#17a2b8}
+.metric-card.yellow::before{background:var(--accent-yellow)}
+.metric-card.purple::before{background:var(--accent-purple)}
+.metric-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin-bottom:6px}
+.metric-value{font-size:18px;font-weight:700;font-family:var(--mono);letter-spacing:-.02em}
+.metric-sub{font-size:10px;color:var(--text-muted);margin-top:4px;font-family:var(--mono)}
+
+/* ── PROGRESS BAR ── */
+.exec-bar-wrap{margin-bottom:16px}
+.exec-bar-label{display:flex;justify-content:space-between;font-size:11px;margin-bottom:6px}
+.exec-bar-label .lbl{color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.exec-bar-label .pct{font-family:var(--mono);font-weight:700;color:var(--accent-green)}
+.exec-bar{height:10px;background:var(--navy);border-radius:5px;overflow:hidden;display:flex}
+.exec-bar .seg-exe{background:var(--accent-green);transition:width .5s}
+.exec-bar .seg-pago{background:var(--accent-yellow);transition:width .5s}
+.exec-bar .seg-emp{background:var(--accent-blue);transition:width .5s}
+.exec-bar .seg-saldo{background:var(--border)}
+.exec-bar-legend{display:flex;gap:16px;margin-top:6px;font-size:10px;color:var(--text-muted)}
+.exec-bar-legend span{display:flex;align-items:center;gap:4px}
+.exec-bar-legend .dot{width:8px;height:8px;border-radius:2px;display:inline-block}
+
+/* ═══ TABS ═══ */
+.form-tabs{display:flex;gap:0;overflow-x:auto;flex-shrink:0}
+.form-tab{padding:11px 18px;font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;border:none;background:none;font-family:var(--font);border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:6px}
+.form-tab:hover{color:var(--text-primary);background:var(--surface-hover)}
+.form-tab.active{color:var(--accent-green);border-bottom-color:var(--accent-green)}
+.form-tab .tab-count{font-size:10px;padding:1px 7px;border-radius:10px;font-weight:700;background:var(--navy);color:var(--text-muted);font-family:var(--mono)}
+.form-tab.active .tab-count{background:var(--accent-green-dim);color:var(--accent-green)}
+
+/* ═══ TAB CONTENT ═══ */
+.tab-body{flex:1;overflow-y:auto;padding:24px 28px}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ── SECTIONS ── */
+.section-card{background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px}
+.section-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.section-icon{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius);font-size:16px}
+.section-icon.green{background:rgba(42,157,143,.12)}
+.section-icon.blue{background:rgba(20,116,183,.12)}
+.section-icon.orange{background:rgba(211,84,0,.12)}
+.section-icon.yellow{background:rgba(243,156,18,.12)}
+.section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-primary)}
+.section-title small{font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted);font-size:11px;margin-left:6px}
+
+/* ── FIELDS ── */
+.field-grid{display:grid;gap:14px}
+.field-grid.cols-2{grid-template-columns:1fr 1fr}
+.field-grid.cols-3{grid-template-columns:1fr 1fr 1fr}
+.field-grid.cols-4{grid-template-columns:1fr 1fr 1fr 1fr}
+.field-group{display:flex;flex-direction:column;gap:5px}
+.field-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);display:flex;align-items:center;gap:5px}
+.field-label .req{color:var(--accent-red)}
+.field-label .auto-tag{font-size:9px;padding:1px 6px;border-radius:6px;font-weight:600;background:rgba(42,157,143,.1);color:var(--accent-green);text-transform:none;letter-spacing:0}
+.field-input{width:100%;background:var(--navy);border:1px solid var(--border);color:var(--text-primary);padding:10px 14px;border-radius:var(--radius);font-size:13px;outline:none;transition:border .15s}
+.field-input:focus{border-color:var(--accent-green);box-shadow:0 0 0 3px rgba(42,157,143,.1)}
+.field-input.readonly{background:var(--navy-light);color:var(--text-muted);cursor:default;border-style:dashed}
+textarea.field-input{resize:vertical;min-height:80px;font-family:var(--font)}
+select.field-input{cursor:pointer}
+
+/* ── SUBTABLE ── */
+.subtable-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.subtable-count{font-size:13px;color:var(--text-secondary);flex:1}
+.subtable-count strong{color:var(--text-primary);font-family:var(--mono)}
+.subtable-totals{display:flex;gap:12px;font-size:12px;flex-wrap:wrap;margin-bottom:12px}
+.subtable-total{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--radius);background:var(--navy);border:1px solid var(--border)}
+.subtable-total .t-label{color:var(--text-muted);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.subtable-total .t-value{font-family:var(--mono);font-weight:700;font-size:13px}
+.subtable-total .t-value.green{color:var(--accent-green)}
+.subtable-total .t-value.blue{color:var(--accent-blue)}
+.subtable-total .t-value.orange{color:var(--accent-orange)}
+.subtable-total .t-value.red{color:var(--accent-red)}
+
+.sub-table{width:100%;border-collapse:collapse}
+.sub-table thead th{padding:10px 14px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);text-align:left;background:var(--navy);border-bottom:2px solid var(--border);position:sticky;top:0}
+.sub-table tbody td{padding:11px 14px;font-size:12px;color:var(--text-secondary);border-bottom:1px solid var(--border)}
+.sub-table tbody tr{transition:background .1s}
+.sub-table tbody tr:hover{background:var(--surface-hover)}
+.sub-table .primary{color:var(--text-primary);font-weight:600}
+.sub-table .currency{font-family:var(--mono);text-align:right;font-weight:500}
+.sub-table .currency.positive{color:var(--accent-green)}
+.sub-table .date{font-family:var(--mono);font-size:11px}
+.sub-table .actions{text-align:center}
+.sub-table tfoot td{padding:10px 14px;font-weight:700;font-size:12px;border-top:2px solid var(--border);background:var(--navy)}
+
+.empty-sub{text-align:center;padding:40px 20px;color:var(--text-muted)}
+.empty-sub .e-icon{font-size:36px;margin-bottom:8px}
+.empty-sub p{font-size:13px}
+
+/* ── RESULT ACCORDION ── */
+.result-item{background:var(--navy);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;overflow:hidden}
+.result-header{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;transition:background .15s}
+.result-header:hover{background:var(--surface-hover)}
+.result-header .r-icon{font-size:14px;transition:transform .2s}
+.result-header.open .r-icon{transform:rotate(90deg)}
+.result-header .r-title{flex:1;font-size:13px;font-weight:600}
+.result-header .r-pct{font-family:var(--mono);font-size:13px;font-weight:700}
+.result-progress{width:60px;height:6px;border-radius:3px;background:var(--border);overflow:hidden}
+.result-progress .fill{height:100%;border-radius:3px;background:var(--accent-green);transition:width .4s}
+.result-body{padding:0 16px 14px;display:none}
+.result-body.open{display:block}
+.product-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px}
+.product-row:last-child{border:none}
+.product-row .p-name{flex:1;color:var(--text-secondary)}
+.product-row .p-vals{display:flex;gap:20px;font-family:var(--mono);font-size:11px}
+.product-row .p-vals .meta{color:var(--text-muted)}
+.product-row .p-vals .real{color:var(--accent-green);font-weight:600}
+
+/* ── TIMELINE ── */
+.timeline{position:relative;padding-left:24px}
+.timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:var(--border)}
+.timeline-item{position:relative;padding-bottom:16px}
+.timeline-item:last-child{padding-bottom:0}
+.timeline-dot{position:absolute;left:-24px;top:2px;width:16px;height:16px;border-radius:50%;border:2px solid;display:flex;align-items:center;justify-content:center;font-size:8px;background:var(--surface-raised)}
+.timeline-dot.green{border-color:var(--accent-green);color:var(--accent-green)}
+.timeline-dot.blue{border-color:var(--accent-blue);color:var(--accent-blue)}
+.timeline-dot.orange{border-color:var(--accent-orange);color:var(--accent-orange)}
+.timeline-dot.muted{border-color:var(--border);color:var(--text-muted)}
+.timeline-content{background:var(--navy);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px}
+.timeline-content .t-title{font-size:13px;font-weight:600;margin-bottom:2px}
+.timeline-content .t-meta{font-size:11px;color:var(--text-muted);font-family:var(--mono)}
+.timeline-content .t-value{font-family:var(--mono);font-weight:600;color:var(--accent-green);font-size:13px;margin-top:4px}
+
+/* ── FOOTER ── */
+.form-footer{padding:14px 28px;border-top:1px solid var(--border);background:var(--surface);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+
+/* BUTTONS */
+.btn{padding:8px 18px;border-radius:var(--radius);font-size:12px;font-weight:600;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--accent-green);color:#fff}
+.btn-primary:hover{filter:brightness(1.15)}
+.btn-ghost{background:transparent;color:var(--text-secondary);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--surface-hover);color:var(--text-primary)}
+.btn-danger{background:transparent;color:var(--accent-red);border:1px solid rgba(204,34,34,.3)}
+.btn-danger:hover{background:rgba(204,34,34,.08)}
+.btn-sm{font-size:11px;padding:6px 12px}
+.btn-export{padding:6px 14px;border-radius:var(--radius);font-size:11px;font-weight:600;color:#fff}
+
+/* THEME TOGGLE */
+.theme-toggle{background:var(--surface-hover);border:1px solid var(--border);border-radius:var(--radius);padding:6px 12px;font-size:16px;cursor:pointer;transition:all .15s}
+.theme-toggle:hover{background:var(--border)}
+
+/* RESPONSIVE */
+@media(max-width:1200px){.field-grid.cols-4{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){.mock-sidebar{display:none}.field-grid.cols-3,.field-grid.cols-4{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.field-grid.cols-2,.field-grid.cols-3,.field-grid.cols-4{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="mock-shell">
+  <!-- SIDEBAR (resumido) -->
+  <div class="mock-sidebar">
+    <div class="sidebar-header">
+      <h2>SISPROJ SAES</h2>
+      <small>CGPROJ/SAES — Ministério da Saúde</small>
+      <div class="module-badge">🔬 TED</div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Projetos</div>
+      <div class="nav-item active"><span class="icon">🔬</span>Projetos TED<span class="badge">32</span></div>
+      <div class="nav-item"><span class="icon">🏷️</span>Metas / PEP<span class="badge">84</span></div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Financeiro</div>
+      <div class="nav-item"><span class="icon">💰</span>Empenhos<span class="badge">127</span></div>
+      <div class="nav-item"><span class="icon">📊</span>Plano Aplicação</div>
+      <div class="nav-item"><span class="icon">📅</span>Cronograma</div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Contratos</div>
+      <div class="nav-item"><span class="icon">👷</span>Contratos CLT<span class="badge">45</span></div>
+      <div class="nav-item"><span class="icon">🎓</span>Contratos PF<span class="badge">18</span></div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Viagens</div>
+      <div class="nav-item"><span class="icon">✈️</span>Passagens/Diárias<span class="badge">23</span></div>
+      <div class="nav-item"><span class="icon">🏖️</span>Férias<span class="badge">45</span></div>
+    </div>
+  </div>
+
+  <!-- MAIN AREA -->
+  <div class="main">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="breadcrumb">
+        <a onclick="alert('→ Portal')">Módulos</a> <span class="sep">›</span>
+        <a onclick="alert('→ TED')">TED</a> <span class="sep">›</span>
+        <a onclick="alert('→ Lista')">Projetos TED</a> <span class="sep">›</span>
+        <span style="color:var(--text-primary);font-weight:500">TED 01/2024</span>
+      </div>
+      <div class="spacer"></div>
+      <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+      <span class="user-info"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="620a070c100b1317072211031706074c050d144c0010">[email&#160;protected]</a></span>
+    </div>
+
+    <!-- SCROLLABLE CONTENT -->
+    <div class="content">
+      <div class="form-wrapper">
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- HERO HEADER                            -->
+        <!-- ═══════════════════════════════════════ -->
+        <div class="form-hero">
+          <div class="form-hero-top">
+            <div class="form-hero-info">
+              <div class="form-hero-title">
+                TED 01/2024 — Fortalecimento da Rede de Atenção Especializada
+                <span class="sit-badge vigente">🟢 Vigente</span>
+              </div>
+              <div class="form-hero-subtitle">
+                <span>📋 Processo SEI: 25000.123456/2024-01</span>
+                <span class="sep">•</span>
+                <span>🏢 DAET / CGAE</span>
+                <span class="sep">•</span>
+                <span>🏛️ Fiocruz</span>
+                <span class="sep">•</span>
+                <span>📅 Jun/2024 → Dez/2026</span>
+              </div>
+            </div>
+            <div class="form-hero-actions">
+              <button class="btn btn-ghost btn-sm" onclick="alert('→ PDF')">📄 PDF</button>
+              <button class="btn btn-ghost btn-sm" onclick="alert('→ Excel')">📊 Excel</button>
+              <button class="btn btn-ghost btn-sm" onclick="alert('→ Histórico')">🕘 Log</button>
+            </div>
+          </div>
+
+          <!-- MÉTRICAS -->
+          <div class="metric-strip">
+            <div class="metric-card green">
+              <div class="metric-label">Valor Aprovado</div>
+              <div class="metric-value" style="color:var(--accent-green)">R$ 4.200.000</div>
+              <div class="metric-sub">Valor original do TED</div>
+            </div>
+            <div class="metric-card blue">
+              <div class="metric-label">Valor com Aditivos</div>
+              <div class="metric-value" style="color:var(--accent-blue)">R$ 5.800.000</div>
+              <div class="metric-sub">+R$ 1.600.000 (2 TAs)</div>
+            </div>
+            <div class="metric-card orange">
+              <div class="metric-label">Empenhado</div>
+              <div class="metric-value" style="color:var(--accent-orange)">R$ 3.480.000</div>
+              <div class="metric-sub">60,0% do valor final</div>
+            </div>
+            <div class="metric-card yellow">
+              <div class="metric-label">Pago (Repasse)</div>
+              <div class="metric-value" style="color:var(--accent-yellow)">R$ 2.900.000</div>
+              <div class="metric-sub">50,0% repassado à instituição</div>
+            </div>
+            <div class="metric-card purple">
+              <div class="metric-label">Executado</div>
+              <div class="metric-value" style="color:var(--accent-purple)">R$ 2.610.000</div>
+              <div class="metric-sub">45,0% nos registros de execução</div>
+            </div>
+            <div class="metric-card teal">
+              <div class="metric-label">Saldo Financeiro</div>
+              <div class="metric-value" style="color:#17a2b8">R$ 290.000</div>
+              <div class="metric-sub">Pago − Executado (na instituição)</div>
+            </div>
+            <div class="metric-card red">
+              <div class="metric-label">Saldo a Empenhar</div>
+              <div class="metric-value" style="color:var(--accent-red)">R$ 2.320.000</div>
+              <div class="metric-sub">40,0% do valor final</div>
+            </div>
+          </div>
+
+          <!-- BARRA DE EXECUÇÃO -->
+          <div class="exec-bar-wrap">
+            <div class="exec-bar-label">
+              <span class="lbl">Execução Financeira</span>
+              <span class="pct">45,0% executado</span>
+            </div>
+            <div class="exec-bar">
+              <div class="seg-exe" style="width:45%" title="Executado: 45%"></div>
+              <div class="seg-pago" style="width:5%" title="Pago não executado: 5%"></div>
+              <div class="seg-emp" style="width:10%" title="Empenhado não pago: 10%"></div>
+              <div class="seg-saldo" style="width:40%" title="Saldo: 40%"></div>
+            </div>
+            <div class="exec-bar-legend">
+              <span><span class="dot" style="background:var(--accent-green)"></span> Executado (45%)</span>
+              <span><span class="dot" style="background:var(--accent-yellow)"></span> Pago não executado (5%)</span>
+              <span><span class="dot" style="background:var(--accent-blue)"></span> Empenhado não pago (10%)</span>
+              <span><span class="dot" style="background:var(--border)"></span> Saldo (40%)</span>
+            </div>
+          </div>
+
+          <!-- TABS -->
+          <div class="form-tabs" id="form-tabs">
+            <button class="form-tab active" data-tab="dados">🔬 Dados do TED</button>
+            <button class="form-tab" data-tab="metas">🏷️ Metas / PEP <span class="tab-count">6</span></button>
+            <button class="form-tab" data-tab="plano">💰 Plano Aplicação <span class="tab-count">8</span></button>
+            <button class="form-tab" data-tab="orcamento">📊 Plano Orçamentário <span class="tab-count">4</span></button>
+            <button class="form-tab" data-tab="aditivos">📝 Aditivos <span class="tab-count">2</span></button>
+            <button class="form-tab" data-tab="crono">📅 Cronograma <span class="tab-count">12</span></button>
+            <button class="form-tab" data-tab="resultados">🎯 Resultados <span class="tab-count">3</span></button>
+            <button class="form-tab" data-tab="empenhos">💰 Empenhos <span class="tab-count">5</span></button>
+            <button class="form-tab" data-tab="anexos">📎 Anexos <span class="tab-count">7</span></button>
+          </div>
+        </div><!-- /form-hero -->
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- TAB BODIES                             -->
+        <!-- ═══════════════════════════════════════ -->
+        <div class="tab-body">
+
+          <!-- TAB: DADOS DO TED -->
+          <div class="tab-panel active" id="tab-dados">
+            <!-- Identificação -->
+            <div class="section-card">
+              <div class="section-header">
+                <div class="section-icon green">🔖</div>
+                <div class="section-title">Identificação</div>
+              </div>
+              <div class="field-grid cols-3">
+                <div class="field-group">
+                  <label class="field-label">Nome do TED <span class="req">*</span></label>
+                  <input class="field-input" value="Fortalecimento da Rede de Atenção Especializada">
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Nº TED <span class="req">*</span></label>
+                  <input class="field-input" value="TED 01/2024" style="font-family:var(--mono)">
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Processo SEI</label>
+                  <input class="field-input" value="25000.123456/2024-01" style="font-family:var(--mono)">
+                </div>
+              </div>
+              <div class="field-grid cols-3" style="margin-top:14px">
+                <div class="field-group">
+                  <label class="field-label">Tipo Projeto</label>
+                  <select class="field-input"><option selected>TED — Descentralização</option><option>TED — Convênio</option></select>
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Fonte de Recurso</label>
+                  <select class="field-input"><option selected>Orçamento Federal</option><option>Emenda Parlamentar</option></select>
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Temática</label>
+                  <select class="field-input"><option selected>Atenção Especializada</option><option>Saúde Mental</option><option>Urgência e Emergência</option></select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Vinculação -->
+            <div class="section-card">
+              <div class="section-header">
+                <div class="section-icon blue">🏢</div>
+                <div class="section-title">Vinculação Institucional</div>
+              </div>
+              <div class="field-grid cols-3">
+                <div class="field-group">
+                  <label class="field-label">Departamento</label>
+                  <select class="field-input"><option selected>DAET — Depto. de Atenção Especializada e Temática</option></select>
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Coordenação</label>
+                  <select class="field-input"><option selected>CGAE — Coord. Geral de Atenção Especializada</option></select>
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Instituição Parceira</label>
+                  <select class="field-input"><option selected>Fiocruz — Fundação Oswaldo Cruz</option></select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Valores -->
+            <div class="section-card">
+              <div class="section-header">
+                <div class="section-icon orange">💰</div>
+                <div class="section-title">Valores <small>campos calculados automaticamente</small></div>
+              </div>
+              <div class="field-grid cols-3">
+                <div class="field-group">
+                  <label class="field-label">Valor Aprovado</label>
+                  <input class="field-input" type="text" value="R$ 4.200.000,00" style="font-family:var(--mono)">
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Valor Empenhado <span class="auto-tag">Σ Empenhos</span></label>
+                  <input class="field-input readonly" value="R$ 3.480.000,00" readonly style="font-family:var(--mono)">
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Valor Pago (Repasse) <span class="auto-tag">Σ Cronograma</span></label>
+                  <input class="field-input readonly" value="R$ 2.900.000,00" readonly style="font-family:var(--mono);color:var(--accent-yellow)">
+                </div>
+              </div>
+              <div class="field-grid cols-4" style="margin-top:14px">
+                <div class="field-group">
+                  <label class="field-label">Valor Executado <span class="auto-tag">Σ Execução</span></label>
+                  <input class="field-input readonly" value="R$ 2.610.000,00" readonly style="font-family:var(--mono)">
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Saldo Financeiro <span class="auto-tag">Pago − Executado</span></label>
+                  <input class="field-input readonly" value="R$ 290.000,00" readonly style="font-family:var(--mono);color:#17a2b8">
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Saldo a Empenhar <span class="auto-tag">Calculado</span></label>
+                  <input class="field-input readonly" value="R$ 2.320.000,00" readonly style="font-family:var(--mono);color:var(--accent-red)">
+                </div>
+                <div class="field-group">
+                  <label class="field-label">% Execução <span class="auto-tag">Auto</span></label>
+                  <input class="field-input readonly" value="45,0%" readonly style="font-family:var(--mono);color:var(--accent-green)">
+                </div>
+              </div>
+            </div>
+
+            <!-- Datas -->
+            <div class="section-card">
+              <div class="section-header">
+                <div class="section-icon yellow">📅</div>
+                <div class="section-title">Datas e Vigência</div>
+              </div>
+              <div class="field-grid cols-4">
+                <div class="field-group">
+                  <label class="field-label">Data Publicação</label>
+                  <input class="field-input" type="date" value="2024-06-15">
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Data Início</label>
+                  <input class="field-input" type="date" value="2024-07-01">
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Data Término Original</label>
+                  <input class="field-input" type="date" value="2026-06-30">
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Término Atual <span class="auto-tag">Último TA</span></label>
+                  <input class="field-input readonly" type="date" value="2026-12-31" readonly>
+                </div>
+              </div>
+            </div>
+
+            <!-- Objeto -->
+            <div class="section-card">
+              <div class="section-header">
+                <div class="section-icon green">📝</div>
+                <div class="section-title">Objeto e Observações</div>
+              </div>
+              <div class="field-grid cols-1">
+                <div class="field-group">
+                  <label class="field-label">Objeto do TED</label>
+                  <textarea class="field-input">Fortalecimento da Rede de Atenção Especializada à Saúde, com foco na ampliação do acesso, qualificação dos processos de regulação e implementação de novas tecnologias em saúde nos serviços habilitados.</textarea>
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Observações</label>
+                  <textarea class="field-input" style="min-height:60px">Projeto prioritário — acompanhamento mensal com parceiro.</textarea>
+                </div>
+              </div>
+            </div>
+          </div><!-- /tab-dados -->
+
+          <!-- TAB: METAS/PEP -->
+          <div class="tab-panel" id="tab-metas">
+            <div class="subtable-header">
+              <div class="subtable-count"><strong>6</strong> metas/PEPs vinculados</div>
+              <button class="btn btn-primary btn-sm" onclick="alert('→ Novo Meta/PEP')">＋ Nova Meta</button>
+            </div>
+            <div class="subtable-totals">
+              <div class="subtable-total"><span class="t-label">Previsto</span><span class="t-value green">R$ 5.800.000</span></div>
+              <div class="subtable-total"><span class="t-label">Executado</span><span class="t-value blue">R$ 2.610.000</span></div>
+              <div class="subtable-total"><span class="t-label">% Exec.</span><span class="t-value orange">45,0%</span></div>
+            </div>
+            <div style="overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius-lg)">
+              <table class="sub-table">
+                <thead><tr><th>Nº Meta</th><th>Nº PEP</th><th>Descrição</th><th style="text-align:right">Vl. Previsto</th><th style="text-align:right">Vl. Executado</th><th style="text-align:right">%</th><th class="actions">Ações</th></tr></thead>
+                <tbody>
+                  <tr onclick="alert('→ Editar M-1')"><td class="primary">M-1</td><td style="font-family:var(--mono)">PEP-001</td><td>Aquisição de equipamentos</td><td class="currency">R$ 1.200.000</td><td class="currency positive">R$ 720.000</td><td class="currency">60%</td><td class="actions"><button class="btn btn-ghost btn-sm">✏️</button></td></tr>
+                  <tr onclick="alert('→ Editar M-2')"><td class="primary">M-2</td><td style="font-family:var(--mono)">PEP-002</td><td>Capacitação profissional</td><td class="currency">R$ 800.000</td><td class="currency positive">R$ 480.000</td><td class="currency">60%</td><td class="actions"><button class="btn btn-ghost btn-sm">✏️</button></td></tr>
+                  <tr><td class="primary">M-3</td><td style="font-family:var(--mono)">PEP-003</td><td>Pesquisa e inovação</td><td class="currency">R$ 1.500.000</td><td class="currency positive">R$ 600.000</td><td class="currency">40%</td><td class="actions"><button class="btn btn-ghost btn-sm">✏️</button></td></tr>
+                  <tr><td class="primary">M-4</td><td style="font-family:var(--mono)">PEP-004</td><td>Infraestrutura e reformas</td><td class="currency">R$ 1.000.000</td><td class="currency positive">R$ 510.000</td><td class="currency">51%</td><td class="actions"><button class="btn btn-ghost btn-sm">✏️</button></td></tr>
+                  <tr><td class="primary">M-5</td><td style="font-family:var(--mono)">PEP-005</td><td>Tecnologia da informação</td><td class="currency">R$ 800.000</td><td class="currency positive">R$ 200.000</td><td class="currency">25%</td><td class="actions"><button class="btn btn-ghost btn-sm">✏️</button></td></tr>
+                  <tr><td class="primary">M-6</td><td style="font-family:var(--mono)">PEP-006</td><td>Gestão e monitoramento</td><td class="currency">R$ 500.000</td><td class="currency positive">R$ 100.000</td><td class="currency">20%</td><td class="actions"><button class="btn btn-ghost btn-sm">✏️</button></td></tr>
+                </tbody>
+                <tfoot><tr><td colspan="3" style="text-align:right;font-weight:700">TOTAL</td><td class="currency" style="font-weight:700">R$ 5.800.000</td><td class="currency" style="font-weight:700;color:var(--accent-green)">R$ 2.610.000</td><td class="currency" style="font-weight:700">45%</td><td></td></tr></tfoot>
+              </table>
+            </div>
+          </div><!-- /tab-metas -->
+
+          <!-- TAB: ADITIVOS (Timeline) -->
+          <div class="tab-panel" id="tab-aditivos">
+            <div class="subtable-header">
+              <div class="subtable-count"><strong>2</strong> termos aditivos</div>
+              <button class="btn btn-primary btn-sm">＋ Novo Aditivo</button>
+            </div>
+            <div class="subtable-totals">
+              <div class="subtable-total"><span class="t-label">Valor Total Aditado</span><span class="t-value green">R$ 1.600.000</span></div>
+              <div class="subtable-total"><span class="t-label">Novo Término</span><span class="t-value blue">31/12/2026</span></div>
+            </div>
+
+            <div class="timeline" style="margin-top:16px">
+              <div class="timeline-item">
+                <div class="timeline-dot green">✓</div>
+                <div class="timeline-content" onclick="alert('→ Editar TA-01')">
+                  <div class="t-title">TA-01 — Aditivo de Prazo e Valor</div>
+                  <div class="t-meta">Publicado: 15/03/2025 · Novo término: 30/06/2026</div>
+                  <div class="t-value">+ R$ 1.000.000,00</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot blue">✓</div>
+                <div class="timeline-content" onclick="alert('→ Editar TA-02')">
+                  <div class="t-title">TA-02 — Aditivo de Prazo e Valor</div>
+                  <div class="t-meta">Publicado: 10/09/2025 · Novo término: 31/12/2026</div>
+                  <div class="t-value">+ R$ 600.000,00</div>
+                </div>
+              </div>
+            </div>
+          </div><!-- /tab-aditivos -->
+
+          <!-- TAB: RESULTADOS -->
+          <div class="tab-panel" id="tab-resultados">
+            <div class="subtable-header">
+              <div class="subtable-count"><strong>3</strong> resultados com <strong>8</strong> produtos</div>
+              <button class="btn btn-primary btn-sm">＋ Novo Resultado</button>
+            </div>
+
+            <div class="result-item">
+              <div class="result-header open" onclick="toggleResult(this)">
+                <span class="r-icon">▶</span>
+                <span class="r-title">R-1 — Equipamentos adquiridos e instalados</span>
+                <div class="result-progress"><div class="fill" style="width:65%"></div></div>
+                <span class="r-pct" style="color:var(--accent-green)">65%</span>
+              </div>
+              <div class="result-body open">
+                <div class="product-row">
+                  <span class="p-name">P-1.1 — Tomógrafos adquiridos</span>
+                  <div class="p-vals"><span class="meta">Meta: 10</span><span class="real">Real: 7</span></div>
+                </div>
+                <div class="product-row">
+                  <span class="p-name">P-1.2 — Equipamentos instalados</span>
+                  <div class="p-vals"><span class="meta">Meta: 10</span><span class="real">Real: 5</span></div>
+                </div>
+                <div class="product-row">
+                  <span class="p-name">P-1.3 — Profissionais capacitados na operação</span>
+                  <div class="p-vals"><span class="meta">Meta: 30</span><span class="real">Real: 22</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="result-item">
+              <div class="result-header" onclick="toggleResult(this)">
+                <span class="r-icon">▶</span>
+                <span class="r-title">R-2 — Sistema de regulação implementado</span>
+                <div class="result-progress"><div class="fill" style="width:40%"></div></div>
+                <span class="r-pct" style="color:var(--accent-yellow)">40%</span>
+              </div>
+              <div class="result-body">
+                <div class="product-row">
+                  <span class="p-name">P-2.1 — Módulos implantados</span>
+                  <div class="p-vals"><span class="meta">Meta: 5</span><span class="real">Real: 2</span></div>
+                </div>
+                <div class="product-row">
+                  <span class="p-name">P-2.2 — Municípios integrados</span>
+                  <div class="p-vals"><span class="meta">Meta: 50</span><span class="real">Real: 20</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="result-item">
+              <div class="result-header" onclick="toggleResult(this)">
+                <span class="r-icon">▶</span>
+                <span class="r-title">R-3 — Pesquisas concluídas e publicadas</span>
+                <div class="result-progress"><div class="fill" style="width:80%"></div></div>
+                <span class="r-pct" style="color:var(--accent-green)">80%</span>
+              </div>
+              <div class="result-body">
+                <div class="product-row">
+                  <span class="p-name">P-3.1 — Artigos publicados</span>
+                  <div class="p-vals"><span class="meta">Meta: 8</span><span class="real">Real: 7</span></div>
+                </div>
+                <div class="product-row">
+                  <span class="p-name">P-3.2 — Protocolos validados</span>
+                  <div class="p-vals"><span class="meta">Meta: 3</span><span class="real">Real: 2</span></div>
+                </div>
+                <div class="product-row">
+                  <span class="p-name">P-3.3 — Seminários realizados</span>
+                  <div class="p-vals"><span class="meta">Meta: 4</span><span class="real">Real: 3</span></div>
+                </div>
+              </div>
+            </div>
+          </div><!-- /tab-resultados -->
+
+          <!-- TAB: EMPENHOS -->
+          <div class="tab-panel" id="tab-empenhos">
+            <div class="subtable-header">
+              <div class="subtable-count"><strong>5</strong> notas de empenho</div>
+              <button class="btn btn-primary btn-sm">＋ Novo Empenho</button>
+            </div>
+            <div class="subtable-totals">
+              <div class="subtable-total"><span class="t-label">Total Empenhado</span><span class="t-value green">R$ 3.480.000</span></div>
+              <div class="subtable-total"><span class="t-label">% do Valor Final</span><span class="t-value blue">60,0%</span></div>
+              <div class="subtable-total"><span class="t-label">Falta Empenhar</span><span class="t-value red">R$ 2.320.000</span></div>
+            </div>
+            <div style="overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius-lg)">
+              <table class="sub-table">
+                <thead><tr><th>Nº Empenho</th><th>Data</th><th style="text-align:right">Valor</th><th style="text-align:right">Acumulado</th><th class="actions">Ações</th></tr></thead>
+                <tbody>
+                  <tr><td class="primary" style="font-family:var(--mono)">2024NE000123</td><td class="date">15/07/2024</td><td class="currency">R$ 1.200.000</td><td class="currency" style="color:var(--text-muted)">R$ 1.200.000</td><td class="actions"><button class="btn btn-ghost btn-sm">✏️</button></td></tr>
+                  <tr><td class="primary" style="font-family:var(--mono)">2024NE000456</td><td class="date">20/10/2024</td><td class="currency">R$ 800.000</td><td class="currency" style="color:var(--text-muted)">R$ 2.000.000</td><td class="actions"><button class="btn btn-ghost btn-sm">✏️</button></td></tr>
+                  <tr><td class="primary" style="font-family:var(--mono)">2025NE000078</td><td class="date">10/02/2025</td><td class="currency">R$ 600.000</td><td class="currency" style="color:var(--text-muted)">R$ 2.600.000</td><td class="actions"><button class="btn btn-ghost btn-sm">✏️</button></td></tr>
+                  <tr><td class="primary" style="font-family:var(--mono)">2025NE000201</td><td class="date">15/06/2025</td><td class="currency">R$ 480.000</td><td class="currency" style="color:var(--text-muted)">R$ 3.080.000</td><td class="actions"><button class="btn btn-ghost btn-sm">✏️</button></td></tr>
+                  <tr><td class="primary" style="font-family:var(--mono)">2025NE000345</td><td class="date">01/11/2025</td><td class="currency">R$ 400.000</td><td class="currency" style="color:var(--text-muted)">R$ 3.480.000</td><td class="actions"><button class="btn btn-ghost btn-sm">✏️</button></td></tr>
+                </tbody>
+                <tfoot><tr><td colspan="2" style="text-align:right;font-weight:700">TOTAL</td><td class="currency" style="font-weight:700;color:var(--accent-green)">R$ 3.480.000</td><td></td><td></td></tr></tfoot>
+              </table>
+            </div>
+          </div><!-- /tab-empenhos -->
+
+          <!-- TAB: PLANO APLICAÇÃO -->
+          <div class="tab-panel" id="tab-plano">
+            <div class="subtable-header">
+              <div class="subtable-count"><strong>8</strong> rubricas</div>
+              <button class="btn btn-primary btn-sm">＋ Nova Rubrica</button>
+            </div>
+            <div style="overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius-lg)">
+              <table class="sub-table">
+                <thead><tr><th>Rubrica</th><th>Código ND</th><th style="text-align:right">Previsto</th><th style="text-align:right">Executado</th><th style="text-align:right">%</th><th style="text-align:right">Saldo</th></tr></thead>
+                <tbody>
+                  <tr><td class="primary">Material de Consumo</td><td style="font-family:var(--mono)">339030</td><td class="currency">R$ 200.000</td><td class="currency positive">R$ 150.000</td><td class="currency">75%</td><td class="currency">R$ 50.000</td></tr>
+                  <tr><td class="primary">Outros Serviços — PJ</td><td style="font-family:var(--mono)">339039</td><td class="currency">R$ 1.800.000</td><td class="currency positive">R$ 900.000</td><td class="currency">50%</td><td class="currency">R$ 900.000</td></tr>
+                  <tr><td class="primary">Equipamentos e Material Permanente</td><td style="font-family:var(--mono)">449052</td><td class="currency">R$ 2.000.000</td><td class="currency positive">R$ 960.000</td><td class="currency">48%</td><td class="currency">R$ 1.040.000</td></tr>
+                  <tr><td class="primary">Diárias</td><td style="font-family:var(--mono)">339014</td><td class="currency">R$ 300.000</td><td class="currency positive">R$ 180.000</td><td class="currency">60%</td><td class="currency">R$ 120.000</td></tr>
+                  <tr><td class="primary">Passagens</td><td style="font-family:var(--mono)">339033</td><td class="currency">R$ 400.000</td><td class="currency positive">R$ 200.000</td><td class="currency">50%</td><td class="currency">R$ 200.000</td></tr>
+                  <tr><td class="primary">Bolsas</td><td style="font-family:var(--mono)">339018</td><td class="currency">R$ 600.000</td><td class="currency positive">R$ 120.000</td><td class="currency">20%</td><td class="currency">R$ 480.000</td></tr>
+                  <tr><td class="primary">Auxílio Financeiro a Pesquisadores</td><td style="font-family:var(--mono)">339020</td><td class="currency">R$ 300.000</td><td class="currency positive">R$ 60.000</td><td class="currency">20%</td><td class="currency">R$ 240.000</td></tr>
+                  <tr><td class="primary">Obras e Instalações</td><td style="font-family:var(--mono)">449051</td><td class="currency">R$ 200.000</td><td class="currency positive">R$ 40.000</td><td class="currency">20%</td><td class="currency">R$ 160.000</td></tr>
+                </tbody>
+                <tfoot><tr><td colspan="2" style="text-align:right;font-weight:700">TOTAL</td><td class="currency" style="font-weight:700">R$ 5.800.000</td><td class="currency" style="font-weight:700;color:var(--accent-green)">R$ 2.610.000</td><td class="currency" style="font-weight:700">45%</td><td class="currency" style="font-weight:700;color:var(--accent-orange)">R$ 3.190.000</td></tr></tfoot>
+              </table>
+            </div>
+          </div><!-- /tab-plano -->
+
+          <!-- TAB: PLANO ORÇAMENTÁRIO -->
+          <div class="tab-panel" id="tab-orcamento">
+            <div class="subtable-header">
+              <div class="subtable-count"><strong>4</strong> itens orçamentários</div>
+              <button class="btn btn-primary btn-sm">＋ Novo Item</button>
+            </div>
+            <div style="overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius-lg)">
+              <table class="sub-table">
+                <thead><tr><th>Item</th><th>Natureza Despesa</th><th>Fonte</th><th style="text-align:right">% Projeto</th><th style="text-align:right">Previsto</th><th style="text-align:right">Executado</th></tr></thead>
+                <tbody>
+                  <tr><td class="primary">Custeio</td><td style="font-family:var(--mono)">3.3.90</td><td>Federal</td><td class="currency">55%</td><td class="currency">R$ 3.190.000</td><td class="currency positive">R$ 1.430.000</td></tr>
+                  <tr><td class="primary">Investimento</td><td style="font-family:var(--mono)">4.4.90</td><td>Federal</td><td class="currency">38%</td><td class="currency">R$ 2.200.000</td><td class="currency positive">R$ 1.000.000</td></tr>
+                  <tr><td class="primary">Bolsas e Auxílios</td><td style="font-family:var(--mono)">3.3.90.18/20</td><td>Federal</td><td class="currency">5%</td><td class="currency">R$ 300.000</td><td class="currency positive">R$ 120.000</td></tr>
+                  <tr><td class="primary">Reserva Técnica</td><td style="font-family:var(--mono)">—</td><td>Federal</td><td class="currency">2%</td><td class="currency">R$ 110.000</td><td class="currency positive">R$ 60.000</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div><!-- /tab-orcamento -->
+
+          <!-- TAB: CRONOGRAMA -->
+          <div class="tab-panel" id="tab-crono">
+            <div class="subtable-header">
+              <div class="subtable-count"><strong>12</strong> parcelas de desembolso</div>
+              <button class="btn btn-primary btn-sm">＋ Nova Parcela</button>
+            </div>
+            <div class="subtable-totals">
+              <div class="subtable-total"><span class="t-label">Previsto</span><span class="t-value green">R$ 5.800.000</span></div>
+              <div class="subtable-total"><span class="t-label">Pago</span><span class="t-value blue">R$ 2.400.000</span></div>
+              <div class="subtable-total"><span class="t-label">Pendente</span><span class="t-value orange">R$ 3.400.000</span></div>
+            </div>
+            <div style="overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius-lg)">
+              <table class="sub-table">
+                <thead><tr><th>Parcela</th><th>Mês/Ano</th><th style="text-align:right">Previsto</th><th>Dt. Pagamento</th><th style="text-align:right">Pago</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td class="primary">1ª</td><td>Jul/2024</td><td class="currency">R$ 600.000</td><td class="date">15/07/2024</td><td class="currency positive">R$ 600.000</td><td><span style="padding:3px 10px;border-radius:10px;font-size:10px;font-weight:600;background:rgba(42,157,143,.12);color:var(--accent-green)">Pago</span></td></tr>
+                  <tr><td class="primary">2ª</td><td>Out/2024</td><td class="currency">R$ 500.000</td><td class="date">22/10/2024</td><td class="currency positive">R$ 500.000</td><td><span style="padding:3px 10px;border-radius:10px;font-size:10px;font-weight:600;background:rgba(42,157,143,.12);color:var(--accent-green)">Pago</span></td></tr>
+                  <tr><td class="primary">3ª</td><td>Jan/2025</td><td class="currency">R$ 500.000</td><td class="date">10/01/2025</td><td class="currency positive">R$ 500.000</td><td><span style="padding:3px 10px;border-radius:10px;font-size:10px;font-weight:600;background:rgba(42,157,143,.12);color:var(--accent-green)">Pago</span></td></tr>
+                  <tr><td class="primary">4ª</td><td>Abr/2025</td><td class="currency">R$ 400.000</td><td class="date">18/04/2025</td><td class="currency positive">R$ 400.000</td><td><span style="padding:3px 10px;border-radius:10px;font-size:10px;font-weight:600;background:rgba(42,157,143,.12);color:var(--accent-green)">Pago</span></td></tr>
+                  <tr><td class="primary">5ª</td><td>Jul/2025</td><td class="currency">R$ 400.000</td><td class="date">05/07/2025</td><td class="currency positive">R$ 400.000</td><td><span style="padding:3px 10px;border-radius:10px;font-size:10px;font-weight:600;background:rgba(42,157,143,.12);color:var(--accent-green)">Pago</span></td></tr>
+                  <tr><td class="primary">6ª</td><td>Out/2025</td><td class="currency">R$ 500.000</td><td></td><td class="currency"></td><td><span style="padding:3px 10px;border-radius:10px;font-size:10px;font-weight:600;background:rgba(243,156,18,.12);color:var(--accent-yellow)">Pendente</span></td></tr>
+                  <tr><td class="primary">7ª</td><td>Jan/2026</td><td class="currency">R$ 500.000</td><td></td><td class="currency"></td><td><span style="padding:3px 10px;border-radius:10px;font-size:10px;font-weight:600;background:rgba(107,131,153,.12);color:var(--text-muted)">Futuro</span></td></tr>
+                  <tr style="opacity:.6"><td class="primary">8ª–12ª</td><td>Abr–Dez/2026</td><td class="currency">R$ 2.400.000</td><td></td><td class="currency"></td><td><span style="padding:3px 10px;border-radius:10px;font-size:10px;font-weight:600;background:rgba(107,131,153,.12);color:var(--text-muted)">Futuro</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div><!-- /tab-crono -->
+
+          <!-- TAB: ANEXOS -->
+          <div class="tab-panel" id="tab-anexos">
+            <div class="subtable-header">
+              <div class="subtable-count"><strong>7</strong> anexos</div>
+              <button class="btn btn-primary btn-sm">＋ Anexar Arquivo</button>
+            </div>
+            <div style="overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius-lg)">
+              <table class="sub-table">
+                <thead><tr><th>Arquivo</th><th>Tipo</th><th>Tamanho</th><th>Data</th><th class="actions">Ações</th></tr></thead>
+                <tbody>
+                  <tr><td class="primary">📄 TED_01_2024_publicacao.pdf</td><td>Publicação DOU</td><td>1.2 MB</td><td class="date">15/06/2024</td><td class="actions"><button class="btn btn-ghost btn-sm">⬇️</button> <button class="btn btn-ghost btn-sm" style="color:var(--accent-red)">🗑️</button></td></tr>
+                  <tr><td class="primary">📄 Plano_trabalho_v3.pdf</td><td>Plano de Trabalho</td><td>3.4 MB</td><td class="date">01/07/2024</td><td class="actions"><button class="btn btn-ghost btn-sm">⬇️</button> <button class="btn btn-ghost btn-sm" style="color:var(--accent-red)">🗑️</button></td></tr>
+                  <tr><td class="primary">📊 Relatorio_semestral_1.xlsx</td><td>Relatório</td><td>890 KB</td><td class="date">15/01/2025</td><td class="actions"><button class="btn btn-ghost btn-sm">⬇️</button> <button class="btn btn-ghost btn-sm" style="color:var(--accent-red)">🗑️</button></td></tr>
+                  <tr><td class="primary">📄 TA_01_publicacao.pdf</td><td>Aditivo</td><td>540 KB</td><td class="date">15/03/2025</td><td class="actions"><button class="btn btn-ghost btn-sm">⬇️</button> <button class="btn btn-ghost btn-sm" style="color:var(--accent-red)">🗑️</button></td></tr>
+                  <tr><td class="primary">📄 TA_02_publicacao.pdf</td><td>Aditivo</td><td>480 KB</td><td class="date">10/09/2025</td><td class="actions"><button class="btn btn-ghost btn-sm">⬇️</button> <button class="btn btn-ghost btn-sm" style="color:var(--accent-red)">🗑️</button></td></tr>
+                  <tr><td class="primary">📊 Prestacao_contas_2024.xlsx</td><td>Prestação de Contas</td><td>2.1 MB</td><td class="date">28/02/2025</td><td class="actions"><button class="btn btn-ghost btn-sm">⬇️</button> <button class="btn btn-ghost btn-sm" style="color:var(--accent-red)">🗑️</button></td></tr>
+                  <tr><td class="primary">📸 Fotos_equipamentos.zip</td><td>Registro Fotográfico</td><td>45 MB</td><td class="date">01/08/2025</td><td class="actions"><button class="btn btn-ghost btn-sm">⬇️</button> <button class="btn btn-ghost btn-sm" style="color:var(--accent-red)">🗑️</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div><!-- /tab-anexos -->
+
+        </div><!-- /tab-body -->
+
+        <!-- FOOTER -->
+        <div class="form-footer">
+          <div>
+            <button class="btn btn-danger" onclick="alert('→ Excluir TED')">🗑️ Excluir</button>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost" onclick="alert('→ Voltar para lista')">Cancelar</button>
+            <button class="btn btn-primary" onclick="alert('→ Salvar TED')">💾 Salvar TED</button>
+          </div>
+        </div>
+
+      </div><!-- /form-wrapper -->
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /mock-shell -->
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// Tab switching
+document.querySelectorAll('.form-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.form-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// Result accordion
+function toggleResult(header) {
+  header.classList.toggle('open');
+  const body = header.nextElementSibling;
+  body.classList.toggle('op

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Férias v2 (Redesign)</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="dark"]{
+  --navy:#131E2E;--navy-light:#1A2840;--navy-mid:#213350;
+  --accent-green:#2A9D8F;--accent-green-dim:#2A9D8F18;--accent-blue:#1474B7;
+  --accent-red:#CC2222;--accent-orange:#d35400;--accent-yellow:#f39c12;--accent-purple:#8e44ad;
+  --accent-ferias:#1474B7;--accent-ferias-dim:#1474B718;
+  --text-primary:#E8ECF2;--text-secondary:#9BB0C4;--text-muted:#6B8399;
+  --surface:#162234;--surface-raised:#1C2D42;--surface-hover:#243A54;
+  --border:#263D58;--border-light:#2E4A68;
+  --radius:8px;--radius-lg:12px;--shadow:0 2px 12px rgba(0,0,0,.25);
+  --font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+[data-theme="light"]{
+  --navy:#f0f2f5;--navy-light:#e4e8ed;--navy-mid:#d8dde5;
+  --accent-green:#0e7a5c;--accent-green-dim:#0e7a5c18;--accent-blue:#0969c3;
+  --accent-red:#c0392b;--accent-orange:#d35400;--accent-yellow:#f39c12;--accent-purple:#8e44ad;
+  --accent-ferias:#0969c3;--accent-ferias-dim:#0969c318;
+  --text-primary:#1a2332;--text-secondary:#4a5e73;--text-muted:#8395a7;
+  --surface:#ffffff;--surface-raised:#ffffff;--surface-hover:#eef1f5;
+  --border:#dfe4ea;--border-light:#cdd5de;
+  --shadow:0 2px 12px rgba(0,0,0,.07);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;font-family:var(--font);background:var(--navy);color:var(--text-primary)}
+button{font-family:var(--font);cursor:pointer;border:none}
+input,select,textarea{font-family:var(--font)}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:3px}
+
+.mock-shell{display:flex;height:100vh;overflow:hidden}
+.mock-sidebar{width:260px;background:var(--surface);border-right:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;overflow-y:auto}
+.sidebar-header{padding:16px;border-bottom:1px solid var(--border)}
+.sidebar-header h2{font-size:14px;font-weight:700;color:var(--accent-ferias)}
+.sidebar-header small{font-size:11px;color:var(--text-muted)}
+.module-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:8px;font-size:11px;font-weight:700;letter-spacing:.5px;margin-top:8px;background:var(--accent-ferias-dim);color:var(--accent-ferias)}
+.nav-group{padding:10px 0}
+.nav-group-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-muted);padding:0 16px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;font-size:13px;color:var(--text-secondary);cursor:pointer;transition:all .15s;border-left:3px solid transparent}
+.nav-item:hover{background:var(--surface-hover);color:var(--text-primary)}
+.nav-item.active{background:var(--navy-light);color:var(--accent-ferias);border-left-color:var(--accent-ferias);font-weight:600}
+.nav-item .icon{font-size:15px;width:20px;text-align:center}
+.nav-item .badge{margin-left:auto;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;background:var(--accent-ferias-dim);color:var(--accent-ferias)}
+
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:50px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0}
+.topbar .breadcrumb{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px}
+.topbar .breadcrumb a{color:var(--accent-ferias);text-decoration:none;cursor:pointer}
+.topbar .spacer{flex:1}
+.topbar .user-info{font-size:12px;color:var(--text-secondary)}
+.content{flex:1;overflow-y:auto;padding:24px 28px}
+
+/* KPI ROW */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px}
+.kpi-card{background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 16px;text-align:center;position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kpi-card.blue::before{background:var(--accent-ferias)}
+.kpi-card.green::before{background:var(--accent-green)}
+.kpi-card.orange::before{background:var(--accent-orange)}
+.kpi-card.red::before{background:var(--accent-red)}
+.kpi-card.purple::before{background:var(--accent-purple)}
+.kpi-card .kpi-icon{font-size:24px;margin-bottom:6px}
+.kpi-card .kpi-value{font-size:28px;font-weight:700;font-family:var(--mono);letter-spacing:-.02em}
+.kpi-card .kpi-label{font-size:11px;color:var(--text-muted);margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+
+/* TABLE SECTION */
+.table-section{background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:24px}
+.table-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.table-header h3{font-size:15px;font-weight:700;flex:1}
+.table-actions{display:flex;gap:8px}
+.table-scroll{overflow-x:auto;max-height:calc(100vh - 420px)}
+
+.f-table{width:100%;border-collapse:collapse}
+.f-table thead th{padding:10px 14px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);text-align:left;background:var(--navy);border-bottom:2px solid var(--border);position:sticky;top:0;z-index:1}
+.f-table tbody td{padding:12px 14px;font-size:12px;color:var(--text-secondary);border-bottom:1px solid var(--border)}
+.f-table tbody tr{transition:background .1s;cursor:pointer}
+.f-table tbody tr:hover{background:var(--surface-hover)}
+.f-table .primary{color:var(--text-primary);font-weight:600}
+
+/* SALDO BAR */
+.saldo-bar{display:flex;height:10px;border-radius:5px;overflow:hidden;width:100px}
+.saldo-bar .seg-gozado{background:var(--accent-ferias)}
+.saldo-bar .seg-programado{background:var(--accent-yellow)}
+.saldo-bar .seg-restante{background:var(--border)}
+
+/* ALERT BADGES */
+.alert-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:600}
+.alert-badge.ok{background:rgba(42,157,143,.12);color:var(--accent-green)}
+.alert-badge.urgente{background:rgba(204,34,34,.12);color:var(--accent-red)}
+.alert-badge.programar{background:rgba(243,156,18,.12);color:var(--accent-yellow)}
+.alert-badge.pendente{background:rgba(20,116,183,.12);color:var(--accent-blue)}
+
+/* DETAIL PANEL */
+.detail-panel{background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:24px;overflow:hidden}
+.detail-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.detail-header h3{flex:1;font-size:15px;font-weight:700}
+.detail-body{padding:20px}
+
+/* PERIOD CARDS */
+.period-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:16px}
+.period-card{background:var(--navy);border:1px solid var(--border);border-radius:var(--radius);padding:16px;position:relative}
+.period-card.gozado{border-left:4px solid var(--accent-ferias)}
+.period-card.programado{border-left:4px solid var(--accent-yellow)}
+.period-card.pendente{border-left:4px solid var(--border)}
+.period-card .p-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.period-card .p-title{font-size:13px;font-weight:700}
+.period-card .p-status{font-size:10px;padding:2px 8px;border-radius:6px;font-weight:600}
+.period-card .p-dates{font-size:12px;font-family:var(--mono);color:var(--text-secondary);margin-bottom:6px}
+.period-card .p-days{font-size:20px;font-weight:700;font-family:var(--mono);margin-bottom:4px}
+.period-card .p-info{font-size:11px;color:var(--text-muted)}
+
+/* SALDO VISUAL */
+.saldo-visual{background:var(--navy);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px}
+.saldo-donut{display:flex;align-items:center;gap:24px}
+.donut-chart{width:120px;height:120px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.donut-center{text-align:center}
+.donut-center .d-value{font-size:24px;font-weight:700;font-family:var(--mono)}
+.donut-center .d-label{font-size:10px;color:var(--text-muted)}
+.saldo-legend{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:12px}
+.legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.legend-item .l-value{font-family:var(--mono);font-weight:600;margin-left:auto}
+
+/* ATTACH SECTION */
+.attach-list{display:flex;flex-direction:column;gap:8px}
+.attach-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--navy);border:1px solid var(--border);border-radius:var(--radius);font-size:12px}
+.attach-item .a-icon{font-size:16px}
+.attach-item .a-name{flex:1;font-weight:500}
+.attach-item .a-status{font-size:10px;padding:2px 8px;border-radius:6px;font-weight:600}
+.attach-item .a-status.ok{background:rgba(42,157,143,.12);color:var(--accent-green)}
+.attach-item .a-status.missing{background:rgba(204,34,34,.12);color:var(--accent-red)}
+
+/* RULES BOX */
+.rules-box{background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px}
+.rules-box h4{font-size:13px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.rules-list{font-size:12px;color:var(--text-secondary);line-height:2.2}
+.rules-list strong{color:var(--text-primary)}
+
+.btn{padding:8px 18px;border-radius:var(--radius);font-size:12px;font-weight:600;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--accent-ferias);color:#fff}
+.btn-primary:hover{filter:brightness(1.15)}
+.btn-ghost{background:transparent;color:var(--text-secondary);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--surface-hover);color:var(--text-primary)}
+.btn-sm{font-size:11px;padding:6px 12px}
+.btn-export{padding:6px 14px;border-radius:var(--radius);font-size:11px;font-weight:600;color:#fff;border:none;cursor:pointer}
+
+.theme-toggle{background:var(--surface-hover);border:1px solid var(--border);border-radius:var(--radius);padding:6px 12px;font-size:16px;cursor:pointer}
+.theme-toggle:hover{background:var(--border)}
+
+.legend-row{display:flex;gap:16px;font-size:11px;color:var(--text-muted);margin-top:10px}
+.legend-row span{display:flex;align-items:center;gap:4px}
+.legend-row .dot{width:8px;height:8px;border-radius:2px;display:inline-block}
+
+@media(max-width:1100px){.kpi-row{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:900px){.mock-sidebar{display:none}.kpi-row{grid-template-columns:repeat(2,1fr)}.saldo-donut{flex-direction:column}}
+@media(max-width:600px){.kpi-row{grid-template-columns:1fr}.period-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="mock-shell">
+  <div class="mock-sidebar">
+    <div class="sidebar-header">
+      <h2>SISPROJ SAES</h2>
+      <small>CGPROJ/SAES — Ministério da Saúde</small>
+      <div class="module-badge">🏖️ Férias</div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Projetos</div>
+      <div class="nav-item"><span class="icon">🔬</span>Projetos TED<span class="badge">32</span></div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Contratos</div>
+      <div class="nav-item"><span class="icon">👷</span>Contratos CLT<span class="badge">45</span></div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Gestão de Pessoas</div>
+      <div class="nav-item active"><span class="icon">🏖️</span>Férias<span class="badge">45</span></div>
+      <div class="nav-item"><span class="icon">📅</span>Calendário Férias</div>
+      <div class="nav-item"><span class="icon">⚠️</span>Alertas<span class="badge" style="background:rgba(204,34,34,.12);color:var(--accent-red)">3</span></div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="breadcrumb">
+        <a>Módulos</a> <span class="sep">›</span>
+        <a>TED</a> <span class="sep">›</span>
+        <span style="color:var(--text-primary);font-weight:500">Férias</span>
+      </div>
+      <div class="spacer"></div>
+      <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+      <span class="user-info"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ff979a918d968e8a9abf8c9e8a9b9ad1989089d19d8d">[email&#160;protected]</a></span>
+    </div>
+
+    <div class="content">
+
+      <!-- ═══ KPIs ═══ -->
+      <div class="kpi-row">
+        <div class="kpi-card blue">
+          <div class="kpi-icon">👷</div>
+          <div class="kpi-value" style="color:var(--accent-ferias)">45</div>
+          <div class="kpi-label">Contratos CLT Ativos</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-icon">✅</div>
+          <div class="kpi-value" style="color:var(--accent-green)">28</div>
+          <div class="kpi-label">Férias Completas</div>
+        </div>
+        <div class="kpi-card orange">
+          <div class="kpi-icon">📋</div>
+          <div class="kpi-value" style="color:var(--accent-orange)">14</div>
+          <div class="kpi-label">Férias Pendentes</div>
+        </div>
+        <div class="kpi-card red">
+          <div class="kpi-icon">🔴</div>
+          <div class="kpi-value" style="color:var(--accent-red)">3</div>
+          <div class="kpi-label">Urgentes (< 90 dias)</div>
+        </div>
+        <div class="kpi-card purple">
+          <div class="kpi-icon">📊</div>
+          <div class="kpi-value" style="color:var(--accent-purple)">67</div>
+          <div class="kpi-label">Total Registros Férias</div>
+        </div>
+      </div>
+
+      <!-- ═══ TABELA PRINCIPAL ═══ -->
+      <div class="table-section">
+        <div class="table-header">
+          <h3>🏖️ Visão por Contrato CLT</h3>
+          <div class="table-actions">
+            <button class="btn-export" style="background:#CC2222">📄 PDF</button>
+            <button class="btn-export" style="background:#0e7a5c">📊 Excel</button>
+            <button class="btn btn-primary btn-sm">＋ Novo Registro</button>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table class="f-table">
+            <thead>
+              <tr><th>Pessoa</th><th>Contrato</th><th>Depto</th><th>Gozado</th><th>Programado</th><th>Restante</th><th>Vence em</th><th>Alerta</th><th>Saldo</th></tr>
+            </thead>
+            <tbody>
+              <tr onclick="showDetail(0)" style="background:rgba(204,34,34,.04)">
+                <td class="primary">🔴 Ana Paula Ferreira</td>
+                <td style="font-family:var(--mono);font-size:11px">CLT-2024-012</td>
+                <td>DAET</td>
+                <td style="font-family:var(--mono);font-weight:600;color:var(--accent-ferias)">0d</td>
+                <td style="font-family:var(--mono);color:var(--accent-yellow)">0d</td>
+                <td style="font-family:var(--mono);font-weight:700;color:var(--accent-red)">30d</td>
+                <td style="font-family:var(--mono);color:var(--accent-red);font-weight:700">45 dias</td>
+                <td><span class="alert-badge urgente">🔴 URGENTE</span></td>
+                <td><div class="saldo-bar"><div class="seg-restante" style="width:100%"></div></div></td>
+              </tr>
+              <tr onclick="showDetail(1)" style="background:rgba(204,34,34,.04)">
+                <td class="primary">🔴 Carlos Roberto Mendes</td>
+                <td style="font-family:var(--mono);font-size:11px">CLT-2024-008</td>
+                <td>DRAC</td>
+                <td style="font-family:var(--mono);font-weight:600;color:var(--accent-ferias)">15d</td>
+                <td style="font-family:var(--mono);color:var(--accent-yellow)">0d</td>
+                <td style="font-family:var(--mono);font-weight:700;color:var(--accent-red)">15d</td>
+                <td style="font-family:var(--mono);color:var(--accent-red);font-weight:700">62 dias</td>
+                <td><span class="alert-badge urgente">🔴 URGENTE</span></td>
+                <td><div class="saldo-bar"><div class="seg-gozado" style="width:50%"></div><div class="seg-restante" style="width:50%"></div></div></td>
+              </tr>
+              <tr onclick="showDetail(2)" style="background:rgba(204,34,34,.04)">
+                <td class="primary">🔴 Mariana Costa</td>
+                <td style="font-family:var(--mono);font-size:11px">CLT-2024-019</td>
+                <td>DAET</td>
+                <td style="font-family:var(--mono);font-weight:600;color:var(--accent-ferias)">0d</td>
+                <td style="font-family:var(--mono);color:var(--accent-yellow)">15d</td>
+                <td style="font-family:var(--mono);font-weight:700;color:var(--accent-orange)">15d</td>
+                <td style="font-family:var(--mono);color:var(--accent-red);font-weight:700">78 dias</td>
+                <td><span class="alert-badge urgente">🔴 URGENTE</span></td>
+                <td><div class="saldo-bar"><div class="seg-programado" style="width:50%"></div><div class="seg-restante" style="width:50%"></div></div></td>
+              </tr>
+              <tr onclick="showDetail(3)">
+                <td class="primary">⚠️ João da Silva Neto</td>
+                <td style="font-family:var(--mono);font-size:11px">CLT-2024-003</td>
+                <td>DAET</td>
+                <td style="font-family:var(--mono);font-weight:600;color:var(--accent-ferias)">15d</td>
+                <td style="font-family:var(--mono);color:var(--accent-yellow)">10d</td>
+                <td style="font-family:var(--mono);font-weight:700;color:var(--accent-orange)">5d</td>
+                <td style="font-family:var(--mono)">105 dias</td>
+                <td><span class="alert-badge programar">⚠️ Programar</span></td>
+                <td><div class="saldo-bar"><div class="seg-gozado" style="width:50%"></div><div class="seg-programado" style="width:33%"></div><div class="seg-restante" style="width:17%"></div></div></td>
+              </tr>
+              <tr onclick="showDetail(4)">
+                <td class="primary">📋 Fernanda Lima</td>
+                <td style="font-family:var(--mono);font-size:11px">CLT-2024-007</td>
+                <td>DGH</td>
+                <td style="font-family:var(--mono);font-weight:600;color:var(--accent-ferias)">0d</td>
+                <td style="font-family:var(--mono);color:var(--accent-yellow)">30d</td>
+                <td style="font-family:var(--mono);font-weight:700;color:var(--accent-green)">0d</td>
+                <td style="font-family:var(--mono)">180 dias</td>
+                <td><span class="alert-badge pendente">📋 Programado</span></td>
+                <td><div class="saldo-bar"><div class="seg-programado" style="width:100%"></div></div></td>
+              </tr>
+              <tr onclick="showDetail(5)">
+                <td class="primary">✅ Pedro Santos</td>
+                <td style="font-family:var(--mono);font-size:11px">CLT-2024-001</td>
+                <td>DAET</td>
+                <td style="font-family:var(--mono);font-weight:600;color:var(--accent-ferias)">30d</td>
+                <td style="font-family:var(--mono);color:var(--accent-yellow)">0d</td>
+                <td style="font-family:var(--mono);font-weight:700;color:var(--accent-green)">0d</td>
+                <td style="font-family:var(--mono)">—</td>
+                <td><span class="alert-badge ok">✅ OK</span></td>
+                <td><div class="saldo-bar"><div class="seg-gozado" style="width:100%"></div></div></td>
+              </tr>
+              <tr onclick="showDetail(6)">
+                <td class="primary">✅ Lucia Almeida</td>
+                <td style="font-family:var(--mono);font-size:11px">CLT-2024-002</td>
+                <td>DRAC</td>
+                <td style="font-family:var(--mono);font-weight:600;color:var(--accent-ferias)">30d</td>
+                <td style="font-family:var(--mono);color:var(--accent-yellow)">0d</td>
+                <td style="font-family:var(--mono);font-weight:700;color:var(--accent-green)">0d</td>
+                <td style="font-family:var(--mono)">—</td>
+                <td><span class="alert-badge ok">✅ OK</span></td>
+                <td><div class="saldo-bar"><div class="seg-gozado" style="width:100%"></div></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="padding:12px 20px;border-top:1px solid var(--border)">
+          <div class="legend-row">
+            <span><span class="dot" style="background:var(--accent-ferias)"></span> Gozado</span>
+            <span><span class="dot" style="background:var(--accent-yellow)"></span> Programado</span>
+            <span><span class="dot" style="background:var(--border)"></span> Restante</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ DETALHE (dinâmico — clique em qualquer contrato) ═══ -->
+      <div class="detail-panel" id="detail-panel">
+        <div class="detail-header">
+          <h3 style="color:var(--text-muted)">👆 Clique em um contrato acima para ver o detalhe de férias</h3>
+        </div>
+      </div>
+
+      <!-- ═══ REGRAS ═══ -->
+      <div class="rules-box">
+        <h4>📐 Regras de Férias — SISPROJ</h4>
+        <div class="rules-list">
+          Direito: <strong>30 dias/ano</strong> · 
+          1º período mínimo: <strong>15 dias</strong> · 
+          Demais períodos: mínimo <strong>5 dias</strong> cada · 
+          Fracionamento máximo: <strong>3 períodos</strong> · 
+          Alteração: antecedência mínima <strong>45 dias</strong> · 
+          Anexos obrigatórios: <strong>Cronograma de Férias</strong>, <strong>Aviso de Férias Assinado</strong> · 
+          Se alteração: <strong>Formulário de Alteração</strong> obrigatório
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const FERIAS_DATA = [
+  {nome:'Ana Paula Ferreira',contrato:'CLT-2024-012',depto:'DAET',admissao:'01/06/2024',gozado:0,programado:0,restante:30,vence:45,
+   periodos:[], anexos:[{n:'Cronograma de Férias',ok:false},{n:'Aviso de Férias Assinado',ok:false}]},
+  {nome:'Carlos Roberto Mendes',contrato:'CLT-2024-008',depto:'DRAC',admissao:'15/03/2024',gozado:15,programado:0,restante:15,vence:62,
+   periodos:[{t:'1º Período',dias:15,de:'01/09/2025',ate:'15/09/2025',status:'Gozado',cls:'gozado'}],
+   anexos:[{n:'Cronograma de Férias',ok:true},{n:'Aviso de Férias Assinado',ok:true}]},
+  {nome:'Mariana Costa',contrato:'CLT-2024-019',depto:'DAET',admissao:'01/08/2024',gozado:0,programado:15,restante:15,vence:78,
+   periodos:[{t:'1º Período',dias:15,de:'10/05/2026',ate:'24/05/2026',status:'Programado',cls:'programado'}],
+   anexos:[{n:'Cronograma de Férias',ok:true},{n:'Aviso de Férias Assinado',ok:false}]},
+  {nome:'João da Silva Neto',contrato:'CLT-2024-003',depto:'DAET',admissao:'01/03/2024',gozado:15,programado:10,restante:5,vence:105,
+   periodos:[{t:'1º Período',dias:15,de:'01/08/2025',ate:'15/08/2025',status:'Gozado',cls:'gozado'},{t:'2º Período',dias:10,de:'15/01/2026',ate:'24/01/2026',status:'Programado',cls:'programado'},{t:'3º Período',dias:5,de:'A programar',ate:'',status:'Pendente',cls:'pendente'}],
+   anexos:[{n:'Cronograma de Férias',ok:true},{n:'Aviso de Férias Assinado',ok:true},{n:'Formulário de Alteração',ok:false}]},
+  {nome:'Fernanda Lima',contrato:'CLT-2024-007',depto:'DGH',admissao:'01/04/2024',gozado:0,programado:30,restante:0,vence:180,
+   periodos:[{t:'1º Período',dias:20,de:'01/06/2026',ate:'20/06/2026',status:'Programado',cls:'programado'},{t:'2º Período',dias:10,de:'01/09/2026',ate:'10/09/2026',status:'Programado',cls:'programado'}],
+   anexos:[{n:'Cronograma de Férias',ok:true},{n:'Aviso de Férias Assinado',ok:false}]},
+  {nome:'Pedro Santos',contrato:'CLT-2024-001',depto:'DAET',admissao:'01/01/2024',gozado:30,programado:0,restante:0,vence:null,
+   periodos:[{t:'1º Período',dias:20,de:'01/07/2025',ate:'20/07/2025',status:'Gozado',cls:'gozado'},{t:'2º Período',dias:10,de:'01/12/2025',ate:'10/12/2025',status:'Gozado',cls:'gozado'}],
+   anexos:[{n:'Cronograma de Férias',ok:true},{n:'Aviso de Férias Assinado',ok:true}]},
+  {nome:'Lucia Almeida',contrato:'CLT-2024-002',depto:'DRAC',admissao:'15/01/2024',gozado:30,programado:0,restante:0,vence:null,
+   periodos:[{t:'Período Único',dias:30,de:'01/10/2025',ate:'30/10/2025',status:'Gozado',cls:'gozado'}],
+   anexos:[{n:'Cronograma de Férias',ok:true},{n:'Aviso de Férias Assinado',ok:true}]},
+];
+
+function showDetail(idx) {
+  const d = FERIAS_DATA[idx];
+  const pctG = Math.round((d.gozado/30)*100), pctP = Math.round((d.programado/30)*100);
+  const conic = 'conic-gradient(var(--accent-ferias) 0% '+pctG+'%, var(--accent-yellow) '+pctG+'% '+(pctG+pctP)+'%, var(--border) '+(pctG+pctP)+'% 100%)';
+
+  document.querySelectorAll('.f-table tbody tr').forEach(function(tr,i) {
+    tr.style.outline = i===idx ? '2px solid var(--accent-ferias)' : '';
+    tr.style.outlineOffset = i===idx ? '-2px' : '';
+  });
+
+  var statusColors = {Gozado:'var(--accent-ferias)',Programado:'var(--accent-yellow)',Pendente:'var(--text-muted)'};
+  var statusBg = {Gozado:'rgba(20,116,183,.12)',Programado:'rgba(243,156,18,.12)',Pendente:'rgba(107,131,153,.12)'};
+  var statusIcon = {Gozado:'✅',Programado:'📅',Pendente:'⏳'};
+
+  var periodsHTML = '';
+  if (d.periodos.length === 0) {
+    periodsHTML = '<div style="padding:24px;text-align:center;color:var(--accent-red);font-size:13px;background:rgba(204,34,34,.05);border:1px dashed rgba(204,34,34,.2);border-radius:8px">⚠️ Nenhum período cadastrado — férias precisam ser programadas urgentemente</div>';
+  } else {
+    periodsHTML = '<div class="period-grid">' + d.periodos.map(function(p,pi) {
+      var minDias = pi === 0 ? 15 : 5;
+      var minLabel = pi === 0 ? 'Mínimo 1º período: 15 dias' : 'Mínimo: 5 dias';
+      var valid = p.dias >= minDias;
+      return '<div class="period-card '+p.cls+'">' +
+        '<div class="p-header"><div class="p-title">'+p.t+'</div>' +
+        '<span class="p-status" style="background:'+statusBg[p.status]+';color:'+statusColors[p.status]+'">'+statusIcon[p.status]+' '+p.status+'</span></div>' +
+        '<div class="p-days" style="color:'+statusColors[p.status]+'">'+p.dias+' dias</div>' +
+        '<div class="p-dates">'+p.de+(p.ate?' → '+p.ate:'')+'</div>' +
+        '<div class="p-info">'+minLabel+' '+(valid?'✅':'❌')+'</div></div>';
+    }).join('') + '</div>';
+  }
+
+  var anexosHTML = d.anexos.map(function(a) {
+    return '<div class="attach-item" '+(a.ok?'':'style="border-color:rgba(204,34,34,.3)"')+'>' +
+      '<span class="a-icon">'+(a.ok?'✅':'📝')+'</span>' +
+      '<span class="a-name">'+a.n+'</span>' +
+      '<span class="a-status '+(a.ok?'ok':'missing')+'">'+(a.ok?'✅ Anexado':'❌ Pendente')+'</span>' +
+      (a.ok?'<button class="btn btn-ghost btn-sm">⬇️</button>':'<button class="btn btn-primary btn-sm">📤 Anexar</button>') +
+      '</div>';
+  }).join('');
+
+  var panel = document.getElementById('detail-panel');
+  panel.innerHTML =
+    '<div class="detail-header">' +
+      '<h3>👤 '+d.nome+' — Detalhe de Férias</h3>' +
+      '<span style="font-size:12px;color:var(--text-muted);font-family:var(--mono)">'+d.contrato+' · '+d.depto+' · Admissão: '+d.admissao+'</span>' +
+      '<button class="btn btn-primary btn-sm" style="margin-left:auto">＋ Novo Período</button>' +
+    '</div>' +
+    '<div class="detail-body">' +
+      '<div class="saldo-visual"><div class="saldo-donut">' +
+        '<div class="donut-chart" style="background:'+conic+'">' +
+          '<div style="width:80px;height:80px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center">' +
+            '<div class="donut-center">' +
+              '<div class="d-value" style="color:'+(d.restante>0?'var(--accent-orange)':'var(--accent-green)')+'">'+d.restante+'d</div>' +
+              '<div class="d-label">'+(d.restante>0?'restante':'completo ✅')+'</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="saldo-legend">' +
+          '<div class="legend-item"><div class="legend-dot" style="background:var(--accent-ferias)"></div>Gozado<span class="l-value" style="color:var(--accent-ferias)">'+d.gozado+'d</span></div>' +
+          '<div class="legend-item"><div class="legend-dot" style="background:var(--accent-yellow)"></div>Programado<span class="l-value" style="color:var(--accent-yellow)">'+d.programado+'d</span></div>' +
+          '<div class="legend-item"><div class="legend-dot" style="background:var(--border)"></div>Restante<span class="l-value" style="color:var(--accent-orange)">'+d.restante+'d</span></div>' +
+          '<div class="legend-item"><div class="legend-dot" style="background:var(--accent-green)"></div>Direito total<span class="l-value">30d</span></div>' +
+          '<div class="legend-item"><div class="legend-dot" style="background:transparent;border:1px solid var(--text-muted)"></div>Frações<span class="l-value">'+d.periodos.length+' de 3</span></div>' +
+          '<div class="legend-item"><div class="legend-dot" style="background:transparent;border:1px solid var(--accent-red)"></div>Vence em<span class="l-value" style="color:'+(d.vence&&d.vence<90?'var(--accent-red)':'var(--accent-yellow)')+'">'+(d.vence?d.vence+' dias':'✅ OK')+'</span></div>' +
+        '</div>' +
+      '</div></div>' +
+      '<h4 style="font-size:13px;font-weight:700;margin-bottom:12px">📅 Períodos de Férias</h4>' +
+      periodsHTML +
+      '<h4 style="font-size:13px;font-weight:700;margin:20px 0 12px">📎 Anexos Obrigatórios</h4>' +
+      '<div class="attach-list">'+anexosHTML+'</div>' +
+    '</div>';
+
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function toggleTheme() {
+  var t = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', t);
+}
+
+// Auto-show first urgent case
+showDetail(0);
+</script>
+</body>
+</html>

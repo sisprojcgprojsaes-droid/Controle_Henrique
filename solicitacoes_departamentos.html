@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solicitações dos Departamentos</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0F1926;--bg2:#162234;--bg3:#1C2D42;--bg4:#243A54;--green:#2A9D8F;--blue:#1474B7;--orange:#d35400;--yellow:#f39c12;--purple:#8e44ad;--red:#CC2222;--teal:#17a2b8;--text:#E8ECF2;--text2:#9BB0C4;--muted:#6B8399;--border:#263D58;--font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text)}button{font-family:var(--font);cursor:pointer;border:none}::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+.shell{height:100vh;overflow-y:auto;padding:28px}
+.page-header{display:flex;align-items:center;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.page-header h1{font-size:22px;font-weight:700;flex:1}
+.btn{padding:8px 18px;border-radius:8px;font-size:12px;font-weight:600;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--green);color:#fff}.btn-primary:hover{filter:brightness(1.15)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border)}.btn-ghost:hover{background:var(--bg3)}
+.btn-sm{font-size:11px;padding:6px 12px}
+.theme-toggle{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:16px;cursor:pointer}.theme-toggle:hover{background:var(--bg4)}
+
+/* TABS */
+.main-tabs{display:flex;gap:2px;margin-bottom:24px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:4px}
+.main-tab{flex:1;padding:10px;text-align:center;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:var(--muted);background:transparent;border:none;font-family:var(--font);transition:all .2s}
+.main-tab:hover{background:var(--bg3);color:var(--text)}
+.main-tab.active{background:var(--green);color:#fff}
+.tab-panel{display:none}.tab-panel.active{display:block}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px}
+.kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kpi-card.green::before{background:var(--green)}.kpi-card.blue::before{background:var(--blue)}.kpi-card.orange::before{background:var(--orange)}.kpi-card.yellow::before{background:var(--yellow)}.kpi-card.red::before{background:var(--red)}
+.kpi-value{font-size:28px;font-weight:700;font-family:var(--mono)}
+.kpi-label{font-size:10px;color:var(--muted);margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+
+/* TABLE */
+.table-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px}
+.table-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.table-header h3{flex:1;font-size:15px;font-weight:700}
+.search-input{padding:8px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px;width:250px;font-family:var(--font)}
+.search-input:focus{outline:none;border-color:var(--green)}
+table{width:100%;border-collapse:collapse}
+thead th{padding:10px 14px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);text-align:left;background:var(--bg);border-bottom:2px solid var(--border);position:sticky;top:0}
+tbody td{padding:11px 14px;font-size:12px;color:var(--text2);border-bottom:1px solid var(--border)}
+tbody tr{transition:background .1s;cursor:pointer}
+tbody tr:hover{background:var(--bg4)}
+.primary{color:var(--text);font-weight:600}
+.mono{font-family:var(--mono);font-size:11px}
+.status-pill{display:inline-block;padding:3px 10px;border-radius:10px;font-size:10px;font-weight:600}
+.status-pill.nova{background:rgba(20,116,183,.12);color:var(--blue)}
+.status-pill.analise{background:rgba(243,156,18,.12);color:var(--yellow)}
+.status-pill.aprovada{background:rgba(42,157,143,.12);color:var(--green)}
+.status-pill.recusada{background:rgba(204,34,34,.12);color:var(--red)}
+.status-pill.execucao{background:rgba(142,68,173,.12);color:var(--purple)}
+.status-pill.concluida{background:rgba(42,157,143,.15);color:var(--green)}
+
+/* CATEGORY PILLS */
+.cat-pill{display:inline-block;padding:2px 8px;border-radius:6px;font-size:9px;font-weight:600}
+.cat-pill.contrato{background:rgba(20,116,183,.12);color:var(--blue)}
+.cat-pill.equipamento{background:rgba(211,84,0,.12);color:var(--orange)}
+.cat-pill.viagem{background:rgba(243,156,18,.12);color:var(--yellow)}
+.cat-pill.orcamento{background:rgba(42,157,143,.12);color:var(--green)}
+.cat-pill.rh{background:rgba(142,68,173,.12);color:var(--purple)}
+.cat-pill.outros{background:rgba(107,131,153,.12);color:var(--muted)}
+
+/* FORM */
+.form-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px}
+.form-card h3{font-size:15px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.field-grid{display:grid;gap:14px}
+.field-grid.cols-2{grid-template-columns:1fr 1fr}
+.field-grid.cols-3{grid-template-columns:1fr 1fr 1fr}
+.field-grid.cols-4{grid-template-columns:1fr 1fr 1fr 1fr}
+.f-group{display:flex;flex-direction:column;gap:5px}
+.f-group label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+.f-group input,.f-group select,.f-group textarea{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;font-size:13px;outline:none;font-family:var(--font)}
+.f-group input:focus,.f-group select:focus,.f-group textarea:focus{border-color:var(--green)}
+.f-group textarea{resize:vertical;min-height:80px}
+.f-group .hint{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* WORKFLOW */
+.workflow{display:flex;gap:3px;padding:4px;background:var(--bg);border:1px solid var(--border);border-radius:10px;margin-bottom:16px}
+.wf-step{flex:1;padding:9px 6px;text-align:center;border-radius:8px;font-size:11px;font-weight:600;transition:all .2s}
+.wf-step.done{background:var(--green);color:#fff}
+.wf-step.current{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(20,116,183,.3)}
+.wf-step.pending{background:var(--bg3);color:var(--muted)}
+
+/* DETAIL DRAWER */
+.detail-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px}
+.detail-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.detail-header h3{flex:1;font-size:15px;font-weight:700}
+.detail-body{padding:20px}
+.info-row{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.info-item{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;flex:1;min-width:140px}
+.info-item .i-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:4px}
+.info-item .i-value{font-size:13px;font-weight:600}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:24px;margin-top:16px}
+.timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:var(--border)}
+.tl-item{position:relative;padding-bottom:14px}
+.tl-item:last-child{padding-bottom:0}
+.tl-dot{position:absolute;left:-24px;top:2px;width:16px;height:16px;border-radius:50%;border:2px solid;display:flex;align-items:center;justify-content:center;font-size:8px;background:var(--bg2)}
+.tl-content{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px}
+.tl-content .t-title{font-size:12px;font-weight:600;margin-bottom:2px}
+.tl-content .t-meta{font-size:10px;color:var(--muted);font-family:var(--mono)}
+.tl-content .t-text{font-size:11px;color:var(--text2);margin-top:4px}
+
+@media(max-width:900px){.kpi-row{grid-template-columns:repeat(3,1fr)}.field-grid.cols-3,.field-grid.cols-4{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.kpi-row{grid-template-columns:1fr 1fr}.field-grid.cols-2,.field-grid.cols-3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <div class="page-header">
+    <h1>📨 Solicitações dos Departamentos</h1>
+    <button class="theme-toggle" onclick="document.documentElement.setAttribute('data-theme',document.documentElement.getAttribute('data-theme')==='light'?'dark':'light')">🌓</button>
+    <button class="btn btn-primary" onclick="showTab('nova')">＋ Nova Solicitação</button>
+  </div>
+
+  <!-- TABS -->
+  <div class="main-tabs">
+    <button class="main-tab active" onclick="showTab('painel')">📊 Painel de Solicitações</button>
+    <button class="main-tab" onclick="showTab('nova')">📝 Nova Solicitação</button>
+    <button class="main-tab" onclick="showTab('detalhe')">🔍 Detalhe / Análise</button>
+  </div>
+
+  <!-- ═══ TAB 1: PAINEL ═══ -->
+  <div class="tab-panel active" id="tab-painel">
+    <div class="kpi-row">
+      <div class="kpi-card blue"><div class="kpi-value" style="color:var(--blue)">47</div><div class="kpi-label">Total Solicitações</div></div>
+      <div class="kpi-card yellow"><div class="kpi-value" style="color:var(--yellow)">12</div><div class="kpi-label">Em Análise</div></div>
+      <div class="kpi-card green"><div class="kpi-value" style="color:var(--green)">28</div><div class="kpi-label">Aprovadas</div></div>
+      <div class="kpi-card red"><div class="kpi-value" style="color:var(--red)">4</div><div class="kpi-label">Recusadas</div></div>
+      <div class="kpi-card orange"><div class="kpi-value" style="color:var(--orange)">3</div><div class="kpi-label">Novas (hoje)</div></div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">
+        <h3>📨 Todas as Solicitações</h3>
+        <select style="padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:11px;font-family:var(--font)">
+          <option>Todos os Departamentos</option><option>DAET</option><option>DRAC</option><option>DGH</option><option>DESMAD</option><option>DCEBAS</option><option>DECAN</option>
+        </select>
+        <select style="padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:11px;font-family:var(--font)">
+          <option>Todos os Status</option><option>Nova</option><option>Em Análise</option><option>Aprovada</option><option>Recusada</option><option>Em Execução</option><option>Concluída</option>
+        </select>
+        <input class="search-input" placeholder="🔍 Buscar por nº, assunto, departamento...">
+      </div>
+      <div style="overflow-x:auto;max-height:500px">
+        <table>
+          <thead><tr><th>Nº</th><th>Departamento</th><th>Categoria</th><th>Assunto</th><th>Solicitante</th><th>Data</th><th>Prioridade</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr onclick="showTab('detalhe')">
+              <td class="mono primary">SOL-2026-047</td><td>DAET</td><td><span class="cat-pill contrato">Contrato</span></td><td class="primary">Novo CLT — Pesquisador em Epidemiologia</td><td>Maria Oliveira</td><td class="mono">23/03/26</td><td><span style="color:var(--red);font-weight:600">🔴 Alta</span></td><td><span class="status-pill nova">Nova</span></td>
+            </tr>
+            <tr onclick="showTab('detalhe')">
+              <td class="mono primary">SOL-2026-046</td><td>DRAC</td><td><span class="cat-pill equipamento">Equipamento</span></td><td class="primary">Aquisição de 3 notebooks para equipe técnica</td><td>Carlos Mendes</td><td class="mono">22/03/26</td><td><span style="color:var(--yellow);font-weight:600">🟡 Média</span></td><td><span class="status-pill analise">Em Análise</span></td>
+            </tr>
+            <tr onclick="showTab('detalhe')">
+              <td class="mono primary">SOL-2026-045</td><td>DGH</td><td><span class="cat-pill viagem">Viagem</span></td><td class="primary">Participação em congresso — 3 servidores</td><td>Fernanda Lima</td><td class="mono">21/03/26</td><td><span style="color:var(--yellow);font-weight:600">🟡 Média</span></td><td><span class="status-pill analise">Em Análise</span></td>
+            </tr>
+            <tr onclick="showTab('detalhe')">
+              <td class="mono primary">SOL-2026-044</td><td>DAET</td><td><span class="cat-pill orcamento">Orçamento</span></td><td class="primary">Remanejamento de rubrica — TED 01/2024</td><td>João da Silva</td><td class="mono">20/03/26</td><td><span style="color:var(--green);font-weight:600">🟢 Baixa</span></td><td><span class="status-pill aprovada">Aprovada</span></td>
+            </tr>
+            <tr onclick="showTab('detalhe')">
+              <td class="mono primary">SOL-2026-043</td><td>DESMAD</td><td><span class="cat-pill rh">RH</span></td><td class="primary">Substituição de bolsista — Projeto Saúde Mental</td><td>Ana Torres</td><td class="mono">19/03/26</td><td><span style="color:var(--red);font-weight:600">🔴 Alta</span></td><td><span class="status-pill execucao">Em Execução</span></td>
+            </tr>
+            <tr onclick="showTab('detalhe')">
+              <td class="mono primary">SOL-2026-042</td><td>DCEBAS</td><td><span class="cat-pill contrato">Contrato</span></td><td class="primary">Renovação de contrato PF — Analista de Dados</td><td>Paulo Ribeiro</td><td class="mono">18/03/26</td><td><span style="color:var(--yellow);font-weight:600">🟡 Média</span></td><td><span class="status-pill aprovada">Aprovada</span></td>
+            </tr>
+            <tr onclick="showTab('detalhe')">
+              <td class="mono primary">SOL-2026-041</td><td>DECAN</td><td><span class="cat-pill outros">Outros</span></td><td class="primary">Acesso ao SISPROJ para novo colaborador</td><td>Lucia Almeida</td><td class="mono">17/03/26</td><td><span style="color:var(--green);font-weight:600">🟢 Baixa</span></td><td><span class="status-pill concluida">Concluída</span></td>
+            </tr>
+            <tr onclick="showTab('detalhe')">
+              <td class="mono primary">SOL-2026-040</td><td>DAET</td><td><span class="cat-pill equipamento">Equipamento</span></td><td class="primary">Manutenção de equipamentos laboratoriais</td><td>Pedro Santos</td><td class="mono">15/03/26</td><td><span style="color:var(--red);font-weight:600">🔴 Alta</span></td><td><span class="status-pill recusada">Recusada</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB 2: NOVA SOLICITAÇÃO ═══ -->
+  <div class="tab-panel" id="tab-nova">
+    <div class="form-card">
+      <h3>📝 Nova Solicitação</h3>
+
+      <div class="field-grid cols-3" style="margin-bottom:16px">
+        <div class="f-group"><label>Departamento Solicitante <span style="color:var(--red)">*</span></label><select><option>— Selecione —</option><option>DAET</option><option>DRAC</option><option>DGH</option><option>DESMAD</option><option>DCEBAS</option><option>DECAN</option><option>DEEQAE</option><option>DAHUD</option><option>FNSUS</option><option>GAB.SAES</option></select></div>
+        <div class="f-group"><label>Coordenação</label><select><option>— Selecione —</option><option>CGAE</option><option>CGVS</option><option>CGPROJ</option></select></div>
+        <div class="f-group"><label>Solicitante <span style="color:var(--red)">*</span></label><input placeholder="Nome do solicitante..."></div>
+      </div>
+
+      <div class="field-grid cols-3" style="margin-bottom:16px">
+        <div class="f-group"><label>Categoria <span style="color:var(--red)">*</span></label>
+          <select onchange="showCatFields(this.value)">
+            <option value="">— Selecione —</option>
+            <option value="contrato">📋 Novo Contrato / Renovação</option>
+            <option value="equipamento">🖥️ Equipamento / Material</option>
+            <option value="viagem">✈️ Viagem / Evento</option>
+            <option value="orcamento">💰 Remanejamento Orçamentário</option>
+            <option value="rh">👤 RH / Substituição</option>
+            <option value="outros">📝 Outros</option>
+          </select>
+        </div>
+        <div class="f-group"><label>Prioridade <span style="color:var(--red)">*</span></label>
+          <select><option>🟢 Baixa</option><option selected>🟡 Média</option><option>🔴 Alta</option><option>🚨 Urgente</option></select>
+        </div>
+        <div class="f-group"><label>Projeto vinculado</label><input placeholder="Buscar TED / TC OPAS..."><span class="hint">Opcional — vincular a um projeto existente</span></div>
+      </div>
+
+      <div class="field-grid cols-1" style="margin-bottom:16px">
+        <div class="f-group"><label>Assunto <span style="color:var(--red)">*</span></label><input placeholder="Resumo da solicitação em uma frase..."></div>
+      </div>
+      <div class="field-grid cols-1" style="margin-bottom:16px">
+        <div class="f-group"><label>Descrição detalhada <span style="color:var(--red)">*</span></label><textarea placeholder="Descreva a necessidade, justificativa e o que espera como resultado..."></textarea></div>
+      </div>
+
+      <!-- Campos condicionais por categoria -->
+      <div id="cat-fields-contrato" style="display:none;margin-bottom:16px">
+        <div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid rgba(20,116,183,.15)">📋 Dados do Contrato Solicitado</div>
+        <div class="field-grid cols-4">
+          <div class="f-group"><label>Tipo Vínculo</label><select><option>CLT</option><option>Bolsista</option><option>RPA</option><option>Consultor OPAS</option></select></div>
+          <div class="f-group"><label>Cargo pretendido</label><input placeholder="Ex: Pesquisador"></div>
+          <div class="f-group"><label>Salário/Valor estimado</label><input type="number" placeholder="R$ 0,00" style="font-family:var(--mono)"></div>
+          <div class="f-group"><label>Duração estimada</label><input placeholder="Ex: 24 meses"></div>
+        </div>
+      </div>
+      <div id="cat-fields-equipamento" style="display:none;margin-bottom:16px">
+        <div style="font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid rgba(211,84,0,.15)">🖥️ Dados do Equipamento</div>
+        <div class="field-grid cols-3">
+          <div class="f-group"><label>Tipo equipamento</label><input placeholder="Ex: Notebook, Servidor, Reagente..."></div>
+          <div class="f-group"><label>Quantidade</label><input type="number" placeholder="0"></div>
+          <div class="f-group"><label>Valor estimado total</label><input type="number" placeholder="R$ 0,00" style="font-family:var(--mono)"></div>
+        </div>
+      </div>
+      <div id="cat-fields-viagem" style="display:none;margin-bottom:16px">
+        <div style="font-size:11px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid rgba(243,156,18,.15)">✈️ Dados da Viagem</div>
+        <div class="field-grid cols-4">
+          <div class="f-group"><label>Evento/Motivo</label><input placeholder="Nome do evento..."></div>
+          <div class="f-group"><label>Local</label><input placeholder="Cidade/UF"></div>
+          <div class="f-group"><label>Nº viajantes</label><input type="number" placeholder="0"></div>
+          <div class="f-group"><label>Período</label><input placeholder="DD/MM → DD/MM"></div>
+        </div>
+      </div>
+      <div id="cat-fields-orcamento" style="display:none;margin-bottom:16px">
+        <div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid rgba(42,157,143,.15)">💰 Dados Orçamentários</div>
+        <div class="field-grid cols-3">
+          <div class="f-group"><label>Rubrica origem</label><input placeholder="De qual rubrica..."></div>
+          <div class="f-group"><label>Rubrica destino</label><input placeholder="Para qual rubrica..."></div>
+          <div class="f-group"><label>Valor a remanejar</label><input type="number" placeholder="R$ 0,00" style="font-family:var(--mono)"></div>
+        </div>
+      </div>
+
+      <div class="field-grid cols-1" style="margin-bottom:16px">
+        <div class="f-group"><label>📎 Anexos</label>
+          <div style="border:2px dashed var(--border);border-radius:8px;padding:24px;text-align:center;color:var(--muted);font-size:12px;cursor:pointer">📂 Arraste arquivos aqui ou clique para anexar (ofícios, justificativas, orçamentos...)</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn btn-ghost">Cancelar</button>
+        <button class="btn btn-ghost" onclick="alert('Solicitação salva como rascunho')">💾 Salvar Rascunho</button>
+        <button class="btn btn-primary" onclick="alert('Solicitação SOL-2026-048 enviada para análise da CGPROJ!')">📤 Enviar Solicitação</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB 3: DETALHE ═══ -->
+  <div class="tab-panel" id="tab-detalhe">
+    <div class="detail-card">
+      <div class="detail-header">
+        <button class="btn btn-ghost btn-sm" onclick="showTab('painel')">◀ Voltar</button>
+        <h3>SOL-2026-047 — Novo CLT — Pesquisador em Epidemiologia</h3>
+        <span class="status-pill nova">Nova</span>
+        <span style="color:var(--red);font-size:12px;font-weight:600">🔴 Alta</span>
+      </div>
+      <div class="detail-body">
+        <!-- Workflow -->
+        <div class="workflow">
+          <div class="wf-step done">📝 Rascunho</div>
+          <div class="wf-step current">📤 Enviada</div>
+          <div class="wf-step pending">🔍 Em Análise</div>
+          <div class="wf-step pending">✅ Aprovada</div>
+          <div class="wf-step pending">⚙️ Em Execução</div>
+          <div class="wf-step pending">✅ Concluída</div>
+        </div>
+
+        <!-- Info -->
+        <div class="info-row">
+          <div class="info-item"><div class="i-label">Departamento</div><div class="i-value">DAET</div></div>
+          <div class="info-item"><div class="i-label">Coordenação</div><div class="i-value">CGAE</div></div>
+          <div class="info-item"><div class="i-label">Solicitante</div><div class="i-value">Maria Oliveira</div></div>
+          <div class="info-item"><div class="i-label">Data</div><div class="i-value" style="font-family:var(--mono)">23/03/2026</div></div>
+          <div class="info-item"><div class="i-label">Categoria</div><div class="i-value"><span class="cat-pill contrato">Contrato</span></div></div>
+          <div class="info-item"><div class="i-label">Projeto</div><div class="i-value" style="font-family:var(--mono)">TED 01/2024 — Fiocruz</div></div>
+        </div>
+
+        <div style="margin:16px 0">
+          <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Descrição</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.8;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px">
+            Solicito a contratação de um(a) pesquisador(a) em epidemiologia para atuar no TED 01/2024 (Fortalecimento da Rede de Atenção Especializada). O profissional será responsável pela análise de dados epidemiológicos, elaboração de relatórios técnicos e apoio na implementação do sistema de alerta precoce. Vínculo CLT, 40h semanais, salário estimado de R$ 10.500. Prazo de contratação urgente — projeto entra em fase crítica em abril/2026.
+          </div>
+        </div>
+
+        <!-- Dados contrato -->
+        <div class="info-row">
+          <div class="info-item"><div class="i-label">Tipo Vínculo</div><div class="i-value">CLT</div></div>
+          <div class="info-item"><div class="i-label">Cargo</div><div class="i-value">Pesquisador em Epidemiologia</div></div>
+          <div class="info-item"><div class="i-label">Salário estimado</div><div class="i-value" style="font-family:var(--mono);color:var(--green)">R$ 10.500,00</div></div>
+          <div class="info-item"><div class="i-label">Duração</div><div class="i-value">24 meses</div></div>
+        </div>
+
+        <!-- Parecer CGPROJ -->
+        <div style="margin-top:20px">
+          <div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px">Parecer CGPROJ</div>
+          <div class="field-grid cols-1" style="margin-bottom:12px">
+            <div class="f-group"><label>Análise técnica</label><textarea placeholder="Parecer da CGPROJ sobre a solicitação..."></textarea></div>
+          </div>
+          <div class="field-grid cols-2" style="margin-bottom:16px">
+            <div class="f-group"><label>Decisão</label><select><option>— Selecione —</option><option>✅ Aprovar</option><option>🔄 Devolver para ajustes</option><option>❌ Recusar</option></select></div>
+            <div class="f-group"><label>Responsável pela execução</label><input placeholder="Quem vai executar a ação..."></div>
+          </div>
+          <div style="display:flex;gap:8px;justify-content:flex-end">
+            <button class="btn btn-ghost" onclick="alert('Devolvida ao departamento com observações')">🔄 Devolver</button>
+            <button class="btn" style="background:var(--red);color:#fff" onclick="alert('Solicitação recusada')">❌ Recusar</button>
+            <button class="btn btn-primary" onclick="alert('Solicitação aprovada! Status → Em Execução')">✅ Aprovar</button>
+          </div>
+        </div>
+
+        <!-- Histórico -->
+        <div style="margin-top:24px">
+          <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px">Histórico</div>
+          <div class="timeline">
+            <div class="tl-item">
+              <div class="tl-dot" style="border-color:var(--blue);color:var(--blue)">→</div>
+              <div class="tl-content">
+                <div class="t-title">Solicitação enviada</div>
+                <div class="t-meta">23/03/2026 09:15 · Maria Oliveira (DAET)</div>
+                <div class="t-text">Solicitação criada e enviada para análise da CGPROJ</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot" style="border-color:var(--green);color:var(--green)">✓</div>
+              <div class="tl-content">
+                <div class="t-title">Rascunho criado</div>
+                <div class="t-meta">23/03/2026 08:42 · Maria Oliveira (DAET)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  const tabs = document.querySelectorAll('.main-tab');
+  const map = {painel:0, nova:1, detalhe:2};
+  if (tabs[map[id]]) tabs[map[id]].classList.add('active');
+}
+
+function showCatFields(cat) {
+  document.querySelectorAll('[id^="cat-fields-"]').forEach(el => el.style.display = 'none');
+  if (cat) {
+    const el = document.getElementById('cat-fields-' + cat);
+    if (el) el.style.display = '';
+  }
+}
+</script>
+</body>
+</html>
